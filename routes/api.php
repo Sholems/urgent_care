@@ -22,6 +22,7 @@ use \App\Http\Controllers\PromotionController;
 use \App\Http\Controllers\SpecialityController;
 use \App\Http\Controllers\DiagnosticController;
 use \App\Http\Controllers\AppointmentController;
+use \App\Http\Controllers\FavouriteController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/banners', [BannerController::class, 'index']);
@@ -38,10 +39,13 @@ Route::middleware('authApi')->group(function () {
 
   Route::get('/user/{userId}', [AppUserController::class, 'show']);
 
+  Route::get('/favourites/{userId}', [FavouriteController::class, 'index']);
+
   Route::post('/user/create', [AppUserController::class, 'store']);
   Route::post('/user/login', [AppUserController::class, 'login']);
 
   Route::post('/appointments/create', [AppointmentController::class, 'store']);
+  Route::post('/favourites/create', [FavouriteController::class, 'store']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
