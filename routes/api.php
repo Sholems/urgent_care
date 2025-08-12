@@ -40,12 +40,14 @@ Route::middleware('authApi')->group(function () {
   Route::get('/user/{userId}', [AppUserController::class, 'show']);
 
   Route::get('/favourites/{userId}', [FavouriteController::class, 'index']);
+  Route::get('/favourites/doctors/{userId}', [FavouriteController::class, 'doctors']);
 
   Route::post('/user/create', [AppUserController::class, 'store']);
   Route::post('/user/login', [AppUserController::class, 'login']);
 
   Route::post('/appointments/create', [AppointmentController::class, 'store']);
   Route::post('/favourites/create', [FavouriteController::class, 'store']);
+  Route::delete('/favourites/{userId}/{doctorId}', [FavouriteController::class, 'destroy']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
