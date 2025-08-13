@@ -103,6 +103,11 @@ class PlatformProvider extends OrchidServiceProvider {
         ->route('platform.appuser.list')
         ->permission('platform.systems.users'),
 
+      Menu::make('SMTP Settings')
+        ->icon('bs.envelope')
+        ->route('platform.smtp.edit')
+        ->permission('platform.systems.users'),
+
         
 
       Menu::make(__('Users'))
