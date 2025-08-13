@@ -27,6 +27,7 @@ use App\Orchid\Screens\Diagnostic\DiagnosticEditScreen;
 use App\Orchid\Screens\Appointment\AppointmentListScreen;
 use App\Orchid\Screens\Appointment\AppointmentDetailScreen;
 use App\Orchid\Screens\AppUser\AppUserListScreen;
+use App\Orchid\Screens\Smtp\SmtpSettingScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyListScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyEditScreen;
 
@@ -86,6 +87,9 @@ Route::screen('stripekey/edit/{stripeKey?}', StripeKeyEditScreen::class)
 // AppUsers
 Route::screen('appuser/list', AppUserListScreen::class)
   ->name('platform.appuser.list');
+
+Route::screen('smtp/edit', SmtpSettingScreen::class)
+  ->name('platform.smtp.edit');
 
 // Promotions
 Route::screen('promotion/list', PromotionListScreen::class)
