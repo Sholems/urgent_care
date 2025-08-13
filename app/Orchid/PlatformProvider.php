@@ -75,10 +75,7 @@ class PlatformProvider extends OrchidServiceProvider {
         ->route('platform.banner.list')
         ->permission('platform.systems.users'),
 
-      Menu::make('Stripe Keys')
-        ->icon('bs.credit-card')
-        ->route('platform.stripekey.list')
-        ->permission('platform.systems.users'),
+     
 
       Menu::make('Categories')
         ->title('Details')
@@ -117,9 +114,14 @@ class PlatformProvider extends OrchidServiceProvider {
       Menu::make(__('Roles'))
         ->icon('bs.shield')
         ->route('platform.systems.roles')
-        ->permission('platform.systems.roles')
-        ->divider(),
+        ->permission('platform.systems.roles'),
 
+       Menu::make('Stripe Keys')
+       ->title('Configuration')
+        ->icon('bs.credit-card')
+        ->route('platform.stripekey.list')
+        ->permission('platform.systems.users')
+        ->divider(),
      
     ];
   }
