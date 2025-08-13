@@ -103,13 +103,6 @@ class PlatformProvider extends OrchidServiceProvider {
         ->route('platform.appuser.list')
         ->permission('platform.systems.users'),
 
-      Menu::make('SMTP Settings')
-        ->icon('bs.envelope')
-        ->route('platform.smtp.edit')
-        ->permission('platform.systems.users'),
-
-        
-
       Menu::make(__('Users'))
         ->icon('bs.people')
         ->route('platform.systems.users')
@@ -125,8 +118,15 @@ class PlatformProvider extends OrchidServiceProvider {
        ->title('Configuration')
         ->icon('bs.credit-card')
         ->route('platform.stripekey.list')
+        ->permission('platform.systems.users'),
+        
+        Menu::make('SMTP Settings')
+        ->icon('bs.envelope')
+        ->route('platform.smtp.edit')
         ->permission('platform.systems.users')
         ->divider(),
+
+
      
     ];
   }
