@@ -37,10 +37,14 @@ use App\Orchid\Screens\StripeKey\StripeKeyEditScreen;
 
 // Doctors
 Route::screen('doctor/list', DoctorListScreen::class)
-  ->name('platform.doctor.list');
+  ->name('platform.doctor.list')
+  ->defaults('permission', 'platform.systems.users')
+  ->middleware('check.orchid.permission');
 
 Route::screen('doctor/edit/{doctor?}', DoctorEditScreen::class)
-  ->name('platform.doctor.edit');
+  ->name('platform.doctor.edit')
+  ->defaults('permission', 'platform.systems.users')
+  ->middleware('check.orchid.permission');
 
 // Appointments
 Route::screen('appointment/list', AppointmentListScreen::class)
