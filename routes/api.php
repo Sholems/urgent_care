@@ -23,6 +23,7 @@ use \App\Http\Controllers\SpecialityController;
 use \App\Http\Controllers\DiagnosticController;
 use \App\Http\Controllers\AppointmentController;
 use \App\Http\Controllers\FavouriteController;
+use \App\Http\Controllers\StripeKeyController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/banners', [BannerController::class, 'index']);
@@ -30,6 +31,8 @@ Route::middleware('authApi')->group(function () {
   Route::get('/promotions', [PromotionController::class, 'index']);
   Route::get('/diagnostics', [DiagnosticController::class, 'index']);
   Route::get('/specialities', [SpecialityController::class, 'index']);
+
+  Route::get('/stripe-key', [StripeKeyController::class, 'show']);
 
   Route::get('/doctors', [DoctorController::class, 'index']);
   Route::get('/doctors/{doctorId}', [DoctorController::class, 'show']);

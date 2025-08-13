@@ -27,6 +27,8 @@ use App\Orchid\Screens\Diagnostic\DiagnosticEditScreen;
 use App\Orchid\Screens\Appointment\AppointmentListScreen;
 use App\Orchid\Screens\Appointment\AppointmentDetailScreen;
 use App\Orchid\Screens\AppUser\AppUserListScreen;
+use App\Orchid\Screens\StripeKey\StripeKeyListScreen;
+use App\Orchid\Screens\StripeKey\StripeKeyEditScreen;
 
 //
 // Dashboard Routes
@@ -73,6 +75,13 @@ Route::screen('banner/list', BannerListScreen::class)
 
 Route::screen('banner/edit/{banner?}', BannerEditScreen::class)
   ->name('platform.banner.edit');
+
+// Stripe Keys
+Route::screen('stripekey/list', StripeKeyListScreen::class)
+  ->name('platform.stripekey.list');
+
+Route::screen('stripekey/edit/{stripeKey?}', StripeKeyEditScreen::class)
+  ->name('platform.stripekey.edit');
 
 // AppUsers
 Route::screen('appuser/list', AppUserListScreen::class)

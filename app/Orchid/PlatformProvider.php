@@ -75,6 +75,11 @@ class PlatformProvider extends OrchidServiceProvider {
         ->route('platform.banner.list')
         ->permission('platform.systems.users'),
 
+      Menu::make('Stripe Keys')
+        ->icon('bs.credit-card')
+        ->route('platform.stripekey.list')
+        ->permission('platform.systems.users'),
+
       Menu::make('Categories')
         ->title('Details')
         ->icon('bs.grid')
