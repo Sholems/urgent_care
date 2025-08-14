@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 // return Product::where('is_active', 1)->get();
 
@@ -61,11 +63,13 @@ class DoctorController extends Controller {
     }
 
     if ($request->filled('available_start')) {
-      $query->where('start_time', '<=', $request->input('available_start'));
+      $availableStart = Carbon::createFromFormat('H:i', $request->input('available_start'))->format('H:i:s');
+      $query->whereTime(DB::raw("STR_TO_DATE(end_time, '%h:%i %p')"), '>=', $availableStart);
     }
 
     if ($request->filled('available_end')) {
-      $query->where('end_time', '>=', $request->input('available_end'));
+      $availableEnd = Carbon::createFromFormat('H:i', $request->input('available_end'))->format('H:i:s');
+      $query->whereTime(DB::raw("STR_TO_DATE(start_time, '%h:%i %p')"), '<=', $availableEnd);
     }
 
     switch ($request->input('sort')) {
