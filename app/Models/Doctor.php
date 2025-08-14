@@ -55,4 +55,8 @@ class Doctor extends Model {
     'speciality'     => Like::class,
     'is_available'   => Like::class,
   ];
+
+  public function appointments() {
+    return $this->hasMany(Appointment::class);
+  }
 }

@@ -34,6 +34,8 @@ Route::middleware('authApi')->group(function () {
 
   Route::get('/stripe-key', [StripeKeyController::class, 'show']);
 
+  Route::get('/doctors/search', [DoctorController::class, 'search']);
+  Route::get('/doctors/category/{category}', [DoctorController::class, 'categorySearch']);
   Route::get('/doctors', [DoctorController::class, 'index']);
   Route::get('/doctors/{doctorId}', [DoctorController::class, 'show']);
 
