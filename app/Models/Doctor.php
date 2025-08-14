@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Orchid\Screen\AsSource;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Filterable;
+use App\Models\Review;
 
 class Doctor extends Model {
   use AsSource;
@@ -58,5 +59,9 @@ class Doctor extends Model {
 
   public function appointments() {
     return $this->hasMany(Appointment::class);
+  }
+
+  public function reviews() {
+    return $this->hasMany(Review::class);
   }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 // return Product::where('is_active', 1)->get();
@@ -111,6 +112,7 @@ class DoctorController extends Controller {
   public function show($doctorId) {
     $doctor = Doctor::where('id', $doctorId)->first();
     $doctor->certificates = json_decode($doctor->certificates, true);
+    $doctor->reviews = Review::where('doctor_id', $doctorId)->with('user')->get();
     return $doctor;
   }
 
