@@ -3,63 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use App\Models\AppUser;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource for a given user.
      */
-    public function index()
+    public function index($userId)
     {
-        //
+        $notifications = Notification::where('notifiable_type', AppUser::class)
+            ->where('notifiable_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $notifications,
+        ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Mark the specified notification as read.
      */
-    public function create()
+    public function markAsRead($id)
     {
-        //
-    }
+        $notification = Notification::findOrFail($id);
+        $notification->update(['read_at' => now()]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Notification $notification)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Notification $notification)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Notification $notification)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Notification $notification)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Notification marked as read',
+        ]);
     }
 }

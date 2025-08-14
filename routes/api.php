@@ -24,6 +24,7 @@ use \App\Http\Controllers\DiagnosticController;
 use \App\Http\Controllers\AppointmentController;
 use \App\Http\Controllers\FavouriteController;
 use \App\Http\Controllers\StripeKeyController;
+use \App\Http\Controllers\NotificationController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/banners', [BannerController::class, 'index']);
@@ -41,6 +42,10 @@ Route::middleware('authApi')->group(function () {
 
   Route::get('/appointments', [AppointmentController::class, 'index']);
   Route::get('/appointments/{userId}', [AppointmentController::class, 'show']);
+  Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
+
+  Route::get('/notifications/{userId}', [NotificationController::class, 'index']);
+  Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
   Route::get('/user/{userId}', [AppUserController::class, 'show']);
 
