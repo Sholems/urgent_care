@@ -13,7 +13,7 @@ class CheckOrchidPermission
     {
         $route = Route::current();
         $requiredPermission = $route?->defaults['permission'] ?? null;
-
+        
         if ($requiredPermission && !$request->user()?->hasAccess($requiredPermission)) {
             abort(403, 'You do not have permission to access this page.');
         }

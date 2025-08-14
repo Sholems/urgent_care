@@ -38,12 +38,12 @@ use App\Orchid\Screens\StripeKey\StripeKeyEditScreen;
 // Doctors
 Route::screen('doctor/list', DoctorListScreen::class)
   ->name('platform.doctor.list')
-  ->defaults('permission', 'platform.systems.users')
+  // ->defaults('permission', 'platform.systems.users')
   ->middleware('check.orchid.permission');
 
 Route::screen('doctor/edit/{doctor?}', DoctorEditScreen::class)
   ->name('platform.doctor.edit')
-  ->defaults('permission', 'platform.systems.users')
+  // ->defaults('permission', 'platform.systems.users')
   ->middleware('check.orchid.permission');
 
 // Appointments
@@ -135,27 +135,15 @@ Route::screen('users', UserListScreen::class)
 // Roles
 Route::screen('roles/{role}/edit', RoleEditScreen::class)
   ->name('platform.systems.roles.edit')
-  ->defaults('permission', 'platform.systems.roles')
-  ->middleware('check.orchid.permission')
-  ->breadcrumbs(fn(Trail $trail, $role) => $trail
-    ->parent('platform.systems.roles')
-    ->push($role->name, route('platform.systems.roles.edit', $role)));
+  ->middleware('check.orchid.permission');
 
 Route::screen('roles/create', RoleEditScreen::class)
   ->name('platform.systems.roles.create')
-  ->defaults('permission', 'platform.systems.roles')
-  ->middleware('check.orchid.permission')
-  ->breadcrumbs(fn(Trail $trail) => $trail
-    ->parent('platform.systems.roles')
-    ->push(__('Create'), route('platform.systems.roles.create')));
+  ->middleware('check.orchid.permission');
 
 Route::screen('roles', RoleListScreen::class)
   ->name('platform.systems.roles')
-  ->defaults('permission', 'platform.systems.roles')
-  ->middleware('check.orchid.permission')
-  ->breadcrumbs(fn(Trail $trail) => $trail
-    ->parent('platform.index')
-    ->push(__('Roles'), route('platform.systems.roles')));
+  ->middleware('check.orchid.permission');
 
 // Example
 Route::screen('example', ExampleScreen::class)

@@ -99,7 +99,7 @@ return [
      |
      */
 
-  'index' => 'platform.doctor.list',
+  'index' => 'platform.appointment.list',
 
   /*
      |--------------------------------------------------------------------------

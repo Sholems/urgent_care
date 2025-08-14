@@ -20,39 +20,29 @@ class AppointmentController extends Controller {
     //
   }
 
-  public function store(Request $request) {
+public function store(Request $request) {
     $request->validate([
-      'day' => 'required',
-      'year' => 'required',
-      'time' => 'required',
-      'month' => 'required',
-      'patient_name' => 'required',
-      'patient_email' => 'required|email',
-      'patient_phone_number' => 'required',
-      'user_id' => 'required|exists:users,id',
-      'doctor_id' => 'required|exists:doctors,id',
-      'status' => 'required',
+        'date' => 'required|date',
+        'time' => 'required|string',
+        'user_id' => 'required',
+        'doctor_id' => 'required|exists:doctors,id',
+        'status' => 'required|string'
     ]);
 
-    $appointment = new Appointment;
-    $appointment->day = $request->input('day');
-    $appointment->year = $request->input('year');
-    $appointment->time = $request->input('time');
-    $appointment->month = $request->input('month');
-    $appointment->patient_name = $request->input('patient_name');
-    $appointment->patient_email = $request->input('patient_email');
-    $appointment->patient_phone_number = $request->input('patient_phone_number');
-    $appointment->user_id = $request->input('user_id');
-    $appointment->doctor_id = $request->input('doctor_id');
-    $appointment->status = $request->input('status');
-    $appointment->save();
+    $appointment = Appointment::create([
+        'date' => $request->input('date'),
+        'user_id' => $request->input('user_id'),
+        'doctor_id' => $request->input('doctor_id'),
+        'status' => $request->input('status'),
+    ]);
 
     return response()->json([
-      'status' => 'success',
-      'message' => 'Appointment created successfully',
-      'data' => $appointment
+        'status' => 'success',
+        'message' => 'Appointment created successfully',
+        'data' => $appointment
     ], 201);
-  }
+}
+
 
   /**
    * Display the specified resource.

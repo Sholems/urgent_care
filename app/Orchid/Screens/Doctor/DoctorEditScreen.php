@@ -133,10 +133,10 @@ class DoctorEditScreen extends Screen {
           ->type('file')
           ->title(__('Photo:')),
 
-        Input::make('doctor.certificates')
-          ->type('file')
-          ->multiple()
-          ->title(__('Certificates:')),
+        // Input::make('doctor.certificates')
+        //   ->type('file')
+        //   ->multiple()
+        //   ->title(__('Certificates:')),
 
       ]),
 

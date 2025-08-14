@@ -14,6 +14,7 @@ return new class extends Migration {
       $table->timestamps();
 
       $table->string('date');
+      $table->string('time');
 
       $table->foreignId('user_id')->constrained();
       $table->foreignId('doctor_id')->constrained();

@@ -33,15 +33,36 @@ class UserEditScreen extends Screen
      *
      * @return array
      */
-    public function query(User $user): iterable
-    {
-        $user->load(['roles']);
+public function query(User $user): iterable
+{
+    $user->load(['roles']);
 
-        return [
-            'user'       => $user,
-            'permission' => $user->getStatusPermission(),
-        ];
+    $permissions = $user->getStatusPermission();
+
+    // Append the new appointment permission under 'Main'
+    if (isset($permissions['Main']) && $permissions['Main'] instanceof \Illuminate\Support\Collection) {
+        $permissions['Main']->push([
+            'slug'        => 'platform.appointments',
+            'description' => 'Appointments',
+            'active'      => false,
+        ]);
+    } else {
+        // If 'Main' group doesn't exist, create it
+        $permissions['Main'] = collect([
+            [
+                'slug'        => 'platform.appointments',
+                'description' => 'Appointments',
+                'active'      => false,
+            ]
+        ]);
     }
+
+    return [
+        'user'       => $user,
+        'permission' => $permissions,
+    ];
+}
+
 
     /**
      * The name of the screen displayed in the header.

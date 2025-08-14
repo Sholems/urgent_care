@@ -20,6 +20,7 @@ class Appointment extends Model {
   protected $fillable = [
     'id',
     'date',
+    'time',
     'user_id',
     'doctor_id',
     'status',
@@ -30,12 +31,14 @@ class Appointment extends Model {
   protected $allowedSorts = [
     'id',
     'date',
+    'time',
     'updated_at',
   ];
 
   protected $allowedFilters = [
     'id',
     'date',
+    'time',
     'updated_at',
   ];
 

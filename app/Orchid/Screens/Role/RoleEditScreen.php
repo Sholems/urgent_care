@@ -29,12 +29,21 @@ class RoleEditScreen extends Screen
      * @return array
      */
     public function query(Role $role): iterable
-    {
-        return [
-            'role'       => $role,
-            'permission' => $role->getStatusPermission(),
-        ];
-    }
+{
+    $permissions = $role->getStatusPermission();
+
+    // Append new appointment permission under 'Main'
+    $permissions['Main']->push([
+        'slug'        => 'platform.appointments',
+        'description' => 'Appointments',
+        'active'      => false,
+    ]);
+
+    return [
+        'role'       => $role,
+        'permission' => $permissions,
+    ];
+}
 
     /**
      * The name of the screen displayed in the header.
