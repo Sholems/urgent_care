@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use Orchid\Screen\AsSource;
+use Illuminate\Notifications\Notifiable;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Filterable;
 
@@ -13,6 +14,7 @@ class AppUser extends Model {
   use HasFactory;
   use Filterable;
   use AsSource;
+  use Notifiable;
 
   protected $connection = 'mysql';
   protected $table = 'app_users';

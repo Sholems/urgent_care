@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\Notification;
+use App\Models\AppUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AppointmentController extends Controller {
   /**
@@ -20,7 +23,7 @@ class AppointmentController extends Controller {
     //
   }
 
-public function store(Request $request) {
+  public function store(Request $request) {
     $request->validate([
         'date' => 'required|date',
         'time' => 'required|string',
@@ -36,12 +39,23 @@ public function store(Request $request) {
         'status' => $request->input('status'),
     ]);
 
+    Notification::create([
+        'id' => (string) Str::uuid(),
+        'type' => 'appointment.created',
+        'notifiable_type' => AppUser::class,
+        'notifiable_id' => $request->input('user_id'),
+        'data' => json_encode([
+            'message' => 'Appointment booked for ' . $request->input('date') . ' at ' . $request->input('time'),
+            'appointment_id' => $appointment->id,
+        ]),
+    ]);
+
     return response()->json([
         'status' => 'success',
         'message' => 'Appointment created successfully',
         'data' => $appointment
     ], 201);
-}
+  }
 
 
   /**
@@ -68,7 +82,24 @@ public function store(Request $request) {
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(Appointment $appointment) {
-    //
+  public function destroy($id) {
+    $appointment = Appointment::findOrFail($id);
+    $appointment->delete();
+
+    Notification::create([
+        'id' => (string) Str::uuid(),
+        'type' => 'appointment.canceled',
+        'notifiable_type' => AppUser::class,
+        'notifiable_id' => $appointment->user_id,
+        'data' => json_encode([
+            'message' => 'Appointment on ' . $appointment->date . ' was canceled',
+            'appointment_id' => $appointment->id,
+        ]),
+    ]);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Appointment canceled successfully'
+    ]);
   }
 }
