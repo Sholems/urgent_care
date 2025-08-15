@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Orchid\Screen\AsSource;
 use Orchid\Filters\Filterable;
+use App\Models\Review;
 
 class Appointment extends Model {
   use AsSource;
@@ -45,5 +46,9 @@ class Appointment extends Model {
   public function getUpcomingAttribute() {
     $appointmentDate = Carbon::parse($this->date);
     return Carbon::now()->lessThan($appointmentDate);
+  }
+
+  public function review() {
+    return $this->hasOne(Review::class);
   }
 }
