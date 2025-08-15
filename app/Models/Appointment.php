@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Orchid\Screen\AsSource;
 use Orchid\Filters\Filterable;
 use App\Models\Review;
+use App\Models\Doctor;
 
 class Appointment extends Model {
   use AsSource;
@@ -50,5 +51,9 @@ class Appointment extends Model {
 
   public function review() {
     return $this->hasOne(Review::class);
+  }
+
+  public function doctor() {
+    return $this->belongsTo(Doctor::class);
   }
 }
