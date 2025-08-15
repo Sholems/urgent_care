@@ -15,11 +15,16 @@ class DoctorController extends Controller {
    * Display a listing of the resource.
    */
   public function index() {
-    $doctors = Doctor::where('is_available', 1)->get();
+    $doctors = Doctor::where('is_available', 1)
+      ->withAvg('reviews as average_rating', 'rating')
+      ->get();
+
     $doctors->map(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
+      $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
+
     return $doctors;
   }
 
@@ -37,6 +42,7 @@ class DoctorController extends Controller {
 
     return $builder->get()->map(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
+      $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
   }
@@ -50,6 +56,7 @@ class DoctorController extends Controller {
 
     return $builder->get()->map(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
+      $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
   }
@@ -71,6 +78,12 @@ class DoctorController extends Controller {
     if ($request->filled('available_end')) {
       $availableEnd = Carbon::createFromFormat('H:i', $request->input('available_end'))->format('H:i:s');
       $query->whereTime(DB::raw("STR_TO_DATE(start_time, '%h:%i %p')"), '<=', $availableEnd);
+    }
+
+    $query->withAvg('reviews as average_rating', 'rating');
+
+    if ($request->filled('min_rating')) {
+      $query->havingRaw('COALESCE(average_rating, 0) >= ?', [$request->input('min_rating')]);
     }
 
     switch ($request->input('sort')) {
@@ -114,9 +127,14 @@ class DoctorController extends Controller {
    * Display the specified resource.
    */
   public function show($doctorId) {
-    $doctor = Doctor::where('id', $doctorId)->first();
+    $doctor = Doctor::where('id', $doctorId)
+      ->withAvg('reviews as average_rating', 'rating')
+      ->first();
+
     $doctor->certificates = json_decode($doctor->certificates, true);
+    $doctor->average_rating = $doctor->average_rating ?? 0;
     $doctor->reviews = Review::where('doctor_id', $doctorId)->with('user')->get();
+
     return $doctor;
   }
 
