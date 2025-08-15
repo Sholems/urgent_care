@@ -13,8 +13,14 @@ class NotificationController extends Controller
      */
     public function index($userId)
     {
-        $notifications = Notification::where('notifiable_type', AppUser::class)
-            ->where('notifiable_id', $userId)
+        // Some legacy records may store the notifiable type using the class
+        // basename ("AppUser") instead of the fully qualified class name.
+        // Query for both representations so existing notifications are
+        // returned regardless of how the type was persisted.
+        $appUserClass = AppUser::class;
+
+        $notifications = Notification::where('notifiable_id', $userId)
+            ->whereIn('notifiable_type', [$appUserClass, class_basename($appUserClass)])
             ->orderBy('created_at', 'desc')
             ->get();
 
