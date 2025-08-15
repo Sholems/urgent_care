@@ -72,12 +72,12 @@ class DoctorController extends Controller {
 
     if ($request->filled('available_start')) {
       $availableStart = Carbon::createFromFormat('H:i', $request->input('available_start'))->format('H:i:s');
-      $query->whereTime(DB::raw("STR_TO_DATE(end_time, '%h:%i %p')"), '>=', $availableStart);
+      $query->whereTime(DB::raw("STR_TO_DATE(end_time, '%h:%i %p')"), '>', $availableStart);
     }
 
     if ($request->filled('available_end')) {
       $availableEnd = Carbon::createFromFormat('H:i', $request->input('available_end'))->format('H:i:s');
-      $query->whereTime(DB::raw("STR_TO_DATE(start_time, '%h:%i %p')"), '<=', $availableEnd);
+      $query->whereTime(DB::raw("STR_TO_DATE(start_time, '%h:%i %p')"), '<', $availableEnd);
     }
 
     $query->withAvg('reviews as average_rating', 'rating');
