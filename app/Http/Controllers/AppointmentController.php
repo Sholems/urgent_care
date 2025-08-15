@@ -13,7 +13,7 @@ class AppointmentController extends Controller {
    * Display a listing of the resource.
    */
   public function index() {
-    return Appointment::all();
+    return Appointment::with('doctor')->get();
   }
 
   /**
@@ -63,7 +63,7 @@ class AppointmentController extends Controller {
    * Display the specified resource.
    */
   public function show($userId) {
-    return Appointment::where('user_id', $userId)->get();
+    return Appointment::with('doctor')->where('user_id', $userId)->get();
   }
 
   /**
