@@ -34,6 +34,7 @@ class AppointmentController extends Controller {
 
     $appointment = Appointment::create([
         'date' => $request->input('date'),
+        'time' => $request->input('time'),
         'user_id' => $request->input('user_id'),
         'doctor_id' => $request->input('doctor_id'),
         'status' => $request->input('status'),
@@ -92,7 +93,7 @@ class AppointmentController extends Controller {
         'notifiable_type' => AppUser::class,
         'notifiable_id' => $appointment->user_id,
         'data' => json_encode([
-            'message' => 'Appointment on ' . $appointment->date . ' was canceled',
+            'message' => 'Appointment on ' . $appointment->date . ' was cancelled',
             'appointment_id' => $appointment->id,
         ]),
     ]);
