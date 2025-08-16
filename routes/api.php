@@ -43,6 +43,7 @@ Route::middleware('authApi')->group(function () {
 
   Route::get('/appointments', [AppointmentController::class, 'index']);
   Route::get('/appointments/{userId}', [AppointmentController::class, 'show']);
+  Route::post('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule']);
   Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
 
   Route::get('/notifications/{userId}', [NotificationController::class, 'index']);
