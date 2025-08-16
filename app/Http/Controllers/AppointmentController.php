@@ -81,6 +81,44 @@ class AppointmentController extends Controller {
   }
 
   /**
+   * Reschedule an existing appointment.
+   */
+  public function reschedule(Request $request, $id) {
+    $request->validate([
+        'date' => 'required|date',
+        'time' => 'required|string'
+    ]);
+
+    $appointment = Appointment::findOrFail($id);
+    $oldDate = $appointment->date;
+    $oldTime = $appointment->time;
+
+    $appointment->update([
+        'date' => $request->input('date'),
+        'time' => $request->input('time')
+    ]);
+
+    Notification::create([
+        'id' => (string) Str::uuid(),
+        'type' => 'appointment.rescheduled',
+        'notifiable_type' => AppUser::class,
+        'notifiable_id' => $appointment->user_id,
+        'data' => json_encode([
+            'message' => 'Appointment rescheduled to ' . $request->input('date') . ' at ' . $request->input('time'),
+            'appointment_id' => $appointment->id,
+            'old_date' => $oldDate,
+            'old_time' => $oldTime,
+        ]),
+    ]);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Appointment rescheduled successfully',
+        'data' => $appointment
+    ]);
+  }
+
+  /**
    * Remove the specified resource from storage.
    */
   public function destroy($id) {
