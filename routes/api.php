@@ -26,6 +26,7 @@ use \App\Http\Controllers\FavouriteController;
 use \App\Http\Controllers\StripeKeyController;
 use \App\Http\Controllers\NotificationController;
 use \App\Http\Controllers\ReviewController;
+use \App\Http\Controllers\PaymentController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/banners', [BannerController::class, 'index']);
@@ -62,6 +63,11 @@ Route::middleware('authApi')->group(function () {
   Route::delete('/favourites/{userId}/{doctorId}', [FavouriteController::class, 'destroy']);
   Route::post('/reviews/create', [ReviewController::class, 'store']);
   Route::get('/reviews/doctor/{doctorId}', [ReviewController::class, 'doctorReviews']);
+
+  Route::post('/payments/payment-intent', [PaymentController::class, 'createPaymentIntent']);
+  Route::post('/payments/setup-intent/{userId}', [PaymentController::class, 'createSetupIntent']);
+  Route::get('/payments/methods/{userId}', [PaymentController::class, 'listPaymentMethods']);
+  Route::delete('/payments/methods/{paymentMethodId}', [PaymentController::class, 'deletePaymentMethod']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
