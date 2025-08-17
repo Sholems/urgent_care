@@ -44,7 +44,7 @@ class AppointmentListScreen extends Screen {
           ->sort()
           ->filter(Input::make())
           ->render(function (Appointment $appointment) {
-            return $appointment->day . ' ' . $appointment->month . ' ' . $appointment->year;
+            return $appointment->date;
           }),
 
         TD::make('time', 'Time')
@@ -55,30 +55,23 @@ class AppointmentListScreen extends Screen {
             return $appointment->time;
           }),
 
-        TD::make('patient_name', 'Name')
+        TD::make('user_name', 'Name')
           ->cantHide()
           ->sort()
           ->filter(Input::make())
           ->render(function (Appointment $appointment) {
-            return $appointment->patient_name;
+            return $appointment->user->user_name;
           }),
 
-        TD::make('patient_email', 'Email')
+        TD::make('user_email', 'Email')
           ->cantHide()
           ->sort()
           ->filter(Input::make())
           ->render(function (Appointment $appointment) {
-            return $appointment->patient_email;
+            return $appointment->user->user_email;
           }),
 
-        TD::make('patient_phone_number', 'Phone')
-          ->cantHide()
-          ->sort()
-          ->filter(Input::make())
-          ->render(function (Appointment $appointment) {
-            return $appointment->patient_phone_number;
-          }),
-
+       
         TD::make(__('Actions'))
           ->cantHide()
           ->align(TD::ALIGN_CENTER)

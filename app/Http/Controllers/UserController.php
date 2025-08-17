@@ -20,18 +20,7 @@ class UserController extends Controller
             'new_password' => 'required',
         ]);
 
-        $otpRecord = EmailOtp::where('email', $request->email)->first();
-
-        if (
-            !$otpRecord ||
-            $otpRecord->expires_at->isPast() ||
-            !Hash::check($request->otp, $otpRecord->otp)
-        ) {
-            return response()->json([
-                'message' => 'Invalid or expired OTP',
-            ], 422);
-        }
-
+       
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
@@ -43,7 +32,7 @@ class UserController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        $otpRecord->delete();
+        // $otpRecord->delete();
 
         return response()->json([
             'message' => 'Password changed successfully',

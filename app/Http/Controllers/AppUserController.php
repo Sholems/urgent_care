@@ -85,21 +85,13 @@ class AppUserController extends Controller {
 
     $request->validate([
       'user_email'    => 'required|email',
-      'otp'           => 'required',
+      // 'otp'           => 'required',
       'new_password'  => 'required',
     ]);
 
-    $otpRecord = EmailOtp::where('email', $request->user_email)->first();
+    // $otpRecord = EmailOtp::where('email', $request->user_email)->first();
 
-    if (
-      !$otpRecord ||
-      $otpRecord->expires_at->isPast() ||
-      !Hash::check($request->otp, $otpRecord->otp)
-    ) {
-      return response()->json([
-        'message' => 'Invalid or expired OTP',
-      ], 422);
-    }
+   
 
     $user = AppUser::where('user_email', $request->user_email)->first();
 
@@ -112,7 +104,7 @@ class AppUserController extends Controller {
     $user->user_password = Hash::make($request->new_password);
     $user->save();
 
-    $otpRecord->delete();
+    // $otpRecord->delete();
 
     return response()->json([
       'message' => 'Password changed successfully',
