@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EmailOtp;
+use App\Models\AppUser;
 use App\Models\SmtpSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -70,6 +71,11 @@ class OtpController extends Controller
         }
 
         $record->delete();
+
+        if ($user = AppUser::where('user_email', $request->email)->first()) {
+            $user->user_email_verified = 'true';
+            $user->save();
+        }
 
         return response()->json(['message' => 'OTP verified successfully']);
     }

@@ -26,6 +26,7 @@ class AppUser extends Model {
     'user_password',
     'user_location',
     'user_phone_number',
+    'user_email_verified',
     'user_phone_verified',
     'stripe_customer_id',
   ];
@@ -37,6 +38,7 @@ class AppUser extends Model {
     'user_password',
     'user_location',
     'user_phone_number',
+    'user_email_verified',
     'user_phone_verified',
     'stripe_customer_id',
     'updated_at',
@@ -49,6 +51,7 @@ class AppUser extends Model {
     'user_password'       => Like::class,
     'user_location'       => Like::class,
     'user_phone_number'   => Like::class,
+    'user_email_verified' => Like::class,
     'user_phone_verified' => Like::class,
     'stripe_customer_id'  => Like::class,
     'updated_at'          => Like::class,
