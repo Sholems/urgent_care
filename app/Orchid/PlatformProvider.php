@@ -57,11 +57,7 @@ class PlatformProvider extends OrchidServiceProvider {
 
         Menu::make('Appointments')
         ->icon('bs.calendar')
-        ->badge(function () {
-          if (Appointment::where('status', 'pending')->count() > 0) {
-            return Appointment::where('status', 'pending')->count();
-          }
-        })
+        
         // ->badge(function () {
         //   if (Appointment::where('status', 'pending')->count() > 0) {
         //     return Appointment::where('status', 'pending')->count();
