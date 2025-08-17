@@ -19,6 +19,20 @@ class Review extends Model
         'comment',
     ];
 
+    /**
+     * After a review is created, update the associated doctor's rating.
+     */
+    protected static function booted()
+    {
+        static::created(function (self $review) {
+            $doctor = $review->doctor;
+            if ($doctor) {
+                $doctor->rating = $doctor->reviews()->avg('rating');
+                $doctor->save();
+            }
+        });
+    }
+
     public function doctor()
     {
         return $this->belongsTo(Doctor::class);
