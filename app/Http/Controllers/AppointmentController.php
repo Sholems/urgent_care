@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\Notification;
 use App\Models\AppUser;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -40,15 +41,14 @@ class AppointmentController extends Controller {
         'status' => $request->input('status'),
     ]);
 
-    Notification::create([
-        'id' => (string) Str::uuid(),
-        'type' => 'appointment.created',
-        'notifiable_type' => AppUser::class,
-        'notifiable_id' => $request->input('user_id'),
-        'data' => json_encode([
-            'message' => 'Appointment booked for ' . $request->input('date') . ' at ' . $request->input('time'),
-            'appointment_id' => $appointment->id,
-        ]),
+    $this->notify(AppUser::class, $request->input('user_id'), 'appointment.created', [
+      'message' => 'Appointment booked for ' . $request->input('date') . ' at ' . $request->input('time'),
+      'appointment_id' => $appointment->id,
+    ]);
+
+    $this->notify(Doctor::class, $request->input('doctor_id'), 'appointment.created', [
+      'message' => 'New appointment on ' . $request->input('date') . ' at ' . $request->input('time'),
+      'appointment_id' => $appointment->id,
     ]);
 
     return response()->json([
@@ -105,18 +105,15 @@ class AppointmentController extends Controller {
         'time' => $request->input('time')
     ]);
 
-    Notification::create([
-        'id' => (string) Str::uuid(),
-        'type' => 'appointment.rescheduled',
-        'notifiable_type' => AppUser::class,
-        'notifiable_id' => $appointment->user_id,
-        'data' => json_encode([
-            'message' => 'Appointment rescheduled to ' . $request->input('date') . ' at ' . $request->input('time'),
-            'appointment_id' => $appointment->id,
-            'old_date' => $oldDate,
-            'old_time' => $oldTime,
-        ]),
-    ]);
+    $data = [
+      'message' => 'Appointment rescheduled to ' . $request->input('date') . ' at ' . $request->input('time'),
+      'appointment_id' => $appointment->id,
+      'old_date' => $oldDate,
+      'old_time' => $oldTime,
+    ];
+
+    $this->notify(AppUser::class, $appointment->user_id, 'appointment.rescheduled', $data);
+    $this->notify(Doctor::class, $appointment->doctor_id, 'appointment.rescheduled', $data);
 
     return response()->json([
         'status' => 'success',
@@ -132,20 +129,27 @@ class AppointmentController extends Controller {
     $appointment = Appointment::findOrFail($id);
     $appointment->delete();
 
-    Notification::create([
-        'id' => (string) Str::uuid(),
-        'type' => 'appointment.canceled',
-        'notifiable_type' => AppUser::class,
-        'notifiable_id' => $appointment->user_id,
-        'data' => json_encode([
-            'message' => 'Appointment on ' . $appointment->date . ' was cancelled',
-            'appointment_id' => $appointment->id,
-        ]),
-    ]);
+    $data = [
+      'message' => 'Appointment on ' . $appointment->date . ' was cancelled',
+      'appointment_id' => $appointment->id,
+    ];
+
+    $this->notify(AppUser::class, $appointment->user_id, 'appointment.canceled', $data);
+    $this->notify(Doctor::class, $appointment->doctor_id, 'appointment.canceled', $data);
 
     return response()->json([
         'status' => 'success',
         'message' => 'Appointment canceled successfully'
+    ]);
+  }
+
+  private function notify($notifiableType, $notifiableId, $type, array $data) {
+    Notification::create([
+      'id' => (string) Str::uuid(),
+      'type' => $type,
+      'notifiable_type' => $notifiableType,
+      'notifiable_id' => $notifiableId,
+      'data' => json_encode($data),
     ]);
   }
 }

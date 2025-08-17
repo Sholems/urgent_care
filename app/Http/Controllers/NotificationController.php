@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use App\Models\AppUser;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -21,6 +22,24 @@ class NotificationController extends Controller
 
         $notifications = Notification::where('notifiable_id', $userId)
             ->whereIn('notifiable_type', [$appUserClass, class_basename($appUserClass)])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $notifications,
+        ]);
+    }
+
+    /**
+     * Display a listing of notifications for a given doctor.
+     */
+    public function doctor($doctorId)
+    {
+        $doctorClass = Doctor::class;
+
+        $notifications = Notification::where('notifiable_id', $doctorId)
+            ->whereIn('notifiable_type', [$doctorClass, class_basename($doctorClass)])
             ->orderBy('created_at', 'desc')
             ->get();
 
