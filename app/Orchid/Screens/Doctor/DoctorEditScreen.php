@@ -97,6 +97,7 @@ class DoctorEditScreen extends Screen {
           ->title(__('User:'))
           ->disabled(!$this->users->count())
           ->fromModel(User::class, 'name', 'id')
+          ->value($this->doctor->user_id)
           ->empty($this->users->count() ? 'Select user' : 'Please create users first in the "Users" section.')
           ->placeholder($this->users->count() ? 'Select user' : 'Please create users first in the "Users" section.'),
 
@@ -206,7 +207,6 @@ class DoctorEditScreen extends Screen {
     $doctorData['start_time'] = $request->input('doctor.start_time');
     $doctorData['end_time'] = $request->input('doctor.end_time');
     $doctorData['user_id'] = $request->input('doctor.user_id');
-    $doctorData['user_id'] = $request->input('doctor.user_id');
 
     if ($request->hasFile('doctor.photo')) {
       $path = $request->file('doctor.photo')->store('', 'public');
@@ -245,6 +245,7 @@ class DoctorEditScreen extends Screen {
     $doctorData['is_available'] = $request->input('doctor.is_available');
     $doctorData['start_time'] = $request->input('doctor.start_time');
     $doctorData['end_time'] = $request->input('doctor.end_time');
+    $doctorData['user_id'] = $request->input('doctor.user_id');
 
     if ($request->hasFile('doctor.photo')) {
       $this->deleteSingleImage($this->doctor->photo);
