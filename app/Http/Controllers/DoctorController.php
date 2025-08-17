@@ -87,7 +87,7 @@ class DoctorController extends Controller {
       ], 404);
     }
 
-    $appointments = $doctor->appointments()->with('user')->get();
+    $appointments = $doctor->appointments()->with(['user', 'review'])->get();
 
     return response()->json([
       'message' => 'Doctor logged in successfully',
