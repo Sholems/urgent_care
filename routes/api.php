@@ -27,6 +27,7 @@ use \App\Http\Controllers\StripeKeyController;
 use \App\Http\Controllers\NotificationController;
 use \App\Http\Controllers\ReviewController;
 use \App\Http\Controllers\OtpController;
+use \App\Http\Controllers\PaymentController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/banners', [BannerController::class, 'index']);
@@ -35,7 +36,7 @@ Route::middleware('authApi')->group(function () {
   Route::get('/diagnostics', [DiagnosticController::class, 'index']);
   Route::get('/specialities', [SpecialityController::class, 'index']);
 
-  Route::get('/stripe-key', [StripeKeyController::class, 'show']);
+  Route::get('/stripe-keys', [StripeKeyController::class, 'show']);
 
   Route::get('/doctors/search', [DoctorController::class, 'search']);
   Route::get('/doctors/category/{category}', [DoctorController::class, 'categorySearch']);
@@ -44,10 +45,12 @@ Route::middleware('authApi')->group(function () {
 
   Route::get('/appointments', [AppointmentController::class, 'index']);
   Route::get('/appointments/{userId}', [AppointmentController::class, 'show']);
+  Route::get('/appointments/doctor/{doctorId}', [AppointmentController::class, 'doctorAppointments']);
   Route::post('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule']);
   Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
 
   Route::get('/notifications/{userId}', [NotificationController::class, 'index']);
+  Route::get('/notifications/doctor/{doctorId}', [NotificationController::class, 'doctor']);
   Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
   Route::get('/user/{userId}', [AppUserController::class, 'show']);
@@ -55,8 +58,9 @@ Route::middleware('authApi')->group(function () {
   Route::get('/favourites/{userId}', [FavouriteController::class, 'index']);
   Route::get('/favourites/doctors/{userId}', [FavouriteController::class, 'doctors']);
 
-    Route::post('/user/create', [AppUserController::class, 'store']);
-    Route::post('/user/login', [AppUserController::class, 'login']);
+  Route::post('/user/create', [AppUserController::class, 'store']);
+  Route::post('/user/login', [AppUserController::class, 'login']);
+  Route::post('/doctor/login', [DoctorController::class, 'login']);
 
     Route::post('/otp/send', [OtpController::class, 'send']);
     Route::post('/otp/verify', [OtpController::class, 'verify']);
@@ -66,6 +70,11 @@ Route::middleware('authApi')->group(function () {
   Route::delete('/favourites/{userId}/{doctorId}', [FavouriteController::class, 'destroy']);
   Route::post('/reviews/create', [ReviewController::class, 'store']);
   Route::get('/reviews/doctor/{doctorId}', [ReviewController::class, 'doctorReviews']);
+
+  Route::post('/payments/payment-intent', [PaymentController::class, 'createPaymentIntent']);
+  Route::post('/payments/setup-intent/{userId}', [PaymentController::class, 'createSetupIntent']);
+  Route::get('/payments/methods/{userId}', [PaymentController::class, 'listPaymentMethods']);
+  Route::delete('/payments/methods/{paymentMethodId}', [PaymentController::class, 'deletePaymentMethod']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

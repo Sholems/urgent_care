@@ -18,7 +18,7 @@ class Doctor extends Model {
   protected $connection = 'mysql';
   protected $table = 'doctors';
 
-  protected $hidden = ['created_at', 'updated_at'];
+  protected $hidden = ['password', 'created_at', 'updated_at'];
 
   protected $fillable = [
     'name',
@@ -33,6 +33,8 @@ class Doctor extends Model {
     'start_time',
     'end_time',
     'promotion',
+    'email',
+    'password',
   ];
 
   protected $casts = [

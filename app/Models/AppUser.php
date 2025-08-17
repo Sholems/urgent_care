@@ -27,6 +27,7 @@ class AppUser extends Model {
     'user_location',
     'user_phone_number',
     'user_phone_verified',
+    'stripe_customer_id',
   ];
 
   protected $allowedSorts = [
@@ -37,6 +38,7 @@ class AppUser extends Model {
     'user_location',
     'user_phone_number',
     'user_phone_verified',
+    'stripe_customer_id',
     'updated_at',
   ];
 
@@ -48,6 +50,7 @@ class AppUser extends Model {
     'user_location'       => Like::class,
     'user_phone_number'   => Like::class,
     'user_phone_verified' => Like::class,
+    'stripe_customer_id'  => Like::class,
     'updated_at'          => Like::class,
   ];
 }

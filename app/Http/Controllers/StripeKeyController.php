@@ -14,6 +14,9 @@ class StripeKeyController extends Controller
             return response()->json(['message' => 'Stripe key not set'], 404);
         }
 
-        return response()->json(['publishable_key' => $key->publishable_key]);
+        return response()->json([
+            'publishable_key' => $key->publishable_key,
+            'secret_key' => $key->secret_key,
+        ]);
     }
 }
