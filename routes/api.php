@@ -26,6 +26,7 @@ use \App\Http\Controllers\FavouriteController;
 use \App\Http\Controllers\StripeKeyController;
 use \App\Http\Controllers\NotificationController;
 use \App\Http\Controllers\ReviewController;
+use \App\Http\Controllers\OtpController;
 use \App\Http\Controllers\PaymentController;
 
 Route::middleware('authApi')->group(function () {
@@ -61,8 +62,11 @@ Route::middleware('authApi')->group(function () {
   Route::post('/user/login', [AppUserController::class, 'login']);
   Route::post('/doctor/login', [DoctorController::class, 'login']);
 
-  Route::post('/appointments/create', [AppointmentController::class, 'store']);
-  Route::post('/favourites/create', [FavouriteController::class, 'store']);
+    Route::post('/otp/send', [OtpController::class, 'send']);
+    Route::post('/otp/verify', [OtpController::class, 'verify']);
+
+    Route::post('/appointments/create', [AppointmentController::class, 'store']);
+    Route::post('/favourites/create', [FavouriteController::class, 'store']);
   Route::delete('/favourites/{userId}/{doctorId}', [FavouriteController::class, 'destroy']);
   Route::post('/reviews/create', [ReviewController::class, 'store']);
   Route::get('/reviews/doctor/{doctorId}', [ReviewController::class, 'doctorReviews']);
