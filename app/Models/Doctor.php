@@ -35,6 +35,7 @@ class Doctor extends Model {
     'promotion',
     'email',
     'password',
+    'user_id',
   ];
 
   protected $casts = [
@@ -61,6 +62,16 @@ class Doctor extends Model {
 
   public function appointments() {
     return $this->hasMany(Appointment::class);
+  }
+
+  public function user() {
+    return $this->belongsTo(User::class);
+  }
+
+  public function patients() {
+    return $this
+      ->hasManyThrough(AppUser::class, Appointment::class, 'doctor_id', 'id', 'id', 'user_id')
+      ->distinct();
   }
 
   public function reviews() {

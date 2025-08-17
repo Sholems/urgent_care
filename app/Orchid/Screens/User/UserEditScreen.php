@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Orchid\Access\Impersonation;
 use Orchid\Platform\Models\User;
+use App\Models\Doctor;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Screen;
@@ -35,7 +36,8 @@ class UserEditScreen extends Screen
      */
 public function query(User $user): iterable
 {
-    $user->load(['roles']);
+    $user->load(['roles', 'doctor']);
+    $user->doctor_id = $user->doctor->id ?? null;
 
     $permissions = $user->getStatusPermission();
 
@@ -177,6 +179,7 @@ public function query(User $user): iterable
                 'required',
                 Rule::unique(User::class, 'email')->ignore($user),
             ],
+            'user.doctor_id' => ['nullable', 'exists:doctors,id'],
         ]);
 
         $permissions = collect($request->get('permissions'))
@@ -194,6 +197,13 @@ public function query(User $user): iterable
             ->save();
 
         $user->replaceRoles($request->input('user.roles'));
+
+        $doctorId = $request->input('user.doctor_id');
+        Doctor::where('user_id', $user->id)->where('id', '!=', $doctorId)->update(['user_id' => null]);
+
+        if ($doctorId) {
+            Doctor::where('id', $doctorId)->update(['user_id' => $user->id]);
+        }
 
         Toast::info(__('User was saved.'));
 
