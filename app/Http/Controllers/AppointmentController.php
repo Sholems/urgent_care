@@ -93,16 +93,16 @@ class AppointmentController extends Controller {
    */
   public function reschedule(Request $request, $id) {
     $request->validate([
-        'date' => 'required|date_format:D M d Y',
-        'time' => 'required|date_format:g:i a'
+        'date' => 'required|date_format:Y-m-d',
+        'time' => 'required|date_format:H:i'
     ]);
 
     $appointment = Appointment::findOrFail($id);
     $oldDate = $appointment->date;
     $oldTime = $appointment->time;
 
-    $newDate = Carbon::createFromFormat('D M d Y', $request->input('date'))->format('D M d Y');
-    $newTime = Carbon::createFromFormat('g:i a', $request->input('time'))->format('g:i a');
+    $newDate = Carbon::createFromFormat('Y-m-d', $request->input('date'))->format('Y-m-d');
+    $newTime = Carbon::createFromFormat('H:i', $request->input('time'))->format('H:i');
 
     $appointment->update([
         'date' => $newDate,
