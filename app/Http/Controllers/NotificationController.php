@@ -5,25 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use App\Models\AppUser;
 use App\Models\Doctor;
-use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
+    /**
+     * Retrieve notifications for the given model.
+     *
+     * Some legacy records may store the notifiable type using the model's
+     * class basename instead of the fully qualified class name. This helper
+     * queries for both representations so existing notifications are returned
+     * regardless of how the type was persisted.
+     */
+    protected function fetchNotifications($id, string $modelClass)
+    {
+        return Notification::where('notifiable_id', $id)
+            ->whereIn('notifiable_type', [$modelClass, class_basename($modelClass)])
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
     /**
      * Display a listing of the resource for a given user.
      */
     public function index($userId)
     {
-        // Some legacy records may store the notifiable type using the class
-        // basename ("AppUser") instead of the fully qualified class name.
-        // Query for both representations so existing notifications are
-        // returned regardless of how the type was persisted.
-        $appUserClass = AppUser::class;
-
-        $notifications = Notification::where('notifiable_id', $userId)
-            ->whereIn('notifiable_type', [$appUserClass, class_basename($appUserClass)])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $notifications = $this->fetchNotifications($userId, AppUser::class);
 
         return response()->json([
             'status' => 'success',
@@ -36,12 +42,7 @@ class NotificationController extends Controller
      */
     public function doctor($doctorId)
     {
-        $doctorClass = Doctor::class;
-
-        $notifications = Notification::where('notifiable_id', $doctorId)
-            ->whereIn('notifiable_type', [$doctorClass, class_basename($doctorClass)])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $notifications = $this->fetchNotifications($doctorId, Doctor::class);
 
         return response()->json([
             'status' => 'success',
