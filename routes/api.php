@@ -42,6 +42,7 @@ Route::middleware('authApi')->group(function () {
   Route::get('/doctors/category/{category}', [DoctorController::class, 'categorySearch']);
   Route::get('/doctors', [DoctorController::class, 'index']);
   Route::get('/doctors/{doctorId}', [DoctorController::class, 'show']);
+  Route::get('/doctors/{doctorId}/patients', [DoctorController::class, 'patients']);
 
   Route::get('/appointments', [AppointmentController::class, 'index']);
   Route::get('/appointments/{userId}', [AppointmentController::class, 'show']);
@@ -55,6 +56,7 @@ Route::middleware('authApi')->group(function () {
   Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
   Route::get('/user/{userId}', [AppUserController::class, 'show']);
+  Route::get('/patients/{userId}/appointments', [AppUserController::class, 'appointments']);
 
   Route::get('/favourites/{userId}', [FavouriteController::class, 'index']);
   Route::get('/favourites/doctors/{userId}', [FavouriteController::class, 'doctors']);

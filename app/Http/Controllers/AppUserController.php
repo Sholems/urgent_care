@@ -119,6 +119,14 @@ class AppUserController extends Controller {
   }
 
   /**
+   * Fetch all appointments for the specified user.
+   */
+  public function appointments($id) {
+    $user = AppUser::with(['appointments.doctor'])->findOrFail($id);
+    return $user->appointments;
+  }
+
+  /**
    * Show the form for editing the specified resource.
    */
   public function edit(AppUser $appUser) {

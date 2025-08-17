@@ -173,6 +173,14 @@ class DoctorController extends Controller {
     return $doctor;
   }
 
+  /**
+   * List all patients for the specified doctor.
+   */
+  public function patients($doctorId) {
+    $doctor = Doctor::findOrFail($doctorId);
+    return $doctor->patients()->get();
+  }
+
   // public function show($userId) {
   //   return Appointment::where('user_id', $userId)->get();
   // }
