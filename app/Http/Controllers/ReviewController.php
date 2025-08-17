@@ -18,12 +18,7 @@ class ReviewController extends Controller
 
         $appointment = Appointment::findOrFail($request->input('appointment_id'));
 
-        if ($appointment->status !== 'completed') {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Only completed appointments can be reviewed',
-            ], 422);
-        }
+       
 
         if ($appointment->review()->exists()) {
             return response()->json([
@@ -49,6 +44,6 @@ class ReviewController extends Controller
 
     public function doctorReviews($doctorId)
     {
-        return Review::where('doctor_id', $doctorId)->with('user')->get();
+        return Review::where('doctor_id', $doctorId)->with('user:id,name,email')->get();
     }
 }
