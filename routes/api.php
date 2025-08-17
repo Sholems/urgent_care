@@ -56,6 +56,7 @@ Route::middleware('authApi')->group(function () {
 
   Route::post('/user/create', [AppUserController::class, 'store']);
   Route::post('/user/login', [AppUserController::class, 'login']);
+  Route::post('/doctor/login', [DoctorController::class, 'login']);
 
   Route::post('/appointments/create', [AppointmentController::class, 'store']);
   Route::post('/favourites/create', [FavouriteController::class, 'store']);

@@ -7,6 +7,7 @@ use App\Models\Review;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 // return Product::where('is_active', 1)->get();
 
@@ -59,6 +60,28 @@ class DoctorController extends Controller {
       $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
+  }
+
+  // LOGIN //
+  public function login(Request $request) {
+
+    $request->validate([
+      'email' => 'required|email',
+      'password' => 'required',
+    ]);
+
+    $doctor = Doctor::where('email', $request->email)->first();
+
+    if (!$doctor || !Hash::check($request->password, $doctor->password)) {
+      return response()->json([
+        'message' => 'Invalid email or password',
+      ], 401);
+    }
+
+    return response()->json([
+      'message' => 'Doctor logged in successfully',
+      'doctor' => $doctor,
+    ], 200);
   }
 
   private function applyFilters(Request $request, $query) {
