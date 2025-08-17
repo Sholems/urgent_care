@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\Review;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -70,12 +71,20 @@ class DoctorController extends Controller {
       'password' => 'required',
     ]);
 
-    $doctor = Doctor::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-    if (!$doctor || !Hash::check($request->password, $doctor->password)) {
+    if (!$user || !Hash::check($request->password, $user->password)) {
       return response()->json([
         'message' => 'Invalid email or password',
       ], 401);
+    }
+
+    $doctor = $user->doctor;
+
+    if (!$doctor) {
+      return response()->json([
+        'message' => 'Doctor not found',
+      ], 404);
     }
 
     $appointments = $doctor->appointments()->with('user')->get();
