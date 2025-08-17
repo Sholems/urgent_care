@@ -10,6 +10,7 @@ use Orchid\Screen\AsSource;
 use Orchid\Filters\Filterable;
 use App\Models\Review;
 use App\Models\Doctor;
+use App\Models\AppUser;
 
 class Appointment extends Model {
   use AsSource;
@@ -56,5 +57,9 @@ class Appointment extends Model {
 
   public function doctor() {
     return $this->belongsTo(Doctor::class);
+  }
+
+  public function user() {
+    return $this->belongsTo(AppUser::class, 'user_id');
   }
 }

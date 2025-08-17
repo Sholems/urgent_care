@@ -9,6 +9,7 @@ use Orchid\Screen\AsSource;
 use Illuminate\Notifications\Notifiable;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Filterable;
+use App\Models\Appointment;
 
 class AppUser extends Model {
   use HasFactory;
@@ -56,4 +57,8 @@ class AppUser extends Model {
     'stripe_customer_id'  => Like::class,
     'updated_at'          => Like::class,
   ];
+
+  public function appointments() {
+    return $this->hasMany(Appointment::class, 'user_id');
+  }
 }

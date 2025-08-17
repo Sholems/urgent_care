@@ -75,7 +75,7 @@ class AppointmentController extends Controller {
    * Display appointments for a specific doctor.
    */
   public function doctorAppointments($doctorId) {
-    return Appointment::with('doctor')->where('doctor_id', $doctorId)->get();
+    return Appointment::with(['doctor', 'user'])->where('doctor_id', $doctorId)->get();
   }
 
   /**

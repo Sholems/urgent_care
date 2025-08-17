@@ -78,9 +78,12 @@ class DoctorController extends Controller {
       ], 401);
     }
 
+    $appointments = $doctor->appointments()->with('user')->get();
+
     return response()->json([
       'message' => 'Doctor logged in successfully',
       'doctor' => $doctor,
+      'appointments' => $appointments,
     ], 200);
   }
 
