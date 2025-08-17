@@ -78,6 +78,33 @@ class AppUserController extends Controller {
     ], 200); // 200 OK
   }
 
+  // CHANGE PASSWORD //
+  public function changePassword(Request $request) {
+    info($request->all());
+
+    $request->validate([
+      'user_email'    => 'required|email',
+      'old_password'  => 'required',
+      'new_password'  => 'required',
+    ]);
+
+    $user = AppUser::where('user_email', $request->user_email)->first();
+
+    if (!$user || !Hash::check($request->old_password, $user->user_password)) {
+      return response()->json([
+        'message' => 'Invalid email or password',
+      ], 401); // 401 Unauthorized
+    }
+
+    $user->user_password = Hash::make($request->new_password);
+    $user->save();
+
+    return response()->json([
+      'message' => 'Password changed successfully',
+      'user'    => $user,
+    ], 200); // 200 OK
+  }
+
   /**
    * Display the specified resource.
    */
