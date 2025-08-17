@@ -28,6 +28,7 @@ use \App\Http\Controllers\NotificationController;
 use \App\Http\Controllers\ReviewController;
 use \App\Http\Controllers\OtpController;
 use \App\Http\Controllers\PaymentController;
+use \App\Http\Controllers\UserController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/banners', [BannerController::class, 'index']);
@@ -65,6 +66,7 @@ Route::middleware('authApi')->group(function () {
   Route::post('/user/login', [AppUserController::class, 'login']);
   Route::post('/user/change-password', [AppUserController::class, 'changePassword']);
   Route::post('/doctor/login', [DoctorController::class, 'login']);
+  Route::post('/users/change-password', [UserController::class, 'changePassword']);
 
     Route::post('/otp/send', [OtpController::class, 'send']);
     Route::post('/otp/verify', [OtpController::class, 'verify']);
