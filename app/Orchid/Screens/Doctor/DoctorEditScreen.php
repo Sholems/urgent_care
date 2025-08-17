@@ -8,6 +8,7 @@ use App\Models\Doctor;
 use App\Models\Category;
 use App\Models\Promotion;
 use App\Models\Speciality;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Select;
@@ -25,6 +26,7 @@ class DoctorEditScreen extends Screen {
   public $categories;
   public $specialities;
   public $promotions;
+  public $users;
 
   public function query(Doctor $doctor): iterable {
     return [
@@ -32,6 +34,7 @@ class DoctorEditScreen extends Screen {
       'categories' => Category::all(),
       'specialities' => Speciality::all(),
       'promotions' => Promotion::all(),
+      'users' => User::all(),
     ];
   }
 
@@ -89,6 +92,13 @@ class DoctorEditScreen extends Screen {
             'removeMaskOnSubmit' => true,
           ])
           ->placeholder('Enter price'),
+
+        Select::make('doctor.user_id')
+          ->title(__('User:'))
+          ->disabled(!$this->users->count())
+          ->fromModel(User::class, 'name', 'id')
+          ->empty($this->users->count() ? 'Select user' : 'Please create users first in the "Users" section.')
+          ->placeholder($this->users->count() ? 'Select user' : 'Please create users first in the "Users" section.'),
 
         Select::make('doctor.specialities')
           ->multiple()
@@ -161,6 +171,7 @@ class DoctorEditScreen extends Screen {
       'doctor.certificates' => 'sometimes|array',
       'doctor.start_time' => 'required',
       'doctor.end_time' => 'required',
+      'doctor.user_id' => 'nullable|exists:users,id',
     ];
 
     if (empty($this->doctor->photo)) {
@@ -194,6 +205,8 @@ class DoctorEditScreen extends Screen {
     $doctorData['is_available'] = $request->input('doctor.is_available');
     $doctorData['start_time'] = $request->input('doctor.start_time');
     $doctorData['end_time'] = $request->input('doctor.end_time');
+    $doctorData['user_id'] = $request->input('doctor.user_id');
+    $doctorData['user_id'] = $request->input('doctor.user_id');
 
     if ($request->hasFile('doctor.photo')) {
       $path = $request->file('doctor.photo')->store('', 'public');
