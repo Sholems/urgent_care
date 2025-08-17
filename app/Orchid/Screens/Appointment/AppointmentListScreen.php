@@ -16,8 +16,14 @@ use Orchid\Screen\Actions\DropDown;
 
 class AppointmentListScreen extends Screen {
   public function query(): iterable {
+    $user = auth()->user();
+
+    $appointments = $user?->doctor
+      ? Appointment::where('doctor_id', $user->doctor->id)->get()
+      : Appointment::all();
+
     return [
-      'appointment' => Appointment::all(),
+      'appointment' => $appointments,
     ];
   }
 
