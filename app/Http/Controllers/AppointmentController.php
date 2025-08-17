@@ -8,6 +8,7 @@ use App\Models\AppUser;
 use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class AppointmentController extends Controller {
   /**
@@ -92,21 +93,24 @@ class AppointmentController extends Controller {
    */
   public function reschedule(Request $request, $id) {
     $request->validate([
-        'date' => 'required|date',
-        'time' => 'required|string'
+        'date' => 'required|date_format:D M d Y',
+        'time' => 'required|date_format:g:i a'
     ]);
 
     $appointment = Appointment::findOrFail($id);
     $oldDate = $appointment->date;
     $oldTime = $appointment->time;
 
+    $newDate = Carbon::createFromFormat('D M d Y', $request->input('date'))->format('D M d Y');
+    $newTime = Carbon::createFromFormat('g:i a', $request->input('time'))->format('g:i a');
+
     $appointment->update([
-        'date' => $request->input('date'),
-        'time' => $request->input('time')
+        'date' => $newDate,
+        'time' => $newTime
     ]);
 
     $data = [
-      'message' => 'Appointment rescheduled to ' . $request->input('date') . ' at ' . $request->input('time'),
+      'message' => 'Appointment rescheduled to ' . $newDate . ' at ' . $newTime,
       'appointment_id' => $appointment->id,
       'old_date' => $oldDate,
       'old_time' => $oldTime,
