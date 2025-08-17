@@ -6,9 +6,11 @@ use App\Models\Appointment;
 use App\Models\Notification;
 use App\Models\AppUser;
 use App\Models\Doctor;
+use App\Models\StripeKey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Stripe\StripeClient;
 
 class AppointmentController extends Controller {
   /**
@@ -31,7 +33,8 @@ class AppointmentController extends Controller {
         'time' => 'required|string',
         'user_id' => 'required',
         'doctor_id' => 'required|exists:doctors,id',
-        'status' => 'required|string'
+        'status' => 'required|string',
+        'payment_intent_id' => 'nullable|string'
     ]);
 
     $appointment = Appointment::create([
@@ -40,6 +43,7 @@ class AppointmentController extends Controller {
         'user_id' => $request->input('user_id'),
         'doctor_id' => $request->input('doctor_id'),
         'status' => $request->input('status'),
+        'payment_intent_id' => $request->input('payment_intent_id'),
     ]);
 
     $this->notify(AppUser::class, $request->input('user_id'), 'appointment.created', [
@@ -131,6 +135,21 @@ class AppointmentController extends Controller {
    */
   public function destroy($id) {
     $appointment = Appointment::findOrFail($id);
+    if ($appointment->payment_intent_id) {
+      try {
+        $key = StripeKey::first();
+        $secret = $key?->secret_key;
+        if ($secret) {
+          $stripe = new StripeClient($secret);
+          $stripe->refunds->create([
+            'payment_intent' => $appointment->payment_intent_id,
+          ]);
+        }
+      } catch (\Exception $e) {
+        // Optionally log the exception or handle the refund failure
+      }
+    }
+
     $appointment->delete();
 
     $data = [

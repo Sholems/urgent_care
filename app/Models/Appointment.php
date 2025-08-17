@@ -26,6 +26,7 @@ class Appointment extends Model {
     'user_id',
     'doctor_id',
     'status',
+    'payment_intent_id',
     'upcoming'
 
   ];
