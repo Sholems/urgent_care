@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppUser;
+use App\Models\EmailOtp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -84,20 +85,34 @@ class AppUserController extends Controller {
 
     $request->validate([
       'user_email'    => 'required|email',
-      'old_password'  => 'required',
+      'otp'           => 'required',
       'new_password'  => 'required',
     ]);
 
+    $otpRecord = EmailOtp::where('email', $request->user_email)->first();
+
+    if (
+      !$otpRecord ||
+      $otpRecord->expires_at->isPast() ||
+      !Hash::check($request->otp, $otpRecord->otp)
+    ) {
+      return response()->json([
+        'message' => 'Invalid or expired OTP',
+      ], 422);
+    }
+
     $user = AppUser::where('user_email', $request->user_email)->first();
 
-    if (!$user || !Hash::check($request->old_password, $user->user_password)) {
+    if (!$user) {
       return response()->json([
-        'message' => 'Invalid email or password',
-      ], 401); // 401 Unauthorized
+        'message' => 'User not found',
+      ], 404);
     }
 
     $user->user_password = Hash::make($request->new_password);
     $user->save();
+
+    $otpRecord->delete();
 
     return response()->json([
       'message' => 'Password changed successfully',
