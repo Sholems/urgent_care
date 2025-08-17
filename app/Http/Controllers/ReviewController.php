@@ -44,6 +44,12 @@ class ReviewController extends Controller
 
     public function doctorReviews($doctorId)
     {
-        return Review::where('doctor_id', $doctorId)->with('user:id,name,email')->get();
+        return Review::where('doctor_id', $doctorId)
+            ->with([
+                'user' => function ($query) {
+                    $query->select('id', 'user_name as name', 'user_email as email');
+                },
+            ])
+            ->get();
     }
 }
