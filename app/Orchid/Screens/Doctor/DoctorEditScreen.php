@@ -69,29 +69,50 @@ class DoctorEditScreen extends Screen {
   public function layout(): iterable {
 
     return [
-      Layout::rows([
-        Input::make('doctor.name')
-          ->title(__('Name:'))
-          ->required(!$this->doctor->exists)
-          ->placeholder('Enter doctor name'),
+        Layout::rows([
+          Input::make('doctor.name')
+            ->title(__('Name:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter doctor name'),
 
-        TextArea::make('doctor.biography')
-          ->rows(5)
-          ->title(__('Biography:'))
-          ->required(!$this->doctor->exists)
-          ->placeholder('Enter short biography'),
+          Select::make('doctor.gender')
+            ->title(__('Gender:'))
+            ->required(!$this->doctor->exists)
+            ->options([
+              'male' => 'Male',
+              'female' => 'Female',
+              'other' => 'Other',
+            ])
+            ->empty('Select gender'),
 
-        Input::make('doctor.price')
-          ->title('Price (USD):')
-          ->required(!$this->doctor->exists)
-          ->mask([
-            'alias' => 'currency',
-            'groupSeparator' => '',
-            'digits' => 2,
-            'autoUnmask' => true,
-            'removeMaskOnSubmit' => true,
-          ])
-          ->placeholder('Enter price'),
+          TextArea::make('doctor.biography')
+            ->rows(5)
+            ->title(__('Biography:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter short biography'),
+
+          TextArea::make('doctor.medical_history')
+            ->rows(5)
+            ->title(__('Medical History:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter medical history'),
+
+          Input::make('doctor.price')
+            ->title('Price (USD):')
+            ->required(!$this->doctor->exists)
+            ->mask([
+              'alias' => 'currency',
+              'groupSeparator' => '',
+              'digits' => 2,
+              'autoUnmask' => true,
+              'removeMaskOnSubmit' => true,
+            ])
+            ->placeholder('Enter price'),
+
+          Input::make('doctor.insurance')
+            ->title(__('Insurance:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter insurance details'),
 
         Select::make('doctor.user_id')
           ->title(__('User:'))
@@ -161,14 +182,17 @@ class DoctorEditScreen extends Screen {
   }
 
   private function validateRequest(Request $request) {
-    $rules = [
-      'doctor.name' => 'required|string',
-      'doctor.biography' => 'required|string',
-      'doctor.price' => 'required|numeric',
-      'doctor.categories' => 'required',
-      'doctor.specialities' => 'required|array',
-      'doctor.photo' => 'sometimes|image',
-      'doctor.is_available' => 'required|boolean',
+      $rules = [
+        'doctor.name' => 'required|string',
+        'doctor.biography' => 'required|string',
+        'doctor.gender' => 'required|string',
+        'doctor.medical_history' => 'required|string',
+        'doctor.insurance' => 'required|string',
+        'doctor.price' => 'required|numeric',
+        'doctor.categories' => 'required',
+        'doctor.specialities' => 'required|array',
+        'doctor.photo' => 'sometimes|image',
+        'doctor.is_available' => 'required|boolean',
       'doctor.certificates' => 'sometimes|array',
       'doctor.start_time' => 'required',
       'doctor.end_time' => 'required',
@@ -197,15 +221,18 @@ class DoctorEditScreen extends Screen {
   public function create(Request $request) {
     $doctorData = $this->validateRequest($request);
 
-    $doctorData['name'] = ucwords($request->input('doctor.name'));
-    $doctorData['categories'] = $request->input('doctor.categories');
-    $doctorData['specialities'] = $request->input('doctor.specialities');
-    $doctorData['biography'] = $request->input('doctor.biography');
-    $doctorData['price'] = $request->input('doctor.price');
-    $doctorData['promotion'] = $request->input('doctor.promotion');
-    $doctorData['is_available'] = $request->input('doctor.is_available');
-    $doctorData['start_time'] = $request->input('doctor.start_time');
-    $doctorData['end_time'] = $request->input('doctor.end_time');
+      $doctorData['name'] = ucwords($request->input('doctor.name'));
+      $doctorData['categories'] = $request->input('doctor.categories');
+      $doctorData['specialities'] = $request->input('doctor.specialities');
+      $doctorData['biography'] = $request->input('doctor.biography');
+      $doctorData['gender'] = $request->input('doctor.gender');
+      $doctorData['medical_history'] = $request->input('doctor.medical_history');
+      $doctorData['insurance'] = $request->input('doctor.insurance');
+      $doctorData['price'] = $request->input('doctor.price');
+      $doctorData['promotion'] = $request->input('doctor.promotion');
+      $doctorData['is_available'] = $request->input('doctor.is_available');
+      $doctorData['start_time'] = $request->input('doctor.start_time');
+      $doctorData['end_time'] = $request->input('doctor.end_time');
     $doctorData['user_id'] = $request->input('doctor.user_id');
 
     if ($request->hasFile('doctor.photo')) {
@@ -236,15 +263,18 @@ class DoctorEditScreen extends Screen {
 
     $doctorData = $this->validateRequest($request);
 
-    $doctorData['name'] = ucwords($request->input('doctor.name'));
-    $doctorData['categories'] = $request->input('doctor.categories');
-    $doctorData['specialities'] = $request->input('doctor.specialities');
-    $doctorData['biography'] = $request->input('doctor.biography');
-    $doctorData['price'] = $request->input('doctor.price');
-    $doctorData['promotion'] = $request->input('doctor.promotion');
-    $doctorData['is_available'] = $request->input('doctor.is_available');
-    $doctorData['start_time'] = $request->input('doctor.start_time');
-    $doctorData['end_time'] = $request->input('doctor.end_time');
+      $doctorData['name'] = ucwords($request->input('doctor.name'));
+      $doctorData['categories'] = $request->input('doctor.categories');
+      $doctorData['specialities'] = $request->input('doctor.specialities');
+      $doctorData['biography'] = $request->input('doctor.biography');
+      $doctorData['gender'] = $request->input('doctor.gender');
+      $doctorData['medical_history'] = $request->input('doctor.medical_history');
+      $doctorData['insurance'] = $request->input('doctor.insurance');
+      $doctorData['price'] = $request->input('doctor.price');
+      $doctorData['promotion'] = $request->input('doctor.promotion');
+      $doctorData['is_available'] = $request->input('doctor.is_available');
+      $doctorData['start_time'] = $request->input('doctor.start_time');
+      $doctorData['end_time'] = $request->input('doctor.end_time');
     $doctorData['user_id'] = $request->input('doctor.user_id');
 
     if ($request->hasFile('doctor.photo')) {
