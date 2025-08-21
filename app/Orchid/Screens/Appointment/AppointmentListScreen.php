@@ -42,7 +42,8 @@ class AppointmentListScreen extends Screen {
           ->cantHide()
           ->sort()
           ->render(function (Appointment $appointment) {
-            return '#' . $appointment->id;
+            return Link::make('#' . $appointment->id)
+              ->route('platform.appointment.detail', $appointment->id);
           }),
 
         TD::make('date', 'Date')
@@ -50,7 +51,8 @@ class AppointmentListScreen extends Screen {
           ->sort()
           ->filter(Input::make())
           ->render(function (Appointment $appointment) {
-            return $appointment->date;
+            return Link::make($appointment->date)
+              ->route('platform.appointment.detail', $appointment->id);
           }),
 
         TD::make('time', 'Time')
@@ -58,7 +60,8 @@ class AppointmentListScreen extends Screen {
           ->sort()
           ->filter(Input::make())
           ->render(function (Appointment $appointment) {
-            return $appointment->time;
+            return Link::make($appointment->time)
+              ->route('platform.appointment.detail', $appointment->id);
           }),
 
         TD::make('user_name', 'Name')
@@ -66,7 +69,8 @@ class AppointmentListScreen extends Screen {
           ->sort()
           ->filter(Input::make())
           ->render(function (Appointment $appointment) {
-            return $appointment->user->user_name;
+            return Link::make($appointment->user->user_name)
+              ->route('platform.appointment.detail', $appointment->id);
           }),
 
         TD::make('user_email', 'Email')
@@ -74,7 +78,8 @@ class AppointmentListScreen extends Screen {
           ->sort()
           ->filter(Input::make())
           ->render(function (Appointment $appointment) {
-            return $appointment->user->user_email;
+            return Link::make($appointment->user->user_email)
+              ->route('platform.appointment.detail', $appointment->id);
           }),
 
        

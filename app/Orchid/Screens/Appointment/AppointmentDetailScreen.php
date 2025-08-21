@@ -5,21 +5,27 @@ namespace App\Orchid\Screens\Appointment;
 use Orchid\Screen\Screen;
 
 use Orchid\Screen\TD;
-use App\Models\Product;
 use Orchid\Screen\Sight;
-use App\Models\Appointment;
-use Orchid\Support\Facades\Alert;
 use Orchid\Screen\Actions\Button;
 use Orchid\Support\Facades\Layout;
+use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Select;
+use Orchid\Screen\Actions\Link;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Appointment;
+use App\Models\AppointmentDocument;
+use Orchid\Support\Facades\Alert;
+use Illuminate\Http\Request;
 
 class AppointmentDetailScreen extends Screen {
 
   public $appointment;
 
   public function query(Appointment $appointment): iterable {
-    $this->appointment = $appointment;
+    $this->appointment = $appointment->load('documents');
     return [
       'appointment' => $this->appointment,
+      'documents' => $this->appointment->documents,
     ];
   }
 
@@ -73,6 +79,34 @@ class AppointmentDetailScreen extends Screen {
           return $appointment->patient_phone_number;
         }),
       ]),
+
+      Layout::table('documents', [
+        TD::make('type', 'Type'),
+        TD::make('file_path', 'File')->render(function (AppointmentDocument $document) {
+          return Link::make('Download')
+            ->href(Storage::url($document->file_path))
+            ->target('_blank');
+        }),
+      ]),
+
+      Layout::rows([
+        Select::make('document.type')
+          ->title('Document Type')
+          ->options([
+            'prescription' => 'Prescription',
+            'medical_report' => 'Medical Report',
+            'other' => 'Other Document',
+            'invoice' => 'Invoice',
+          ])
+          ->required(),
+        Input::make('document.file')
+          ->type('file')
+          ->title('File')
+          ->required(),
+        Button::make('Upload Document')
+          ->method('uploadDocument')
+          ->icon('bs.upload'),
+      ]),
     ];
   }
 
@@ -94,5 +128,23 @@ class AppointmentDetailScreen extends Screen {
     $appointment->delete();
     Alert::info('Appointment deleted');
     return redirect()->route('platform.appointment.list');
+  }
+
+  public function uploadDocument(Appointment $appointment, Request $request) {
+    $request->validate([
+      'document.file' => 'required|file',
+      'document.type' => 'required|in:prescription,medical_report,other,invoice',
+    ]);
+
+    $path = $request->file('document.file')->store('appointment_documents');
+
+    $appointment->documents()->create([
+      'type' => $request->input('document.type'),
+      'file_path' => $path,
+    ]);
+
+    Alert::info('Document uploaded');
+
+    return redirect()->route('platform.appointment.detail', $appointment->id);
   }
 }
