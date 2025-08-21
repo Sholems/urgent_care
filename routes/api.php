@@ -27,6 +27,7 @@ use \App\Http\Controllers\StripeKeyController;
 use \App\Http\Controllers\NotificationController;
 use \App\Http\Controllers\ReviewController;
 use \App\Http\Controllers\OtpController;
+use \App\Http\Controllers\PhoneOtpController;
 use \App\Http\Controllers\PaymentController;
 use \App\Http\Controllers\UserController;
 
@@ -70,6 +71,8 @@ Route::middleware('authApi')->group(function () {
 
     Route::post('/otp/send', [OtpController::class, 'send']);
     Route::post('/otp/verify', [OtpController::class, 'verify']);
+    Route::post('/phone-otp/send', [PhoneOtpController::class, 'send']);
+    Route::post('/phone-otp/verify', [PhoneOtpController::class, 'verify']);
 
     Route::post('/appointments/create', [AppointmentController::class, 'store']);
     Route::post('/favourites/create', [FavouriteController::class, 'store']);

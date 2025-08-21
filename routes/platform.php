@@ -28,6 +28,7 @@ use App\Orchid\Screens\Appointment\AppointmentListScreen;
 use App\Orchid\Screens\Appointment\AppointmentDetailScreen;
 use App\Orchid\Screens\AppUser\AppUserListScreen;
 use App\Orchid\Screens\Smtp\SmtpSettingScreen;
+use App\Orchid\Screens\Twilio\TwilioSettingScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyListScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyEditScreen;
 
@@ -94,6 +95,9 @@ Route::screen('appuser/list', AppUserListScreen::class)
 
 Route::screen('smtp/edit', SmtpSettingScreen::class)
   ->name('platform.smtp.edit');
+
+Route::screen('twilio/edit', TwilioSettingScreen::class)
+  ->name('platform.twilio.edit');
 
 // Promotions
 Route::screen('promotion/list', PromotionListScreen::class)
