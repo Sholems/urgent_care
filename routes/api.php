@@ -67,6 +67,7 @@ Route::middleware('authApi')->group(function () {
   Route::post('/user/login', [AppUserController::class, 'login']);
   Route::post('/user/change-password', [AppUserController::class, 'changePassword']);
   Route::post('/doctor/login', [DoctorController::class, 'login']);
+  Route::post('/doctor/edit/{doctor}', [DoctorController::class, 'update']);
   Route::post('/users/change-password', [UserController::class, 'changePassword']);
 
     Route::post('/otp/send', [OtpController::class, 'send']);

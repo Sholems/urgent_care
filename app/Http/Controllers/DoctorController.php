@@ -220,7 +220,37 @@ class DoctorController extends Controller {
    * Update the specified resource in storage.
    */
   public function update(Request $request, Doctor $doctor) {
-    //
+    $data = $request->validate([
+      'name' => 'sometimes|string',
+      'biography' => 'sometimes|string',
+      'price' => 'sometimes|numeric',
+      'experience' => 'sometimes|integer',
+      'categories' => 'sometimes|array',
+      'specialities' => 'sometimes|array',
+      'is_available' => 'sometimes|boolean',
+      'start_time' => 'sometimes',
+      'end_time' => 'sometimes',
+      'gender' => 'sometimes|string',
+      'medical_history' => 'sometimes|string',
+      'insurance' => 'sometimes|string',
+      'promotion' => 'sometimes|string',
+    ]);
+
+    if ($request->has('categories')) {
+      $data['categories'] = $request->input('categories');
+    }
+
+    if ($request->has('specialities')) {
+      $data['specialities'] = $request->input('specialities');
+    }
+
+    $doctor->fill($data);
+    $doctor->save();
+
+    return response()->json([
+      'message' => 'Doctor updated successfully',
+      'doctor' => $doctor,
+    ]);
   }
 
   /**
