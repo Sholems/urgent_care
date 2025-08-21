@@ -85,6 +85,11 @@ class DoctorEditScreen extends Screen {
             ])
             ->empty('Select gender'),
 
+          Input::make('doctor.language')
+            ->title(__('Language:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter language'),
+
           TextArea::make('doctor.biography')
             ->rows(5)
             ->title(__('Biography:'))
@@ -186,6 +191,7 @@ class DoctorEditScreen extends Screen {
         'doctor.name' => 'required|string',
         'doctor.biography' => 'required|string',
         'doctor.gender' => 'required|string',
+        'doctor.language' => 'required|string',
         'doctor.medical_history' => 'required|string',
         'doctor.insurance' => 'required|string',
         'doctor.price' => 'required|numeric',
@@ -226,6 +232,7 @@ class DoctorEditScreen extends Screen {
       $doctorData['specialities'] = $request->input('doctor.specialities');
       $doctorData['biography'] = $request->input('doctor.biography');
       $doctorData['gender'] = $request->input('doctor.gender');
+      $doctorData['language'] = $request->input('doctor.language');
       $doctorData['medical_history'] = $request->input('doctor.medical_history');
       $doctorData['insurance'] = $request->input('doctor.insurance');
       $doctorData['price'] = $request->input('doctor.price');
@@ -268,6 +275,7 @@ class DoctorEditScreen extends Screen {
       $doctorData['specialities'] = $request->input('doctor.specialities');
       $doctorData['biography'] = $request->input('doctor.biography');
       $doctorData['gender'] = $request->input('doctor.gender');
+      $doctorData['language'] = $request->input('doctor.language');
       $doctorData['medical_history'] = $request->input('doctor.medical_history');
       $doctorData['insurance'] = $request->input('doctor.insurance');
       $doctorData['price'] = $request->input('doctor.price');
