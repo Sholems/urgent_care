@@ -41,6 +41,11 @@ class Doctor extends Model {
       'password',
       'user_id',
       'language',
+      'city',
+      'address',
+      'country',
+      'latitude',
+      'longitude',
     ];
 
   protected $casts = [
@@ -48,6 +53,8 @@ class Doctor extends Model {
     'certificates'  => 'array',
     'is_available'  => 'boolean',
     'specialities'  => 'array',
+    'latitude'      => 'float',
+    'longitude'     => 'float',
   ];
 
   protected $allowedSorts = [

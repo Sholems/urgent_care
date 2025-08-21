@@ -120,10 +120,35 @@ class DoctorEditScreen extends Screen {
             ->type('number')
             ->placeholder('Enter years of experience'),
 
-          Input::make('doctor.insurance')
-            ->title(__('Insurance:'))
+        Input::make('doctor.insurance')
+          ->title(__('Insurance:'))
+          ->required(!$this->doctor->exists)
+          ->placeholder('Enter insurance details'),
+
+          Input::make('doctor.city')
+            ->title(__('City:'))
             ->required(!$this->doctor->exists)
-            ->placeholder('Enter insurance details'),
+            ->placeholder('Enter city'),
+
+          Input::make('doctor.address')
+            ->title(__('Full Address:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter full address'),
+
+          Input::make('doctor.country')
+            ->title(__('Country:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter country'),
+
+          Input::make('doctor.latitude')
+            ->title(__('Latitude:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter latitude'),
+
+          Input::make('doctor.longitude')
+            ->title(__('Longitude:'))
+            ->required(!$this->doctor->exists)
+            ->placeholder('Enter longitude'),
 
         Select::make('doctor.user_id')
           ->title(__('User:'))
@@ -202,6 +227,11 @@ class DoctorEditScreen extends Screen {
         'doctor.insurance' => 'required|string',
         'doctor.price' => 'required|numeric',
         'doctor.experience' => 'required|integer',
+        'doctor.city' => 'required|string',
+        'doctor.address' => 'required|string',
+        'doctor.country' => 'required|string',
+        'doctor.latitude' => 'required|numeric',
+        'doctor.longitude' => 'required|numeric',
         'doctor.categories' => 'required',
         'doctor.specialities' => 'required|array',
         'doctor.photo' => 'sometimes|image',
@@ -242,6 +272,11 @@ class DoctorEditScreen extends Screen {
       $doctorData['language'] = $request->input('doctor.language');
       $doctorData['medical_history'] = $request->input('doctor.medical_history');
       $doctorData['insurance'] = $request->input('doctor.insurance');
+      $doctorData['city'] = $request->input('doctor.city');
+      $doctorData['address'] = $request->input('doctor.address');
+      $doctorData['country'] = $request->input('doctor.country');
+      $doctorData['latitude'] = $request->input('doctor.latitude');
+      $doctorData['longitude'] = $request->input('doctor.longitude');
       $doctorData['price'] = $request->input('doctor.price');
       $doctorData['experience'] = $request->input('doctor.experience');
       $doctorData['promotion'] = $request->input('doctor.promotion');
@@ -286,6 +321,11 @@ class DoctorEditScreen extends Screen {
       $doctorData['language'] = $request->input('doctor.language');
       $doctorData['medical_history'] = $request->input('doctor.medical_history');
       $doctorData['insurance'] = $request->input('doctor.insurance');
+      $doctorData['city'] = $request->input('doctor.city');
+      $doctorData['address'] = $request->input('doctor.address');
+      $doctorData['country'] = $request->input('doctor.country');
+      $doctorData['latitude'] = $request->input('doctor.latitude');
+      $doctorData['longitude'] = $request->input('doctor.longitude');
       $doctorData['price'] = $request->input('doctor.price');
       $doctorData['experience'] = $request->input('doctor.experience');
       $doctorData['promotion'] = $request->input('doctor.promotion');
