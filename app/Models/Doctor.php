@@ -39,6 +39,7 @@ class Doctor extends Model {
       'email',
       'password',
       'user_id',
+      'language',
     ];
 
   protected $casts = [

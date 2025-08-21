@@ -37,7 +37,9 @@ class DoctorController extends Controller {
     if ($query = $request->input('search')) {
       $builder->where(function ($q) use ($query) {
         $q->where('name', 'like', "%{$query}%")
-          ->orWhere('categories', 'like', "%{$query}%");
+          ->orWhere('categories', 'like', "%{$query}%")
+          ->orWhere('gender', 'like', "%{$query}%")
+          ->orWhere('language', 'like', "%{$query}%");
 
         $categories = Category::where('symptoms', 'like', "%{$query}%")->pluck('name');
         foreach ($categories as $catName) {
@@ -116,6 +118,14 @@ class DoctorController extends Controller {
 
     if ($request->filled('max_price')) {
       $query->where('price', '<=', $request->input('max_price'));
+    }
+
+    if ($request->filled('gender')) {
+      $query->where('gender', $request->input('gender'));
+    }
+
+    if ($request->filled('language')) {
+      $query->where('language', 'like', "%" . $request->input('language') . "%");
     }
 
     if ($request->filled('available_start')) {
