@@ -20,23 +20,26 @@ class Doctor extends Model {
 
   protected $hidden = ['password', 'created_at', 'updated_at'];
 
-  protected $fillable = [
-    'name',
-    'price',
-    'photo',
-    'rating',
-    'biography',
-    'categories',
-    'specialities',
-    'certificates',
-    'is_available',
-    'start_time',
-    'end_time',
-    'promotion',
-    'email',
-    'password',
-    'user_id',
-  ];
+    protected $fillable = [
+      'name',
+      'price',
+      'photo',
+      'rating',
+      'biography',
+      'categories',
+      'specialities',
+      'certificates',
+      'is_available',
+      'start_time',
+      'end_time',
+      'gender',
+      'medical_history',
+      'insurance',
+      'promotion',
+      'email',
+      'password',
+      'user_id',
+    ];
 
   protected $casts = [
     'categories'    => 'array',
