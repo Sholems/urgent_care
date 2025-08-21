@@ -141,11 +141,13 @@ class DoctorEditScreen extends Screen {
             ->placeholder('Enter country'),
 
           Input::make('doctor.latitude')
+            ->id('doctor-latitude')
             ->title(__('Latitude:'))
             ->required(!$this->doctor->exists)
             ->placeholder('Enter latitude'),
 
           Input::make('doctor.longitude')
+            ->id('doctor-longitude')
             ->title(__('Longitude:'))
             ->required(!$this->doctor->exists)
             ->placeholder('Enter longitude'),
@@ -213,7 +215,9 @@ class DoctorEditScreen extends Screen {
           ->value(1)
           ->sendTrueOrFalse()
           ->placeholder('Available & Unavailable'),
-      ])
+      ]),
+
+      Layout::view('doctor.geolocation'),
     ];
   }
 
