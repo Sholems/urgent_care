@@ -11,6 +11,7 @@ use Orchid\Filters\Filterable;
 use App\Models\Review;
 use App\Models\Doctor;
 use App\Models\AppUser;
+use App\Models\AppointmentDocument;
 
 class Appointment extends Model {
   use AsSource;
@@ -61,5 +62,17 @@ class Appointment extends Model {
 
   public function user() {
     return $this->belongsTo(AppUser::class, 'user_id');
+  }
+
+  public function documents() {
+    return $this->hasMany(AppointmentDocument::class);
+  }
+
+  public function prescriptions() {
+    return $this->hasMany(AppointmentDocument::class)->where('type', 'prescription');
+  }
+
+  public function medicalReports() {
+    return $this->hasMany(AppointmentDocument::class)->where('type', 'medical_report');
   }
 }
