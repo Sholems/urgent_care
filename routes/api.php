@@ -30,6 +30,7 @@ use \App\Http\Controllers\OtpController;
 use \App\Http\Controllers\PhoneOtpController;
 use \App\Http\Controllers\PaymentController;
 use \App\Http\Controllers\UserController;
+use \App\Http\Controllers\DashboardController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/banners', [BannerController::class, 'index']);
@@ -77,10 +78,13 @@ Route::middleware('authApi')->group(function () {
     Route::post('/phone-otp/verify', [PhoneOtpController::class, 'verify']);
 
     Route::post('/appointments/create', [AppointmentController::class, 'store']);
-    Route::post('/favourites/create', [FavouriteController::class, 'store']);
+  Route::post('/favourites/create', [FavouriteController::class, 'store']);
   Route::delete('/favourites/{userId}/{doctorId}', [FavouriteController::class, 'destroy']);
   Route::post('/reviews/create', [ReviewController::class, 'store']);
   Route::get('/reviews/doctor/{doctorId}', [ReviewController::class, 'doctorReviews']);
+
+  Route::get('/dashboard/doctor/{doctorId}', [DashboardController::class, 'doctor']);
+  Route::get('/dashboard/admin', [DashboardController::class, 'admin']);
 
   Route::post('/payments/payment-intent', [PaymentController::class, 'createPaymentIntent']);
   Route::post('/payments/setup-intent/{userId}', [PaymentController::class, 'createSetupIntent']);
