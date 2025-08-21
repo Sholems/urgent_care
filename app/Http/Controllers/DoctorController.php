@@ -234,6 +234,11 @@ class DoctorController extends Controller {
       'medical_history' => 'sometimes|string',
       'insurance' => 'sometimes|string',
       'promotion' => 'sometimes|string',
+      'city' => 'sometimes|string',
+      'address' => 'sometimes|string',
+      'country' => 'sometimes|string',
+      'latitude' => 'sometimes|numeric',
+      'longitude' => 'sometimes|numeric',
     ]);
 
     if ($request->has('categories')) {
@@ -242,6 +247,11 @@ class DoctorController extends Controller {
 
     if ($request->has('specialities')) {
       $data['specialities'] = $request->input('specialities');
+    }
+
+    if ($request->has(['latitude', 'longitude'])) {
+      $data['latitude'] = $request->input('latitude');
+      $data['longitude'] = $request->input('longitude');
     }
 
     $doctor->fill($data);
