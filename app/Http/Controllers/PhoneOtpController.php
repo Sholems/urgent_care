@@ -32,8 +32,9 @@ class PhoneOtpController extends Controller
     public function verify(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string',
-            'code' => 'required|string',
+            'phone'      => 'required|string',
+            'code'       => 'required|string',
+            'user_email' => 'required|email',
         ]);
 
         $setting = TwilioSetting::first();
@@ -54,7 +55,8 @@ class PhoneOtpController extends Controller
             return response()->json(['message' => 'Invalid or expired OTP'], 422);
         }
 
-        if ($user = AppUser::where('user_phone_number', $request->phone)->first()) {
+        if ($user = AppUser::where('user_email', $request->user_email)->first()) {
+            $user->user_phone_number  = $request->phone;
             $user->user_phone_verified = 'true';
             $user->save();
         }
