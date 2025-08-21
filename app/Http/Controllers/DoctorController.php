@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Doctor;
 use App\Models\Review;
 use App\Models\User;
+use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,11 @@ class DoctorController extends Controller {
       $builder->where(function ($q) use ($query) {
         $q->where('name', 'like', "%{$query}%")
           ->orWhere('categories', 'like', "%{$query}%");
+
+        $categories = Category::where('symptoms', 'like', "%{$query}%")->pluck('name');
+        foreach ($categories as $catName) {
+          $q->orWhere('categories', 'like', "%{$catName}%");
+        }
       });
     }
 
@@ -52,7 +58,14 @@ class DoctorController extends Controller {
   public function categorySearch(Request $request, $category) {
     $builder = Doctor::query()
       ->where('is_available', 1)
-      ->where('categories', 'like', "%{$category}%");
+      ->where(function ($q) use ($category) {
+        $q->where('categories', 'like', "%{$category}%");
+
+        $categories = Category::where('symptoms', 'like', "%{$category}%")->pluck('name');
+        foreach ($categories as $catName) {
+          $q->orWhere('categories', 'like', "%{$catName}%");
+        }
+      });
 
     $builder = $this->applyFilters($request, $builder);
 

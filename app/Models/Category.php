@@ -23,10 +23,12 @@ class Category extends Model {
     'name',
     'image',
     'specialities',
+    'symptoms',
   ];
 
   protected $casts = [
     'specialities' => 'array',
+    'symptoms'     => 'array',
   ];
 
   protected $allowedSorts = [
