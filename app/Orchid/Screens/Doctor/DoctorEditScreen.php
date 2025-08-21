@@ -109,6 +109,12 @@ class DoctorEditScreen extends Screen {
             ])
             ->placeholder('Enter price'),
 
+          Input::make('doctor.experience')
+            ->title(__('Experience (Years):'))
+            ->required(!$this->doctor->exists)
+            ->type('number')
+            ->placeholder('Enter years of experience'),
+
           Input::make('doctor.insurance')
             ->title(__('Insurance:'))
             ->required(!$this->doctor->exists)
@@ -189,6 +195,7 @@ class DoctorEditScreen extends Screen {
         'doctor.medical_history' => 'required|string',
         'doctor.insurance' => 'required|string',
         'doctor.price' => 'required|numeric',
+        'doctor.experience' => 'required|integer',
         'doctor.categories' => 'required',
         'doctor.specialities' => 'required|array',
         'doctor.photo' => 'sometimes|image',
@@ -229,6 +236,7 @@ class DoctorEditScreen extends Screen {
       $doctorData['medical_history'] = $request->input('doctor.medical_history');
       $doctorData['insurance'] = $request->input('doctor.insurance');
       $doctorData['price'] = $request->input('doctor.price');
+      $doctorData['experience'] = $request->input('doctor.experience');
       $doctorData['promotion'] = $request->input('doctor.promotion');
       $doctorData['is_available'] = $request->input('doctor.is_available');
       $doctorData['start_time'] = $request->input('doctor.start_time');
@@ -271,6 +279,7 @@ class DoctorEditScreen extends Screen {
       $doctorData['medical_history'] = $request->input('doctor.medical_history');
       $doctorData['insurance'] = $request->input('doctor.insurance');
       $doctorData['price'] = $request->input('doctor.price');
+      $doctorData['experience'] = $request->input('doctor.experience');
       $doctorData['promotion'] = $request->input('doctor.promotion');
       $doctorData['is_available'] = $request->input('doctor.is_available');
       $doctorData['start_time'] = $request->input('doctor.start_time');

@@ -25,6 +25,7 @@ class Doctor extends Model {
       'price',
       'photo',
       'rating',
+      'experience',
       'biography',
       'categories',
       'specialities',
