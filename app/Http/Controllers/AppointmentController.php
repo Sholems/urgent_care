@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\AppointmentDocument;
 use App\Models\Notification;
 use App\Models\AppUser;
 use App\Models\Doctor;
@@ -17,7 +18,7 @@ class AppointmentController extends Controller {
    * Display a listing of the resource.
    */
   public function index() {
-    return Appointment::with('doctor')->get();
+    return Appointment::with(['doctor', 'documents'])->get();
   }
 
   /**
@@ -68,14 +69,14 @@ class AppointmentController extends Controller {
    * Display the specified resource.
    */
   public function show($userId) {
-    return Appointment::with('doctor')->where('user_id', $userId)->get();
+    return Appointment::with(['doctor', 'documents'])->where('user_id', $userId)->get();
   }
 
   /**
    * Display appointments for a specific doctor.
    */
   public function doctorAppointments($doctorId) {
-    return Appointment::with(['doctor', 'user', 'review'])->where('doctor_id', $doctorId)->get();
+    return Appointment::with(['doctor', 'user', 'review', 'documents'])->where('doctor_id', $doctorId)->get();
   }
 
   /**
@@ -164,6 +165,28 @@ class AppointmentController extends Controller {
         'status' => 'success',
         'message' => 'Appointment canceled successfully'
     ]);
+  }
+
+  public function uploadDocument(Request $request, $id) {
+    $request->validate([
+      'file' => 'required|file',
+      'type' => 'required|in:prescription,medical_report',
+    ]);
+
+    $appointment = Appointment::findOrFail($id);
+
+    $path = $request->file('file')->store('appointment_documents');
+
+    $document = $appointment->documents()->create([
+      'type' => $request->input('type'),
+      'file_path' => $path,
+    ]);
+
+    return response()->json([
+      'status' => 'success',
+      'message' => 'Document uploaded successfully',
+      'data' => $document,
+    ], 201);
   }
 
   private function notify($notifiableType, $notifiableId, $type, array $data) {
