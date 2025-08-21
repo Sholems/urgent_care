@@ -52,6 +52,11 @@ class CategoryListScreen extends Screen {
             return Link::make(Str::ucfirst($category->name))->route('platform.category.edit', $category->id);
           }),
 
+        TD::make('symptoms', 'Symptoms')
+          ->render(function (Category $category) {
+            return implode(', ', $category->symptoms ?? []);
+          }),
+
         TD::make('updated_at', __('Last edit'))
           ->sort()
           ->cantHide()

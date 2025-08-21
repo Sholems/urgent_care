@@ -70,6 +70,10 @@ class CategoryEditScreen extends Screen {
           ->fromModel(Speciality::class, 'name', 'name')
           ->placeholder($this->specialities->count() ? 'Select specialities' : 'Please create specialities first in the "specialities" section.'),
 
+        Input::make('category.symptoms')
+          ->title(__('Symptoms:'))
+          ->placeholder('Comma separated symptoms'),
+
         Input::make('category.image')
           ->required(!$this->category->exists)
           ->type('file')
@@ -87,6 +91,7 @@ class CategoryEditScreen extends Screen {
         Rule::unique('categories', 'name')->ignore($this->category->id),
       ],
       'category.specialities' => 'required|array|min:1',
+      'category.symptoms' => 'nullable|string',
     ];
 
     if (empty($this->category->image)) {
@@ -106,6 +111,7 @@ class CategoryEditScreen extends Screen {
 
     $categoryData['name'] =  ucwords($request->input('category.name'));
     $categoryData['specialities'] = $request->input('category.specialities');
+    $categoryData['symptoms'] = array_filter(array_map('trim', explode(',', $request->input('category.symptoms', ''))));
 
     if ($request->hasFile('category.image')) {
       $path = $request->file('category.image')->store('', 'public');
@@ -124,6 +130,7 @@ class CategoryEditScreen extends Screen {
 
     $categoryData['name'] =  ucwords($request->input('category.name'));
     $categoryData['specialities'] = $request->input('category.specialities');
+    $categoryData['symptoms'] = array_filter(array_map('trim', explode(',', $request->input('category.symptoms', ''))));
 
     if ($request->hasFile('category.image')) {
       $this->deleteSingleImage($this->category->image);
