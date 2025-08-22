@@ -58,16 +58,30 @@ class DoctorController extends Controller {
   }
 
   public function categorySearch(Request $request, $category) {
-    $builder = Doctor::query()
-      ->where('is_available', 1)
-      ->where(function ($q) use ($category) {
-        $q->where('categories', 'like', "%{$category}%");
+    $builder = Doctor::query()->where('is_available', 1);
 
-        $categories = Category::where('symptoms', 'like', "%{$category}%")->pluck('name');
+    // Filter by the provided category or related symptoms
+    $builder->where(function ($q) use ($category) {
+      $q->where('categories', 'like', "%{$category}%");
+
+      $categories = Category::where('symptoms', 'like', "%{$category}%")->pluck('name');
+      foreach ($categories as $catName) {
+        $q->orWhere('categories', 'like', "%{$catName}%");
+      }
+    });
+
+    // Optional search term across doctor name, categories and symptoms
+    if ($query = $request->input('search')) {
+      $builder->where(function ($q) use ($query) {
+        $q->where('name', 'like', "%{$query}%")
+          ->orWhere('categories', 'like', "%{$query}%");
+
+        $categories = Category::where('symptoms', 'like', "%{$query}%")->pluck('name');
         foreach ($categories as $catName) {
           $q->orWhere('categories', 'like', "%{$catName}%");
         }
       });
+    }
 
     $builder = $this->applyFilters($request, $builder);
 
