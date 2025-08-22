@@ -175,7 +175,7 @@ class AppointmentController extends Controller {
 
     $appointment = Appointment::findOrFail($id);
 
-    $path = $request->file('file')->store('appointment_documents');
+    $path = $request->file('file')->store('appointment_documents', 'public');
 
     $document = $appointment->documents()->create([
       'type' => $request->input('type'),

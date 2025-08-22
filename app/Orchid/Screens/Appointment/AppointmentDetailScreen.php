@@ -84,7 +84,7 @@ class AppointmentDetailScreen extends Screen {
         TD::make('type', 'Type'),
         TD::make('file_path', 'File')->render(function (AppointmentDocument $document) {
           return Link::make('Download')
-            ->href(Storage::url($document->file_path))
+            ->href(Storage::disk('public')->url($document->file_path))
             ->target('_blank');
         }),
       ]),
@@ -136,7 +136,7 @@ class AppointmentDetailScreen extends Screen {
       'document.type' => 'required|in:prescription,medical_report,other,invoice',
     ]);
 
-    $path = $request->file('document.file')->store('appointment_documents');
+    $path = $request->file('document.file')->store('appointment_documents', 'public');
 
     $appointment->documents()->create([
       'type' => $request->input('document.type'),
