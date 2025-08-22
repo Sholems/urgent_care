@@ -50,6 +50,7 @@ Route::middleware('authApi')->group(function () {
   Route::get('/appointments', [AppointmentController::class, 'index']);
   Route::get('/appointments/{userId}', [AppointmentController::class, 'show']);
   Route::get('/appointments/doctor/{doctorId}', [AppointmentController::class, 'doctorAppointments']);
+  Route::get('/appointments/doctor/{doctorId}/available-slots', [AppointmentController::class, 'availableSlots']);
   Route::post('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule']);
   Route::post('/appointments/{id}/documents', [AppointmentController::class, 'uploadDocument']);
   Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);

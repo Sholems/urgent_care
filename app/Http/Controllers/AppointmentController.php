@@ -80,6 +80,41 @@ class AppointmentController extends Controller {
   }
 
   /**
+   * Get available half-hour slots for a doctor on a given date.
+   */
+  public function availableSlots(Request $request, $doctorId) {
+    $request->validate([
+      'date' => 'required|date',
+    ]);
+
+    $doctor = Doctor::findOrFail($doctorId);
+    $date = $request->input('date');
+
+    $startTime = $doctor->start_time ? Carbon::createFromFormat('H:i', $doctor->start_time) : Carbon::createFromTime(9, 0);
+    $endTime = $doctor->end_time ? Carbon::createFromFormat('H:i', $doctor->end_time) : Carbon::createFromTime(17, 0);
+
+    $bookedTimes = Appointment::where('doctor_id', $doctorId)
+      ->where('date', $date)
+      ->where('status', '!=', 'declined')
+      ->pluck('time')
+      ->toArray();
+
+    $slots = [];
+    for ($time = $startTime->copy(); $time < $endTime; $time->addMinutes(30)) {
+      $slot = $time->format('H:i');
+      if (!in_array($slot, $bookedTimes)) {
+        $slots[] = $slot;
+      }
+    }
+
+    return response()->json([
+      'status' => 'success',
+      'message' => 'Available slots fetched successfully',
+      'data' => $slots,
+    ]);
+  }
+
+  /**
    * Show the form for editing the specified resource.
    */
   public function edit(Appointment $appointment) {
