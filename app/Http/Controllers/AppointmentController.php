@@ -170,12 +170,12 @@ class AppointmentController extends Controller {
   public function uploadDocument(Request $request, $id) {
     $request->validate([
       'file' => 'required|file',
-      'type' => 'required|in:prescription,medical_report',
+      'type' => 'required|in:prescription,medical_report,other,invoice',
     ]);
 
     $appointment = Appointment::findOrFail($id);
 
-    $path = $request->file('file')->store('appointment_documents');
+    $path = $request->file('file')->store('appointment_documents', 'public');
 
     $document = $appointment->documents()->create([
       'type' => $request->input('type'),
