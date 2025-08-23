@@ -213,15 +213,29 @@ class DoctorController extends Controller {
   /**
    * List all patients for the specified doctor.
    */
-  public function patients($doctorId) {
-    $doctor = Doctor::findOrFail($doctorId);
-    return $doctor->patients()->get();
+  public function patients(Doctor $doctor) {
+    $appointments = $doctor
+      ->appointments()
+      ->with('user')
+      ->get()
+      ->groupBy('user_id');
+
+    $patients = $appointments
+      ->map(function ($group) {
+        $patient = $group->first()->user;
+        $appointments = $group->map(function ($appointment) {
+          return $appointment->makeHidden('user');
+        });
+
+        return [
+          'patient' => $patient,
+          'appointments' => $appointments->values(),
+        ];
+      })
+      ->values();
+
+    return response()->json($patients);
   }
-
-  // public function show($userId) {
-  //   return Appointment::where('user_id', $userId)->get();
-  // }
-
 
   /**
    * Show the form for editing the specified resource.
