@@ -45,7 +45,7 @@ Route::middleware('authApi')->group(function () {
   Route::get('/doctors/category/{category}', [DoctorController::class, 'categorySearch']);
   Route::get('/doctors', [DoctorController::class, 'index']);
   Route::get('/doctors/{doctorId}', [DoctorController::class, 'show']);
-  Route::get('/doctors/{doctorId}/patients', [DoctorController::class, 'patients']);
+  Route::get('/doctors/{doctor}/patients', [DoctorController::class, 'patients']);
 
   Route::get('/appointments', [AppointmentController::class, 'index']);
   Route::get('/appointments/{userId}', [AppointmentController::class, 'show']);
