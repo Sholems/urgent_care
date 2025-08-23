@@ -214,25 +214,14 @@ class DoctorController extends Controller {
    * List all patients for the specified doctor.
    */
   public function patients(Doctor $doctor) {
-    $appointments = $doctor
-      ->appointments()
-      ->with('user')
-      ->get()
-      ->groupBy('user_id');
-
-    $patients = $appointments
-      ->map(function ($group) {
-        $patient = $group->first()->user;
-        $appointments = $group->map(function ($appointment) {
-          return $appointment->makeHidden('user');
-        });
-
-        return [
-          'patient' => $patient,
-          'appointments' => $appointments->values(),
-        ];
-      })
-      ->values();
+    $patients = $doctor
+      ->patients()
+      ->with([
+        'appointments' => function ($query) use ($doctor) {
+          $query->where('doctor_id', $doctor->id)->with('doctor');
+        },
+      ])
+      ->get();
 
     return response()->json($patients);
   }

@@ -114,9 +114,9 @@ class AppUserController extends Controller {
 
   /**
    * Display the specified resource.
-   */
+  */
   public function show($id) {
-    $user = AppUser::find($id);
+    $user = AppUser::with('appointments.doctor')->find($id);
 
     if ($user === null) {
       return response()->json(['message' => 'User not found'], 404);
