@@ -220,9 +220,13 @@ public function patients(Doctor $doctor)
 {
   // Load patients with their appointments (filtered by this doctor)
   $patients = $doctor->patients()
-    ->with(['appointments' => function ($q) use ($doctor) {
-    $q->where('doctor_id', $doctor->id);
-    }])
+    ->with([
+      'appointments' => function ($q) use ($doctor) {
+        $q
+          ->where('doctor_id', $doctor->id)
+          ->with(['documents', 'review']);
+      },
+    ])
     ->get();
 
     // in patients array, if a patient is duplicated (through pivot.user_id), filter those out
