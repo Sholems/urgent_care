@@ -82,37 +82,67 @@ class AppointmentController extends Controller {
   /**
    * Get available half-hour slots for a doctor on a given date.
    */
-  public function availableSlots(Request $request, $doctorId) {
-    $request->validate([
-      'date' => 'required|date',
+public function availableSlots(Request $request, $doctorId) {
+    $validated = $request->validate([
+        'date' => 'required|date',
     ]);
 
     $doctor = Doctor::findOrFail($doctorId);
-    $date = $request->input('date');
+    $date   = $validated['date'];
 
-    $startTime = $doctor->start_time ? Carbon::createFromFormat('H:i', $doctor->start_time) : Carbon::createFromTime(9, 0);
-    $endTime = $doctor->end_time ? Carbon::createFromFormat('H:i', $doctor->end_time) : Carbon::createFromTime(17, 0);
+    // Parse start/end no matter if stored as "09:00", "09:00:00", or "9:00 AM"
+    $startTime = $doctor->start_time
+        ? Carbon::parse($doctor->start_time)
+        : Carbon::createFromTime(9, 0);
 
+    $endTime = $doctor->end_time
+        ? Carbon::parse($doctor->end_time)
+        : Carbon::createFromTime(17, 0);
+
+    // Anchor times to the requested date to avoid cross-day issues
+    $startTime = Carbon::parse("$date ".$startTime->format('H:i:s'));
+    $endTime   = Carbon::parse("$date ".$endTime->format('H:i:s'));
+
+    if ($endTime->lte($startTime)) {
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Doctor end time must be after start time.',
+        ], 422);
+    }
+
+    // Normalize booked times to "H:i" so comparisons match slot format
     $bookedTimes = Appointment::where('doctor_id', $doctorId)
-      ->where('date', $date)
-      ->where('status', '!=', 'declined')
-      ->pluck('time')
-      ->toArray();
+        ->where('date', $date) // or ->whereDate('date', $date) if it's a DATETIME
+        ->where('status', '!=', 'declined')
+        ->pluck('time')
+        ->map(function ($t) {
+            try {
+                return Carbon::parse($t)->format('H:i');
+            } catch (\Throwable $e) {
+                // Fallback for odd strings like "09:00:00"
+                try {
+                    return Carbon::createFromFormat('H:i:s', $t)->format('H:i');
+                } catch (\Throwable $e2) {
+                    return substr($t, 0, 5); // last resort
+                }
+            }
+        })
+        ->toArray();
 
     $slots = [];
-    for ($time = $startTime->copy(); $time < $endTime; $time->addMinutes(30)) {
-      $slot = $time->format('H:i');
-      if (!in_array($slot, $bookedTimes)) {
-        $slots[] = $slot;
-      }
+    for ($time = $startTime->copy(); $time->lt($endTime); $time->addMinutes(30)) {
+        $slot = $time->format('H:i');
+        if (!in_array($slot, $bookedTimes, true)) {
+            $slots[] = $slot;
+        }
     }
 
     return response()->json([
-      'status' => 'success',
-      'message' => 'Available slots fetched successfully',
-      'data' => $slots,
+        'status'  => 'success',
+        'message' => 'Available slots fetched successfully',
+        'data'    => $slots,
     ]);
-  }
+}
 
   /**
    * Show the form for editing the specified resource.

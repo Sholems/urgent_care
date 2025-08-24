@@ -9,6 +9,7 @@ use Orchid\Screen\AsSource;
 use Orchid\Filters\Types\Like;
 use Orchid\Filters\Filterable;
 use App\Models\Review;
+use App\Models\AppUser;
 
 class Doctor extends Model {
   use AsSource;
@@ -80,11 +81,16 @@ class Doctor extends Model {
     return $this->belongsTo(User::class);
   }
 
-  public function patients() {
-    return $this
-      ->hasManyThrough(AppUser::class, Appointment::class, 'doctor_id', 'id', 'id', 'user_id')
-      ->distinct();
-  }
+  // Doctor model
+public function patients()
+{
+    return $this->belongsToMany(
+        AppUser::class,   // related
+        'appointments',              // pivot table
+        'doctor_id',                 // FK on pivot pointing to doctors
+        'user_id'                    // FK on pivot pointing to app_users
+    );
+}
 
   public function reviews() {
     return $this->hasMany(Review::class);

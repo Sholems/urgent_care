@@ -33,6 +33,7 @@ use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\DashboardController;
 
 Route::middleware('authApi')->group(function () {
+  Route::get('/doctors/{doctor}/patients', [DoctorController::class, 'patients']);
   Route::get('/banners', [BannerController::class, 'index']);
   Route::get('/categories', [CategoryController::class, 'index']);
   Route::get('/promotions', [PromotionController::class, 'index']);
@@ -45,7 +46,7 @@ Route::middleware('authApi')->group(function () {
   Route::get('/doctors/category/{category}', [DoctorController::class, 'categorySearch']);
   Route::get('/doctors', [DoctorController::class, 'index']);
   Route::get('/doctors/{doctorId}', [DoctorController::class, 'show']);
-  Route::get('/doctors/{doctor}/patients', [DoctorController::class, 'patients']);
+
 
   Route::get('/appointments', [AppointmentController::class, 'index']);
   Route::get('/appointments/{userId}', [AppointmentController::class, 'show']);

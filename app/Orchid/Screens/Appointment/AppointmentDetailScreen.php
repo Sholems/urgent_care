@@ -36,17 +36,17 @@ class AppointmentDetailScreen extends Screen {
   public function commandBar(): iterable {
     return [
 
-      Button::make('Accept')
-        ->icon('check')
-        ->method('accept')
-        ->canSee($this->appointment->status == 'pending')
-        ->confirm('Are you sure you want to accept this appointment ?'),
+      // Button::make('Accept')
+      //   ->icon('check')
+      //   ->method('accept')
+      //   ->canSee($this->appointment->status == 'pending')
+      //   ->confirm('Are you sure you want to accept this appointment ?'),
 
-      Button::make('Decline')
-        ->icon('bs.x-circle')
-        ->method('decline')
-        ->canSee($this->appointment->status == 'pending')
-        ->confirm('Are you sure you want to decline this appointment ?'),
+      // Button::make('Decline')
+      //   ->icon('bs.x-circle')
+      //   ->method('decline')
+      //   ->canSee($this->appointment->status == 'pending')
+      //   ->confirm('Are you sure you want to decline this appointment ?'),
 
       Button::make('Remove')
         ->icon('trash')
@@ -70,13 +70,13 @@ class AppointmentDetailScreen extends Screen {
           return $appointment->time;
         }),
         Sight::make('patient_name', 'Patient Name:')->render(function (Appointment $appointment) {
-          return $appointment->patient_name;
+          return $appointment->user->user_name;
         }),
         Sight::make('patient_email', 'Patient Email:')->render(function (Appointment $appointment) {
-          return $appointment->patient_email;
+          return $appointment->user->user_email;
         }),
         Sight::make('patient_phone_number', 'Patient Phone Number:')->render(function (Appointment $appointment) {
-          return $appointment->patient_phone_number;
+          return $appointment->user->user_phone_number;
         }),
       ]),
 

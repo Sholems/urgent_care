@@ -10,6 +10,9 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\AppUser;
+use App\Models\Appointment;
+use Illuminate\Support\Collection;
 
 // return Product::where('is_active', 1)->get();
 
@@ -213,19 +216,24 @@ class DoctorController extends Controller {
   /**
    * List all patients for the specified doctor.
    */
-  public function patients(Doctor $doctor) {
-    $patients = $doctor
-      ->patients()
-      ->with([
-        'appointments' => function ($query) use ($doctor) {
-          $query->where('doctor_id', $doctor->id)->with('doctor');
-        },
-      ])
-      ->get();
+public function patients(Doctor $doctor)
+{
+  // Load patients with their appointments (filtered by this doctor)
+  $patients = $doctor->patients()
+    ->with(['appointments' => function ($q) use ($doctor) {
+    $q->where('doctor_id', $doctor->id);
+    }])
+    ->get();
 
-    return response()->json($patients);
-  }
+    // in patients array, if a patient is duplicated (through pivot.user_id), filter those out
+    $patients = $patients->unique('id')->values();
 
+  return response()->json([
+    'doctor_id'   => $doctor->id,
+    'doctor_name' => $doctor->name,
+    'patients'    => $patients->toArray(),
+  ]);
+}
   /**
    * Show the form for editing the specified resource.
    */
