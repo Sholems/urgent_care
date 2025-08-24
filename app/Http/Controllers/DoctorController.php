@@ -216,8 +216,8 @@ class DoctorController extends Controller {
   /**
    * List all patients for the specified doctor.
    */
-public function patients(Doctor $doctor)
-{
+  public function patients(Doctor $doctor)
+  {
   // Load patients with their appointments (filtered by this doctor)
   $patients = $doctor->patients()
     ->with([
@@ -248,6 +248,48 @@ public function patients(Doctor $doctor)
    */
   public function edit(Doctor $doctor) {
     //
+  }
+
+  /**
+   * Provide monthly appointment, patient and earning stats for a doctor.
+   */
+  public function earningStats(Doctor $doctor)
+  {
+    $monthly = Appointment::where('appointments.doctor_id', $doctor->id)
+      ->where('appointments.status', 'accepted')
+      ->join('doctors', 'appointments.doctor_id', '=', 'doctors.id')
+      ->selectRaw(
+        "DATE_FORMAT(STR_TO_DATE(appointments.date, '%Y-%m-%d'), '%Y-%m') as month, " .
+        'COUNT(*) as appointments, ' .
+        'COUNT(DISTINCT appointments.user_id) as patients, ' .
+        'SUM(doctors.price) as earnings'
+      )
+      ->groupBy('month')
+      ->orderBy('month')
+      ->get();
+
+    $totalAppointments = $monthly->sum('appointments');
+    $totalEarnings = $monthly->sum('earnings');
+
+    $totalPatients = Appointment::where('doctor_id', $doctor->id)
+      ->where('status', 'accepted')
+      ->distinct('user_id')
+      ->count('user_id');
+
+    return response()->json([
+      'doctor_id' => $doctor->id,
+      'totalAppointments' => (int) $totalAppointments,
+      'totalPatients' => (int) $totalPatients,
+      'totalEarnings' => (float) $totalEarnings,
+      'monthlyStats' => $monthly->map(function ($row) {
+        return [
+          'month' => $row->month,
+          'appointments' => (int) $row->appointments,
+          'patients' => (int) $row->patients,
+          'earnings' => (float) $row->earnings,
+        ];
+      }),
+    ]);
   }
 
   /**

@@ -34,6 +34,7 @@ use \App\Http\Controllers\DashboardController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/doctors/{doctor}/patients', [DoctorController::class, 'patients']);
+  Route::get('/doctors/{doctor}/earning-stats', [DoctorController::class, 'earningStats']);
   Route::get('/banners', [BannerController::class, 'index']);
   Route::get('/categories', [CategoryController::class, 'index']);
   Route::get('/promotions', [PromotionController::class, 'index']);
