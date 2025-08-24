@@ -232,6 +232,11 @@ public function patients(Doctor $doctor)
     // in patients array, if a patient is duplicated (through pivot.user_id), filter those out
     $patients = $patients->unique('id')->values();
 
+      $patients->each(function ($patient) {
+        $last = $patient->appointments->first();
+        $patient->last_appointment_date = $last ? $last->date : null;
+      });
+
   return response()->json([
     'doctor_id'   => $doctor->id,
     'doctor_name' => $doctor->name,
