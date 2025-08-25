@@ -216,18 +216,27 @@ class DoctorController extends Controller {
   /**
    * List all patients for the specified doctor.
    */
-  public function patients(Doctor $doctor)
+  public function patients(Request $request, Doctor $doctor)
   {
-  // Load patients with their appointments (filtered by this doctor)
-  $patients = $doctor->patients()
-    ->with([
-      'appointments' => function ($q) use ($doctor) {
-        $q
-          ->where('doctor_id', $doctor->id)
-          ->with(['documents', 'review']);
-      },
-    ])
-    ->get();
+    // Load patients with their appointments (filtered by this doctor)
+    $builder = $doctor->patients()
+      ->with([
+        'appointments' => function ($q) use ($doctor) {
+          $q
+            ->where('doctor_id', $doctor->id)
+            ->with(['documents', 'review']);
+        },
+      ]);
+
+    if ($search = $request->input('search')) {
+      $builder->where(function ($q) use ($search) {
+        $q->where('user_name', 'like', "%{$search}%")
+          ->orWhere('user_email', 'like', "%{$search}%")
+          ->orWhere('user_phone_number', 'like', "%{$search}%");
+      });
+    }
+
+    $patients = $builder->get();
 
     // in patients array, if a patient is duplicated (through pivot.user_id), filter those out
     $patients = $patients->unique('id')->values();
