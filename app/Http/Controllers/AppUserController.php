@@ -143,8 +143,25 @@ class AppUserController extends Controller {
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, AppUser $appUser) {
-    //
+  public function update(Request $request, $id) {
+    $user = AppUser::findOrFail($id);
+
+    $data = $request->validate([
+      'user_name'         => 'sometimes|string',
+      'user_email'        => 'sometimes|email',
+      'user_location'     => 'sometimes|string|nullable',
+      'user_phone_number' => 'sometimes|string|nullable',
+      'medical_history'   => 'sometimes|string|nullable',
+      'insurance_details' => 'sometimes|string|nullable',
+    ]);
+
+    $user->fill($data);
+    $user->save();
+
+    return response()->json([
+      'message' => 'User updated successfully',
+      'user'    => $user,
+    ]);
   }
 
   /**
