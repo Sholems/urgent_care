@@ -96,12 +96,6 @@ class DoctorEditScreen extends Screen {
             ->required(!$this->doctor->exists)
             ->placeholder('Enter short biography'),
 
-          TextArea::make('doctor.medical_history')
-            ->rows(5)
-            ->title(__('Medical History:'))
-            ->required(!$this->doctor->exists)
-            ->placeholder('Enter medical history'),
-
           Input::make('doctor.price')
             ->title('Price (USD):')
             ->required(!$this->doctor->exists)
@@ -119,11 +113,6 @@ class DoctorEditScreen extends Screen {
             ->required(!$this->doctor->exists)
             ->type('number')
             ->placeholder('Enter years of experience'),
-
-        Input::make('doctor.insurance')
-          ->title(__('Insurance:'))
-          ->required(!$this->doctor->exists)
-          ->placeholder('Enter insurance details'),
 
           Input::make('doctor.city')
             ->title(__('City:'))
@@ -227,8 +216,6 @@ class DoctorEditScreen extends Screen {
         'doctor.biography' => 'required|string',
         'doctor.gender' => 'required|string',
         'doctor.language' => 'required|string',
-        'doctor.medical_history' => 'required|string',
-        'doctor.insurance' => 'required|string',
         'doctor.price' => 'required|numeric',
         'doctor.experience' => 'required|integer',
         'doctor.city' => 'required|string',
@@ -274,8 +261,6 @@ class DoctorEditScreen extends Screen {
       $doctorData['biography'] = $request->input('doctor.biography');
       $doctorData['gender'] = $request->input('doctor.gender');
       $doctorData['language'] = $request->input('doctor.language');
-      $doctorData['medical_history'] = $request->input('doctor.medical_history');
-      $doctorData['insurance'] = $request->input('doctor.insurance');
       $doctorData['city'] = $request->input('doctor.city');
       $doctorData['address'] = $request->input('doctor.address');
       $doctorData['country'] = $request->input('doctor.country');
@@ -323,8 +308,6 @@ class DoctorEditScreen extends Screen {
       $doctorData['biography'] = $request->input('doctor.biography');
       $doctorData['gender'] = $request->input('doctor.gender');
       $doctorData['language'] = $request->input('doctor.language');
-      $doctorData['medical_history'] = $request->input('doctor.medical_history');
-      $doctorData['insurance'] = $request->input('doctor.insurance');
       $doctorData['city'] = $request->input('doctor.city');
       $doctorData['address'] = $request->input('doctor.address');
       $doctorData['country'] = $request->input('doctor.country');
