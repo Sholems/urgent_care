@@ -307,8 +307,6 @@ class DoctorController extends Controller {
       'start_time' => 'sometimes',
       'end_time' => 'sometimes',
       'gender' => 'sometimes|string',
-      'medical_history' => 'sometimes|string',
-      'insurance' => 'sometimes|string',
       'promotion' => 'sometimes|string',
       'city' => 'sometimes|string',
       'address' => 'sometimes|string',

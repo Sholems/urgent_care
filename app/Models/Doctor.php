@@ -35,8 +35,6 @@ class Doctor extends Model {
       'start_time',
       'end_time',
       'gender',
-      'medical_history',
-      'insurance',
       'promotion',
       'email',
       'password',
