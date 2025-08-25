@@ -30,6 +30,8 @@ class AppUser extends Model {
     'user_email_verified',
     'user_phone_verified',
     'stripe_customer_id',
+    'medical_history',
+    'insurance_details',
   ];
 
   protected $allowedSorts = [
@@ -42,6 +44,8 @@ class AppUser extends Model {
     'user_email_verified',
     'user_phone_verified',
     'stripe_customer_id',
+    'medical_history',
+    'insurance_details',
     'updated_at',
   ];
 
@@ -55,6 +59,8 @@ class AppUser extends Model {
     'user_email_verified' => Like::class,
     'user_phone_verified' => Like::class,
     'stripe_customer_id'  => Like::class,
+    'medical_history'     => Like::class,
+    'insurance_details'   => Like::class,
     'updated_at'          => Like::class,
   ];
 
