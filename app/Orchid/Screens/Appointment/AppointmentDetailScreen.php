@@ -78,7 +78,14 @@ class AppointmentDetailScreen extends Screen {
         Sight::make('patient_phone_number', 'Patient Phone Number:')->render(function (Appointment $appointment) {
           return $appointment->user->user_phone_number;
         }),
+        Sight::make('patient_medical_history', 'Patient Medical History:')->render(function (Appointment $appointment) {
+          return $appointment->user->medical_history;
+        }),
+        Sight::make('patient_insurance', 'Patient Insurance:')->render(function (Appointment $appointment) {
+          return $appointment->user->insurance_details;
+        }),
       ]),
+
 
       Layout::table('documents', [
         TD::make('type', 'Type'),
