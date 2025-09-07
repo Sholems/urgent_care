@@ -32,8 +32,10 @@ class NotificationController extends Controller
         $page    = (int) $request->query('page', 1);
         $perPage = max(1, min($perPage, 100));
 
-        return $this->baseQuery($userId, AppUser::class)
+        $paginator = $this->baseQuery($userId, AppUser::class)
             ->paginate($perPage, ['*'], 'page', $page);
+
+        return $this->paginatedResponse($paginator);
     }
 
     /**
@@ -45,8 +47,10 @@ class NotificationController extends Controller
         $page    = (int) $request->query('page', 1);
         $perPage = max(1, min($perPage, 100));
 
-        return $this->baseQuery($doctorId, Doctor::class)
+        $paginator = $this->baseQuery($doctorId, Doctor::class)
             ->paginate($perPage, ['*'], 'page', $page);
+
+        return $this->paginatedResponse($paginator);
     }
 
     /**

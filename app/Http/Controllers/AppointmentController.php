@@ -22,9 +22,11 @@ class AppointmentController extends Controller {
     $page    = (int) $request->query('page', 1);
     $perPage = max(1, min($perPage, 100));
 
-    return Appointment::with(['doctor', 'documents'])
+    $paginator = Appointment::with(['doctor', 'documents'])
       ->orderByDesc('id')
       ->paginate($perPage, ['*'], 'page', $page);
+
+    return $this->paginatedResponse($paginator);
   }
 
   /**
@@ -79,10 +81,12 @@ class AppointmentController extends Controller {
     $page    = (int) $request->query('page', 1);
     $perPage = max(1, min($perPage, 100));
 
-    return Appointment::with(['doctor', 'documents'])
+    $paginator = Appointment::with(['doctor', 'documents'])
       ->where('user_id', $userId)
       ->orderByDesc('id')
       ->paginate($perPage, ['*'], 'page', $page);
+
+    return $this->paginatedResponse($paginator);
   }
 
   /**
@@ -93,10 +97,12 @@ class AppointmentController extends Controller {
     $page    = (int) $request->query('page', 1);
     $perPage = max(1, min($perPage, 100));
 
-    return Appointment::with(['doctor', 'user', 'review', 'documents'])
+    $paginator = Appointment::with(['doctor', 'user', 'review', 'documents'])
       ->where('doctor_id', $doctorId)
       ->orderByDesc('id')
       ->paginate($perPage, ['*'], 'page', $page);
+
+    return $this->paginatedResponse($paginator);
   }
 
   /**

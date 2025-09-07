@@ -134,11 +134,12 @@ class AppUserController extends Controller {
     $perPage = max(1, min($perPage, 100));
 
     $user = AppUser::findOrFail($userId);
-
-    return $user->appointments()
+    $paginator = $user->appointments()
       ->with('doctor')
       ->orderByDesc('id')
       ->paginate($perPage, ['*'], 'page', $page);
+
+    return $this->paginatedResponse($paginator);
   }
 
   /**

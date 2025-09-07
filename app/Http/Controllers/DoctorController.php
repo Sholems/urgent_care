@@ -36,7 +36,7 @@ class DoctorController extends Controller {
       return $doctor;
     });
 
-    return $paginator;
+    return $this->paginatedResponse($paginator);
   }
 
   public function search(Request $request) {
@@ -68,7 +68,7 @@ class DoctorController extends Controller {
       $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
-    return $paginator;
+    return $this->paginatedResponse($paginator);
   }
 
   public function categorySearch(Request $request, $category) {
@@ -109,7 +109,7 @@ class DoctorController extends Controller {
       $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
-    return $paginator;
+    return $this->paginatedResponse($paginator);
   }
 
   // LOGIN //
@@ -148,7 +148,7 @@ class DoctorController extends Controller {
     return response()->json([
       'message' => 'Doctor logged in successfully',
       'doctor' => $doctor,
-      'appointments' => $appointments,
+      'appointments' => $this->formatPaginated($appointments),
     ], 200);
   }
 
@@ -275,7 +275,7 @@ class DoctorController extends Controller {
       return $patient;
     });
 
-    return $paginator;
+    return $this->paginatedResponse($paginator);
   }
   /**
    * Show the form for editing the specified resource.
