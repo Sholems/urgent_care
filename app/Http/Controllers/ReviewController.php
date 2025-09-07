@@ -48,7 +48,7 @@ class ReviewController extends Controller
         $page    = (int) $request->query('page', 1);
         $perPage = max(1, min($perPage, 100));
 
-        return Review::where('doctor_id', $doctorId)
+        $paginator = Review::where('doctor_id', $doctorId)
             ->with([
                 'user' => function ($query) {
                     $query->select('id', 'user_name as name', 'user_email as email');
@@ -56,5 +56,7 @@ class ReviewController extends Controller
             ])
             ->orderByDesc('id')
             ->paginate($perPage, ['*'], 'page', $page);
+
+        return $this->paginatedResponse($paginator);
     }
 }

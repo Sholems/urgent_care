@@ -15,10 +15,12 @@ class FavouriteController extends Controller {
     $page    = (int) $request->query('page', 1);
     $perPage = max(1, min($perPage, 100));
 
-    return Favourite::where('user_id', $userId)
+    $paginator = Favourite::where('user_id', $userId)
       ->with('doctor')
       ->orderByDesc('id')
       ->paginate($perPage, ['*'], 'page', $page);
+
+    return $this->paginatedResponse($paginator);
   }
 
   public function doctors(Request $request, $userId) {
@@ -34,7 +36,7 @@ class FavouriteController extends Controller {
       $doctor->certificates = json_decode($doctor->certificates, true);
       return $doctor;
     });
-    return $paginator;
+    return $this->paginatedResponse($paginator);
   }
 
   /**
