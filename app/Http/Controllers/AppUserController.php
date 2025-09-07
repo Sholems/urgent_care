@@ -128,9 +128,17 @@ class AppUserController extends Controller {
   /**
    * Fetch all appointments for the specified user.
    */
-  public function appointments($id) {
-    $user = AppUser::with(['appointments.doctor'])->findOrFail($id);
-    return $user->appointments;
+  public function appointments(Request $request, $userId) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
+    $user = AppUser::findOrFail($userId);
+
+    return $user->appointments()
+      ->with('doctor')
+      ->orderByDesc('id')
+      ->paginate($perPage, ['*'], 'page', $page);
   }
 
   /**

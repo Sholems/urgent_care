@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Orchid\Screen\AsSource;
 use Orchid\Filters\Filterable;
+use Orchid\Filters\Types\Like;
 use App\Models\Review;
 use App\Models\Doctor;
 use App\Models\AppUser;
@@ -41,10 +42,10 @@ class Appointment extends Model {
   ];
 
   protected $allowedFilters = [
-    'id',
-    'date',
-    'time',
-    'updated_at',
+    'id'         => Like::class,
+    'date'       => Like::class,
+    'time'       => Like::class,
+    'updated_at' => Like::class,
   ];
 
   public function getUpcomingAttribute() {

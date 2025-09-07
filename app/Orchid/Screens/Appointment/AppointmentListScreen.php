@@ -18,12 +18,16 @@ class AppointmentListScreen extends Screen {
   public function query(): iterable {
     $user = auth()->user();
 
-    $appointments = $user?->doctor
-      ? Appointment::where('doctor_id', $user->doctor->id)->get()
-      : Appointment::all();
+    $builder = Appointment::query()
+      ->with(['user'])
+      ->defaultSort('updated_at', 'desc');
+
+    if ($user?->doctor) {
+      $builder->where('doctor_id', $user->doctor->id);
+    }
 
     return [
-      'appointment' => $appointments,
+      'appointment' => $builder->filters()->paginate(10),
     ];
   }
 

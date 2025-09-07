@@ -20,21 +20,30 @@ class DoctorController extends Controller {
   /**
    * Display a listing of the resource.
    */
-  public function index() {
-    $doctors = Doctor::where('is_available', 1)
-      ->withAvg('reviews as average_rating', 'rating')
-      ->get();
+  public function index(Request $request) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
 
-    $doctors->map(function ($doctor) {
+    $paginator = Doctor::where('is_available', 1)
+      ->withAvg('reviews as average_rating', 'rating')
+      ->orderByDesc('id')
+      ->paginate($perPage, ['*'], 'page', $page);
+
+    $paginator->getCollection()->transform(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
       $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
 
-    return $doctors;
+    return $paginator;
   }
 
   public function search(Request $request) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
     $builder = Doctor::query()->where('is_available', 1);
 
     if ($query = $request->input('search')) {
@@ -51,16 +60,22 @@ class DoctorController extends Controller {
       });
     }
 
-    $builder = $this->applyFilters($request, $builder);
+    $builder = $this->applyFilters($request, $builder)->orderByDesc('id');
 
-    return $builder->get()->map(function ($doctor) {
+    $paginator = $builder->paginate($perPage, ['*'], 'page', $page);
+    $paginator->getCollection()->transform(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
       $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
+    return $paginator;
   }
 
   public function categorySearch(Request $request, $category) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
     $builder = Doctor::query()->where('is_available', 1);
 
     // Filter by the provided category or related symptoms
@@ -86,13 +101,15 @@ class DoctorController extends Controller {
       });
     }
 
-    $builder = $this->applyFilters($request, $builder);
+    $builder = $this->applyFilters($request, $builder)->orderByDesc('id');
 
-    return $builder->get()->map(function ($doctor) {
+    $paginator = $builder->paginate($perPage, ['*'], 'page', $page);
+    $paginator->getCollection()->transform(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
       $doctor->average_rating = $doctor->average_rating ?? 0;
       return $doctor;
     });
+    return $paginator;
   }
 
   // LOGIN //
@@ -119,7 +136,14 @@ class DoctorController extends Controller {
       ], 404);
     }
 
-    $appointments = $doctor->appointments()->with(['user', 'review'])->get();
+    $perPage = (int) $request->input('per_page', 15);
+    $page    = (int) $request->input('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
+    $appointments = $doctor->appointments()
+      ->with(['user', 'review'])
+      ->orderByDesc('id')
+      ->paginate($perPage, ['*'], 'page', $page);
 
     return response()->json([
       'message' => 'Doctor logged in successfully',
@@ -218,15 +242,21 @@ class DoctorController extends Controller {
    */
   public function patients(Request $request, Doctor $doctor)
   {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
     // Load patients with their appointments (filtered by this doctor)
     $builder = $doctor->patients()
       ->with([
         'appointments' => function ($q) use ($doctor) {
           $q
             ->where('doctor_id', $doctor->id)
+            ->orderByDesc('id')
             ->with(['documents', 'review']);
         },
-      ]);
+      ])
+      ->distinct();
 
     if ($search = $request->input('search')) {
       $builder->where(function ($q) use ($search) {
@@ -236,22 +266,17 @@ class DoctorController extends Controller {
       });
     }
 
-    $patients = $builder->get();
+    $paginator = $builder->paginate($perPage, ['app_users.*'], 'page', $page);
 
-    // in patients array, if a patient is duplicated (through pivot.user_id), filter those out
-    $patients = $patients->unique('id')->values();
+    // Add last_appointment_date to each item in the page
+    $paginator->getCollection()->transform(function ($patient) {
+      $last = $patient->appointments->first();
+      $patient->last_appointment_date = $last ? $last->date : null;
+      return $patient;
+    });
 
-      $patients->each(function ($patient) {
-        $last = $patient->appointments->first();
-        $patient->last_appointment_date = $last ? $last->date : null;
-      });
-
-  return response()->json([
-    'doctor_id'   => $doctor->id,
-    'doctor_name' => $doctor->name,
-    'patients'    => $patients->toArray(),
-  ]);
-}
+    return $paginator;
+  }
   /**
    * Show the form for editing the specified resource.
    */

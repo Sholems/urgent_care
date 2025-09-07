@@ -42,14 +42,19 @@ class ReviewController extends Controller
         ], 201);
     }
 
-    public function doctorReviews($doctorId)
+    public function doctorReviews(Request $request, $doctorId)
     {
+        $perPage = (int) $request->query('per_page', 15);
+        $page    = (int) $request->query('page', 1);
+        $perPage = max(1, min($perPage, 100));
+
         return Review::where('doctor_id', $doctorId)
             ->with([
                 'user' => function ($query) {
                     $query->select('id', 'user_name as name', 'user_email as email');
                 },
             ])
-            ->get();
+            ->orderByDesc('id')
+            ->paginate($perPage, ['*'], 'page', $page);
     }
 }

@@ -17,8 +17,14 @@ class AppointmentController extends Controller {
   /**
    * Display a listing of the resource.
    */
-  public function index() {
-    return Appointment::with(['doctor', 'documents'])->get();
+  public function index(Request $request) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
+    return Appointment::with(['doctor', 'documents'])
+      ->orderByDesc('id')
+      ->paginate($perPage, ['*'], 'page', $page);
   }
 
   /**
@@ -68,15 +74,29 @@ class AppointmentController extends Controller {
   /**
    * Display the specified resource.
    */
-  public function show($userId) {
-    return Appointment::with(['doctor', 'documents'])->where('user_id', $userId)->get();
+  public function show(Request $request, $userId) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
+    return Appointment::with(['doctor', 'documents'])
+      ->where('user_id', $userId)
+      ->orderByDesc('id')
+      ->paginate($perPage, ['*'], 'page', $page);
   }
 
   /**
    * Display appointments for a specific doctor.
    */
-  public function doctorAppointments($doctorId) {
-    return Appointment::with(['doctor', 'user', 'review', 'documents'])->where('doctor_id', $doctorId)->get();
+  public function doctorAppointments(Request $request, $doctorId) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
+    return Appointment::with(['doctor', 'user', 'review', 'documents'])
+      ->where('doctor_id', $doctorId)
+      ->orderByDesc('id')
+      ->paginate($perPage, ['*'], 'page', $page);
   }
 
   /**

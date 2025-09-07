@@ -10,20 +10,31 @@ class FavouriteController extends Controller {
   /**
    * Display a listing of the resource.
    */
-  public function index($userId) {
+  public function index(Request $request, $userId) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
     return Favourite::where('user_id', $userId)
       ->with('doctor')
-      ->get();
+      ->orderByDesc('id')
+      ->paginate($perPage, ['*'], 'page', $page);
   }
 
-  public function doctors($userId) {
+  public function doctors(Request $request, $userId) {
+    $perPage = (int) $request->query('per_page', 15);
+    $page    = (int) $request->query('page', 1);
+    $perPage = max(1, min($perPage, 100));
+
     $doctorIds = Favourite::where('user_id', $userId)->pluck('doctor_id');
-    $doctors   = Doctor::whereIn('id', $doctorIds)->where('is_available', 1)->get();
-    $doctors->map(function ($doctor) {
+    $query     = Doctor::whereIn('id', $doctorIds)->where('is_available', 1)->orderByDesc('id');
+
+    $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+    $paginator->getCollection()->transform(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
       return $doctor;
     });
-    return $doctors;
+    return $paginator;
   }
 
   /**
