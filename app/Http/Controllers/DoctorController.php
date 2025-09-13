@@ -66,6 +66,9 @@ class DoctorController extends Controller {
     $paginator->getCollection()->transform(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
       $doctor->average_rating = $doctor->average_rating ?? 0;
+      $doctor->distance = isset($doctor->distance)
+        ? round((float) $doctor->distance, 2)
+        : null;
       return $doctor;
     });
     return $this->paginatedResponse($paginator);
@@ -101,12 +104,35 @@ class DoctorController extends Controller {
       });
     }
 
-    $builder = $this->applyFilters($request, $builder)->orderByDesc('id');
+    $builder = $this->applyFilters($request, $builder);
+
+    if ($top = $request->query('top')) {
+      $limit = (int) $top > 0 ? (int) $top : 5;
+      $doctors = $builder
+        ->orderByDesc('average_rating')
+        ->limit($limit)
+        ->get()
+        ->map(function ($doctor) {
+          $doctor->certificates = json_decode($doctor->certificates, true);
+          $doctor->average_rating = $doctor->average_rating ?? 0;
+          $doctor->distance = isset($doctor->distance)
+            ? round((float) $doctor->distance, 2)
+            : null;
+          return $doctor;
+        });
+
+      return response()->json(['data' => $doctors]);
+    }
+
+    $builder = $builder->orderByDesc('id');
 
     $paginator = $builder->paginate($perPage, ['*'], 'page', $page);
     $paginator->getCollection()->transform(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
       $doctor->average_rating = $doctor->average_rating ?? 0;
+      $doctor->distance = isset($doctor->distance)
+        ? round((float) $doctor->distance, 2)
+        : null;
       return $doctor;
     });
     return $this->paginatedResponse($paginator);
@@ -153,6 +179,16 @@ class DoctorController extends Controller {
   }
 
   private function applyFilters(Request $request, $query) {
+    if ($request->filled(['latitude', 'longitude'])) {
+      $lat = (float) $request->input('latitude');
+      $lng = (float) $request->input('longitude');
+      $query->select('*');
+      $query->selectRaw(
+        '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) as distance',
+        [$lat, $lng, $lat]
+      );
+    }
+
     if ($request->filled('min_price')) {
       $query->where('price', '>=', $request->input('min_price'));
     }
@@ -199,6 +235,11 @@ class DoctorController extends Controller {
         $query
           ->withCount('appointments')
           ->orderBy('appointments_count', 'desc');
+        break;
+      case 'distance':
+        if ($request->filled(['latitude', 'longitude'])) {
+          $query->orderBy('distance');
+        }
         break;
       case 'best_match':
       default:
