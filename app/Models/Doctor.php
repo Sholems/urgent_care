@@ -54,6 +54,7 @@ class Doctor extends Model {
     'specialities'  => 'array',
     'latitude'      => 'float',
     'longitude'     => 'float',
+    'distance'      => 'float',
   ];
 
   protected $allowedSorts = [

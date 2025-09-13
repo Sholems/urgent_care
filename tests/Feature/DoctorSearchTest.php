@@ -42,6 +42,8 @@ class DoctorSearchTest extends TestCase
         $response = $this->getJson('/api/doctors/search?latitude=0&longitude=0&sort=distance');
         $response->assertStatus(200);
         $data = $response->json('data');
+        $this->assertArrayHasKey('distance', $data[0]);
+        $this->assertArrayHasKey('distance', $data[1]);
         $this->assertEquals('Dr Near', $data[0]['name']);
         $this->assertLessThan($data[1]['distance'], $data[0]['distance']);
     }
@@ -103,10 +105,11 @@ class DoctorSearchTest extends TestCase
             'rating' => 5,
         ]);
 
-        $response = $this->getJson('/api/doctors/category/cardiology?top=1');
+        $response = $this->getJson('/api/doctors/category/cardiology?top=1&latitude=0&longitude=0');
         $response->assertStatus(200);
         $this->assertCount(1, $response->json('data'));
         $this->assertEquals('Dr Top', $response->json('data.0.name'));
+        $this->assertArrayHasKey('distance', $response->json('data.0'));
     }
 }
 

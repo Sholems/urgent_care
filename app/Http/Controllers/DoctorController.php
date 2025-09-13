@@ -66,7 +66,7 @@ class DoctorController extends Controller {
     $paginator->getCollection()->transform(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
       $doctor->average_rating = $doctor->average_rating ?? 0;
-      $doctor->distance = isset($doctor->distance)
+      $doctor->distance = $doctor->distance !== null
         ? round((float) $doctor->distance, 2)
         : null;
       return $doctor;
@@ -115,7 +115,7 @@ class DoctorController extends Controller {
         ->map(function ($doctor) {
           $doctor->certificates = json_decode($doctor->certificates, true);
           $doctor->average_rating = $doctor->average_rating ?? 0;
-          $doctor->distance = isset($doctor->distance)
+          $doctor->distance = $doctor->distance !== null
             ? round((float) $doctor->distance, 2)
             : null;
           return $doctor;
@@ -130,7 +130,7 @@ class DoctorController extends Controller {
     $paginator->getCollection()->transform(function ($doctor) {
       $doctor->certificates = json_decode($doctor->certificates, true);
       $doctor->average_rating = $doctor->average_rating ?? 0;
-      $doctor->distance = isset($doctor->distance)
+      $doctor->distance = $doctor->distance !== null
         ? round((float) $doctor->distance, 2)
         : null;
       return $doctor;
@@ -182,11 +182,10 @@ class DoctorController extends Controller {
     if ($request->filled(['latitude', 'longitude'])) {
       $lat = (float) $request->input('latitude');
       $lng = (float) $request->input('longitude');
-      $query->select('*');
-      $query->selectRaw(
-        '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) as distance',
-        [$lat, $lng, $lat]
-      );
+      $query->select('doctors.*');
+      $query->addSelect(DB::raw(
+        '(6371 * acos(cos(radians(' . $lat . ')) * cos(radians(latitude)) * cos(radians(longitude) - radians(' . $lng . ')) + sin(radians(' . $lat . ')) * sin(radians(latitude)))) as distance'
+      ));
     }
 
     if ($request->filled('min_price')) {
