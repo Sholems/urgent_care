@@ -145,9 +145,9 @@
                         <i class="fa fa-bars"></i>
                     </button>
                     <a class="navbar-brand" href="{{ route('home') }}">
-                        <img src="{{ asset('logo-health-care.PNG') }}" width="65" height="65"
+                        <img src="{{ asset('logo-health-care.png') }}" width="65" height="65"
                             class="logo logo-regular" alt="Logo">
-                        <img src="{{ asset('logo-health-care.PNG') }}" width="65" height="65"
+                        <img src="{{ asset('logo-health-care.png') }}" width="65" height="65"
                             class="logo desktop" alt="Logo">
                     </a>
                 </div>
@@ -185,7 +185,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-6 item">
                         <div class="f-item about">
-                            <img src="{{ asset('logo-health-care.PNG') }}" width="150" height="150"
+                            <img src="{{ asset('logo-health-care.png') }}" width="150" height="150"
                                 alt="Logo">
                             <p>
                                 Our platform connects patients with experienced and qualified doctors across multiple
