@@ -43,9 +43,6 @@
                     @else
                         <img src="{{ asset('img/800x800.png') }}" alt="{{ $doctor->name }}" class="doctor-image">
                     @endif
-                    <div class="doctor-badge">
-                        <i class="fas fa-user-md"></i>
-                    </div>
                 </div>
 
                 <!-- Doctor Info -->

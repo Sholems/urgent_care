@@ -13,12 +13,8 @@
 @endsection
 
 @section('content')
-    <!-- Start Breadcrumb
-                                                        ============================================= -->
     <div class="breadcrumb-area bg-gradient text-center">
-        <!-- Fixed BG -->
         <div class="fixed-bg" style="background-image: url({{ asset('img/shape/9.png') }});"></div>
-        <!-- Fixed BG -->
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 offset-lg-2">
@@ -31,10 +27,7 @@
             </div>
         </div>
     </div>
-    <!-- End Breadcrumb -->
 
-    <!-- Start Team
-                                                        ============================================= -->
     <div class="team-default-area bg-gray default-padding bottom-less">
         <div class="container">
             <div class="row mb-4">
@@ -69,6 +62,10 @@
                                 </div>
                             </div>
 
+                            <button type="button" class="btn btn-primary" id="applyFilters">
+                                Apply
+                            </button>
+
 
                             <div class="col-lg-2 col-md-2">
                                 <button class="btn btn-filter w-100" data-bs-toggle="modal" data-bs-target="#filterModal">
@@ -78,7 +75,7 @@
                                 </button>
                             </div>
 
-                            <div class="col-lg-3 col-md-2">
+                            <div class="col-lg-2 col-md-2">
                                 <div class="results-info">
                                     <span class="results-count" id="resultsCount">{{ count($doctors) }}</span>
                                     <span class="results-text">doctors</span>
@@ -245,7 +242,7 @@
             const filterTags = document.getElementById('filterTags');
             const noResults = document.getElementById('noResults');
 
-            let currentFilters = {}; // This will hold all active filters
+            let currentFilters = {}; 
             let isLoading = false;
             let filterModal = null;
 
@@ -309,7 +306,7 @@
                 doctorsContainer.innerHTML = `
             <div class="col-12 text-center my-4">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
+                    <span class="visually-hidden"></span>
                 </div>
             </div>`;
 
@@ -396,7 +393,7 @@
                 <div class="col-12 text-center my-4">
                     <p><i class="fas fa-map-marker-alt me-2"></i>Requesting your location...</p>
                     <div class="spinner-border text-info" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                        <span class="visually-hidden"></span>
                     </div>
                 </div>`;
 
