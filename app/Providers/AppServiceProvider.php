@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Schema;
 use App\Models\SmtpSetting;
+use App\Models\Category;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +36,11 @@ class AppServiceProvider extends ServiceProvider
                 'mail.from.address' => $smtp->from_address,
                 'mail.from.name' => $smtp->from_name,
             ]);
+        }
+
+        if (Schema::hasTable('categories')) {
+            $categories = Category::all();  
+            View::share('categories', $categories); 
         }
     }
 }
