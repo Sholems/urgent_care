@@ -10,6 +10,7 @@ use Orchid\Platform\OrchidServiceProvider;
 use Orchid\Screen\Actions\Menu;
 use Orchid\Support\Color;
 use App\Models\Appointment;
+use Illuminate\Support\Facades\Auth;
 
 class PlatformProvider extends OrchidServiceProvider {
   /**
@@ -42,9 +43,17 @@ class PlatformProvider extends OrchidServiceProvider {
       Menu::make('Appointments')
         ->icon('bs.calendar')
         ->badge(function () {
-          if (Appointment::where('status', 'pending')->count() > 0) {
-            return Appointment::where('status', 'pending')->count();
+          $user = Auth::user();
+
+          $query = Appointment::query()->where('status', 'pending');
+
+          if ($user?->doctor) {
+            $query->where('doctor_id', $user->doctor->id);
           }
+
+          $count = $query->count();
+
+          return $count > 0 ? $count : null;
         })
         // ->badge(function () {
         //   if (Appointment::where('status', 'pending')->count() > 0) {
