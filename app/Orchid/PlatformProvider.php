@@ -9,7 +9,6 @@ use Orchid\Platform\ItemPermission;
 use Orchid\Platform\OrchidServiceProvider;
 use Orchid\Screen\Actions\Menu;
 use Orchid\Support\Color;
-use App\Models\Appointment;
 
 class PlatformProvider extends OrchidServiceProvider {
   /**
@@ -41,16 +40,6 @@ class PlatformProvider extends OrchidServiceProvider {
 
       Menu::make('Appointments')
         ->icon('bs.calendar')
-        ->badge(function () {
-          if (Appointment::where('status', 'pending')->count() > 0) {
-            return Appointment::where('status', 'pending')->count();
-          }
-        })
-        // ->badge(function () {
-        //   if (Appointment::where('status', 'pending')->count() > 0) {
-        //     return Appointment::where('status', 'pending')->count();
-        //   }
-        // })
         ->route('platform.appointment.list')
         ->permission('platform.appointments')
         ->title(__('Access Controls')),
