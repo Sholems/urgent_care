@@ -9,6 +9,8 @@ use Orchid\Platform\ItemPermission;
 use Orchid\Platform\OrchidServiceProvider;
 use Orchid\Screen\Actions\Menu;
 use Orchid\Support\Color;
+use App\Models\Appointment;
+use Illuminate\Support\Facades\Auth;
 
 class PlatformProvider extends OrchidServiceProvider {
   /**
