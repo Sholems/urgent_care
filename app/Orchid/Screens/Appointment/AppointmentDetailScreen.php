@@ -14,8 +14,11 @@ use Orchid\Screen\Actions\Link;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Appointment;
 use App\Models\AppointmentDocument;
+use App\Models\AppUser;
+use App\Models\Notification;
 use Orchid\Support\Facades\Alert;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AppointmentDetailScreen extends Screen {
 
@@ -132,6 +135,7 @@ class AppointmentDetailScreen extends Screen {
   public function accept(Appointment $appointment) {
     $appointment->status = 'accepted';
     $appointment->save();
+    $this->notifyUser($appointment, 'accepted');
     Alert::info('Appointment accepted');
     return redirect()->route('platform.appointment.list');
   }
@@ -139,8 +143,29 @@ class AppointmentDetailScreen extends Screen {
   public function decline(Appointment $appointment) {
     $appointment->status = 'declined';
     $appointment->save();
+    $this->notifyUser($appointment, 'declined');
     Alert::info('Appointment declined');
     return redirect()->route('platform.appointment.list');
+  }
+
+  protected function notifyUser(Appointment $appointment, string $status): void {
+    $message = $status === 'accepted'
+      ? 'Your appointment on ' . $appointment->date . ' at ' . $appointment->time . ' has been approved.'
+      : 'Your appointment on ' . $appointment->date . ' at ' . $appointment->time . ' has been declined.';
+
+    Notification::create([
+      'id' => (string) Str::uuid(),
+      'type' => 'appointment.' . $status,
+      'notifiable_type' => AppUser::class,
+      'notifiable_id' => $appointment->user_id,
+      'data' => json_encode([
+        'message' => $message,
+        'appointment_id' => $appointment->id,
+        'status' => $status,
+        'date' => $appointment->date,
+        'time' => $appointment->time,
+      ]),
+    ]);
   }
 
   public function remove(Appointment $appointment) {
