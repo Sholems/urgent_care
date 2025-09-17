@@ -223,8 +223,9 @@ Create a new appointment.
 - `time` (string, required)
 - `user_id` (integer, required)
 - `doctor_id` (integer, required)
-- `status` (string, required)
 - `payment_intent_id` (string, optional)
+
+> **Note:** Appointments created through this endpoint automatically start with a `pending` status. Administrators can later accept or decline the booking from the dashboard.
 
 **Sample Response**
 ```json
