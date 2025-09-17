@@ -86,6 +86,13 @@ class AppointmentListScreen extends Screen {
               ->route('platform.appointment.detail', $appointment->id);
           }),
 
+        TD::make('status', 'Status')
+          ->cantHide()
+          ->align(TD::ALIGN_CENTER)
+          ->render(function (Appointment $appointment) {
+            return ucfirst($appointment->status ?? 'pending');
+          }),
+
        
         TD::make(__('Actions'))
           ->cantHide()
@@ -97,6 +104,24 @@ class AppointmentListScreen extends Screen {
               Link::make(__('Details'))
                 ->route('platform.appointment.detail', $appointment->id)
                 ->icon('bs.pencil'),
+
+              Button::make('Accept')
+                ->icon('bs.check-circle')
+                ->method('accept')
+                ->parameters([
+                  'appointment' => $appointment->id,
+                ])
+                ->confirm('Are you sure you want to accept this appointment?')
+                ->canSee($appointment->status === 'pending'),
+
+              Button::make('Decline')
+                ->icon('bs.x-circle')
+                ->method('decline')
+                ->parameters([
+                  'appointment' => $appointment->id,
+                ])
+                ->confirm('Are you sure you want to decline this appointment?')
+                ->canSee($appointment->status === 'pending'),
 
               Button::make('Delete')
                 ->icon('bs.trash3')
@@ -115,6 +140,18 @@ class AppointmentListScreen extends Screen {
   public function remove(Appointment $appointment) {
     $appointment->delete();
     Alert::info('Appointment deleted');
+    return redirect()->route('platform.appointment.list');
+  }
+
+  public function accept(Appointment $appointment) {
+    $appointment->update(['status' => 'accepted']);
+    Alert::info('Appointment accepted');
+    return redirect()->route('platform.appointment.list');
+  }
+
+  public function decline(Appointment $appointment) {
+    $appointment->update(['status' => 'declined']);
+    Alert::info('Appointment declined');
     return redirect()->route('platform.appointment.list');
   }
 }

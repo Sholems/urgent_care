@@ -42,7 +42,6 @@ class AppointmentController extends Controller {
         'time' => 'required|string',
         'user_id' => 'required',
         'doctor_id' => 'required|exists:doctors,id',
-        'status' => 'required|string',
         'payment_intent_id' => 'nullable|string'
     ]);
 
@@ -51,7 +50,7 @@ class AppointmentController extends Controller {
         'time' => $request->input('time'),
         'user_id' => $request->input('user_id'),
         'doctor_id' => $request->input('doctor_id'),
-        'status' => $request->input('status'),
+        'status' => 'pending',
         'payment_intent_id' => $request->input('payment_intent_id'),
     ]);
 

@@ -36,21 +36,30 @@ class AppointmentDetailScreen extends Screen {
   public function commandBar(): iterable {
     return [
 
-      // Button::make('Accept')
-      //   ->icon('check')
-      //   ->method('accept')
-      //   ->canSee($this->appointment->status == 'pending')
-      //   ->confirm('Are you sure you want to accept this appointment ?'),
+      Button::make('Accept')
+        ->icon('check')
+        ->method('accept')
+        ->parameters([
+          'appointment' => $this->appointment->id,
+        ])
+        ->canSee($this->appointment->status === 'pending')
+        ->confirm('Are you sure you want to accept this appointment ?'),
 
-      // Button::make('Decline')
-      //   ->icon('bs.x-circle')
-      //   ->method('decline')
-      //   ->canSee($this->appointment->status == 'pending')
-      //   ->confirm('Are you sure you want to decline this appointment ?'),
+      Button::make('Decline')
+        ->icon('bs.x-circle')
+        ->method('decline')
+        ->parameters([
+          'appointment' => $this->appointment->id,
+        ])
+        ->canSee($this->appointment->status === 'pending')
+        ->confirm('Are you sure you want to decline this appointment ?'),
 
       Button::make('Remove')
         ->icon('trash')
         ->method('remove')
+        ->parameters([
+          'appointment' => $this->appointment->id,
+        ])
         ->confirm(
           'If you delete this appointment, all related data will be deleted.'
         )
@@ -68,6 +77,9 @@ class AppointmentDetailScreen extends Screen {
         }),
         Sight::make('time', 'Time:')->render(function (Appointment $appointment) {
           return $appointment->time;
+        }),
+        Sight::make('status', 'Status:')->render(function (Appointment $appointment) {
+          return ucfirst($appointment->status ?? 'pending');
         }),
         Sight::make('patient_name', 'Patient Name:')->render(function (Appointment $appointment) {
           return $appointment->user->user_name;
