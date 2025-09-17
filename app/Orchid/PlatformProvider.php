@@ -42,24 +42,6 @@ class PlatformProvider extends OrchidServiceProvider {
 
       Menu::make('Appointments')
         ->icon('bs.calendar')
-        ->badge(function () {
-          $user = Auth::user();
-
-          $query = Appointment::query()->where('status', 'pending');
-
-          if ($user?->doctor) {
-            $query->where('doctor_id', $user->doctor->id);
-          }
-
-          $count = $query->count();
-
-          return $count > 0 ? $count : null;
-        })
-        // ->badge(function () {
-        //   if (Appointment::where('status', 'pending')->count() > 0) {
-        //     return Appointment::where('status', 'pending')->count();
-        //   }
-        // })
         ->route('platform.appointment.list')
         ->permission('platform.appointments')
         ->title(__('Access Controls')),
