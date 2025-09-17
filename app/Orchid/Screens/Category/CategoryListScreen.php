@@ -57,6 +57,8 @@ class CategoryListScreen extends Screen {
             return implode(', ', $category->symptoms ?? []);
           }),
 
+          
+
         TD::make('updated_at', __('Last edit'))
           ->sort()
           ->cantHide()
