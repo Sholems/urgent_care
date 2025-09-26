@@ -246,6 +246,19 @@ class DoctorEditScreen extends Screen {
   }
 
   private function deleteMultipleImages($images) {
+    if (empty($images)) {
+      return;
+    }
+
+    if (is_string($images)) {
+      $decodedImages = json_decode($images, true);
+      $images = json_last_error() === JSON_ERROR_NONE ? $decodedImages : [$images];
+    }
+
+    if (!is_iterable($images)) {
+      $images = (array) $images;
+    }
+
     foreach ($images as $image) {
       $image = str_replace(asset('storage/'), '', $image);
       Storage::disk('public')->delete($image);
