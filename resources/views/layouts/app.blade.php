@@ -105,10 +105,8 @@
     <!-- Header
    ============================================= -->
     @php
-        $siteSettingHeaderLogo = optional($siteSetting)->header_logo;
-        $siteSettingFooterLogo = optional($siteSetting)->footer_logo;
-        $headerLogoPath = $siteSettingHeaderLogo ? asset($siteSettingHeaderLogo) : asset('logo-health-care.png');
-        $footerLogoPath = $siteSettingFooterLogo ? asset($siteSettingFooterLogo) : asset('logo-health-care.png');
+        $headerLogoPath = optional($siteSetting)->header_logo_url ?? asset('logo-health-care.png');
+        $footerLogoPath = optional($siteSetting)->footer_logo_url ?? asset('logo-health-care.png');
     @endphp
 
     <header id="home">
