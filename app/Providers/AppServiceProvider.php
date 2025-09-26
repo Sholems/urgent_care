@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Schema;
 use App\Models\SmtpSetting;
 use App\Models\Category;
+use App\Models\SiteSetting;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -39,9 +40,16 @@ class AppServiceProvider extends ServiceProvider
         }
 
         if (Schema::hasTable('categories')) {
-            $categories = Category::all();  
-            View::share('categories', $categories); 
+            $categories = Category::all();
+            View::share('categories', $categories);
         }
+
+        $siteSetting = null;
+        if (Schema::hasTable('site_settings')) {
+            $siteSetting = SiteSetting::first();
+        }
+
+        View::share('siteSetting', $siteSetting);
     }
 }
 

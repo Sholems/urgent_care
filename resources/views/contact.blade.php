@@ -25,6 +25,11 @@
 
     <!-- Start Contact Area
         ============================================= -->
+    @php
+        $contactPhone = optional($siteSetting)->contact_phone ?? optional($siteSetting)->footer_phone ?? '+44-20-7328-4499';
+        $contactEmail = optional($siteSetting)->contact_email ?? optional($siteSetting)->footer_email ?? 'info@healdi.com';
+    @endphp
+
     <div id="contact" class="contact-us-area default-padding">
         <div class="container">
             <div class="contact-items">
@@ -36,11 +41,11 @@
                             <ul>
                                 <li>
                                     <h5><i class="flaticon-call"></i> Phone</h5>
-                                    <span>+44-20-7328-4499</span>
+                                    <span>{{ $contactPhone }}</span>
                                 </li>
                                 <li>
                                     <h5><i class="flaticon-email"></i> Email</h5>
-                                    <span>info@healdi.com</span>
+                                    <span>{{ $contactEmail }}</span>
                                 </li>
                             </ul>
                         </div>
