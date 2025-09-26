@@ -24,6 +24,10 @@ class CategoryEditScreen extends Screen {
   public $specialities;
 
   public function query(Category $category): iterable {
+    if (is_array($category->symptoms)) {
+      $category->symptoms = implode(', ', $category->symptoms);
+    }
+
     return [
       'category' => $category,
       'specialities' => Speciality::all(),
