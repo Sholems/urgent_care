@@ -18,8 +18,29 @@ class SiteSettingScreen extends Screen
 
     public function query(): iterable
     {
+        $siteSetting = SiteSetting::first() ?? new SiteSetting();
+
+        if (is_array($siteSetting->opening_hours)) {
+            $openingHours = $siteSetting->opening_hours;
+
+            if (!array_key_exists('mon_thu', $openingHours)) {
+                $legacyValues = array_filter([
+                    $openingHours['mon_tue'] ?? null,
+                    $openingHours['wed_thu'] ?? null,
+                ]);
+
+                if (!empty($legacyValues)) {
+                    $openingHours['mon_thu'] = reset($legacyValues);
+                }
+            }
+
+            unset($openingHours['mon_tue'], $openingHours['wed_thu']);
+
+            $siteSetting->opening_hours = $openingHours;
+        }
+
         return [
-            'siteSetting' => SiteSetting::first() ?? new SiteSetting(),
+            'siteSetting' => $siteSetting,
         ];
     }
 
@@ -55,12 +76,9 @@ class SiteSettingScreen extends Screen
                     ->title('Contact Page Email')
                     ->type('email')
                     ->placeholder('Enter contact page email address'),
-                Input::make('siteSetting.opening_hours.mon_tue')
-                    ->title('Opening Hours (Mon - Tue)')
+                Input::make('siteSetting.opening_hours.mon_thu')
+                    ->title('Opening Hours (Mon - Thu)')
                     ->placeholder('e.g. 8:00 - 17:30'),
-                Input::make('siteSetting.opening_hours.wed_thu')
-                    ->title('Opening Hours (Wed - Thu)')
-                    ->placeholder('e.g. 10:45 - 15:00'),
                 Input::make('siteSetting.opening_hours.fri')
                     ->title('Opening Hours (Fri)')
                     ->placeholder('e.g. 8:00 - 17:30'),
@@ -87,8 +105,7 @@ class SiteSettingScreen extends Screen
             'siteSetting.footer_email' => 'nullable|email|max:255',
             'siteSetting.contact_phone' => 'nullable|string|max:255',
             'siteSetting.contact_email' => 'nullable|email|max:255',
-            'siteSetting.opening_hours.mon_tue' => 'nullable|string|max:255',
-            'siteSetting.opening_hours.wed_thu' => 'nullable|string|max:255',
+            'siteSetting.opening_hours.mon_thu' => 'nullable|string|max:255',
             'siteSetting.opening_hours.fri' => 'nullable|string|max:255',
             'siteSetting.opening_hours.sat' => 'nullable|string|max:255',
             'siteSetting.opening_hours.sun' => 'nullable|string|max:255',
@@ -104,8 +121,7 @@ class SiteSettingScreen extends Screen
         $siteSetting->contact_email = $request->input('siteSetting.contact_email');
 
         $openingHours = [
-            'mon_tue' => $request->input('siteSetting.opening_hours.mon_tue'),
-            'wed_thu' => $request->input('siteSetting.opening_hours.wed_thu'),
+            'mon_thu' => $request->input('siteSetting.opening_hours.mon_thu'),
             'fri' => $request->input('siteSetting.opening_hours.fri'),
             'sat' => $request->input('siteSetting.opening_hours.sat'),
             'sun' => $request->input('siteSetting.opening_hours.sun'),
