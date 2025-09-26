@@ -37,6 +37,12 @@
     ============================================= -->
     <div class="feature-entry-area cols-3 default-padding bottom-less">
         <div class="container">
+            @php
+                $openingHours = optional($siteSetting)->opening_hours ?? [];
+                $sunHours = $openingHours['sun'] ?? 'Closed';
+                $sunClosedClass = strtolower($sunHours) === 'closed' ? 'closed' : '';
+            @endphp
+
             <div class="feature-entry-items text-center">
                 <div class="row">
                     <!-- Single Item -->
@@ -61,13 +67,13 @@
                             <h4>Opening Hours</h4>
                             <ul>
                                 <li> <span> Mon - Tue :  </span>
-                                  <div class="float-right"> 8:00 - 17:30 </div>
+                                  <div class="float-right"> {{ $openingHours['mon_tue'] ?? '8:00 - 17:30' }} </div>
                                 </li>
                                 <li> <span> Wed - Thu :</span>
-                                  <div class="float-right"> 10:45 - 15:00 </div>
+                                  <div class="float-right"> {{ $openingHours['wed_thu'] ?? '10:45 - 15:00' }} </div>
                                 </li>
                                 <li> <span> Sun : </span>
-                                  <div class="float-right closed"> Closed </div>
+                                  <div class="float-right {{ $sunClosedClass }}"> {{ $sunHours }} </div>
                                 </li>
                             </ul>
                         </div>

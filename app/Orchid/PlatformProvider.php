@@ -112,6 +112,11 @@ class PlatformProvider extends OrchidServiceProvider {
         ->route('platform.twilio.edit')
         ->permission('platform.systems.users'),
 
+        Menu::make('Site Settings')
+        ->icon('bs.gear')
+        ->route('platform.site.settings')
+        ->permission('platform.systems.users'),
+
         Menu::make('SMTP Settings')
         ->icon('bs.envelope')
         ->route('platform.smtp.edit')

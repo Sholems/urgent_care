@@ -31,6 +31,7 @@ use App\Orchid\Screens\Smtp\SmtpSettingScreen;
 use App\Orchid\Screens\Twilio\TwilioSettingScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyListScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyEditScreen;
+use App\Orchid\Screens\SiteSetting\SiteSettingScreen;
 
 //
 // Dashboard Routes
@@ -88,6 +89,10 @@ Route::screen('stripekey/list', StripeKeyListScreen::class)
 
 Route::screen('stripekey/edit/{stripeKey?}', StripeKeyEditScreen::class)
   ->name('platform.stripekey.edit');
+
+Route::screen('settings/site', SiteSettingScreen::class)
+  ->name('platform.site.settings')
+  ->middleware('check.orchid.permission');
 
 // AppUsers
 Route::screen('appuser/list', AppUserListScreen::class)

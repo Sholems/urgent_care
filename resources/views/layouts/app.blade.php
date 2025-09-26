@@ -104,6 +104,13 @@
 
     <!-- Header
    ============================================= -->
+    @php
+        $siteSettingHeaderLogo = optional($siteSetting)->header_logo;
+        $siteSettingFooterLogo = optional($siteSetting)->footer_logo;
+        $headerLogoPath = $siteSettingHeaderLogo ? asset($siteSettingHeaderLogo) : asset('logo-health-care.png');
+        $footerLogoPath = $siteSettingFooterLogo ? asset($siteSettingFooterLogo) : asset('logo-health-care.png');
+    @endphp
+
     <header id="home">
 
         <!-- Start Navigation -->
@@ -145,9 +152,9 @@
                         <i class="fa fa-bars"></i>
                     </button>
                     <a class="navbar-brand" href="{{ route('home') }}">
-                        <img src="{{ asset('logo-health-care.png') }}" width="65" height="65"
+                        <img src="{{ $headerLogoPath }}" width="65" height="65"
                             class="logo logo-regular" alt="Logo">
-                        <img src="{{ asset('logo-health-care.png') }}" width="65" height="65"
+                        <img src="{{ $headerLogoPath }}" width="65" height="65"
                             class="logo desktop" alt="Logo">
                     </a>
                 </div>
@@ -185,7 +192,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-6 item">
                         <div class="f-item about">
-                            <img src="{{ asset('logo-health-care.png') }}" width="150" height="150"
+                            <img src="{{ $footerLogoPath }}" width="150" height="150"
                                 alt="Logo">
                             <p>
                                 Our platform connects patients with experienced and qualified doctors across multiple
@@ -240,7 +247,7 @@
                                             </div>
                                             <div class="info">
                                                 <h5>Email:</h5>
-                                                <span>support@validtemplates.com</span>
+                                                <span>{{ optional($siteSetting)->footer_email ?? 'support@validtemplates.com' }}</span>
                                             </div>
                                         </li>
                                         <li>
@@ -249,7 +256,7 @@
                                             </div>
                                             <div class="info">
                                                 <h5>Phone:</h5>
-                                                <span>+44-20-7328-4499</span>
+                                                <span>{{ optional($siteSetting)->footer_phone ?? '+44-20-7328-4499' }}</span>
                                             </div>
                                         </li>
                                     </ul>
