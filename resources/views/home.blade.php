@@ -39,12 +39,32 @@
         <div class="container">
             @php
                 $openingHours = optional($siteSetting)->opening_hours ?? [];
-                $sunHours = $openingHours['sun'] ?? 'Closed';
-                $sunClosedClass = strtolower($sunHours) === 'closed' ? 'closed' : '';
-                $friHours = $openingHours['fri'] ?? '8:00 - 17:30';
-                $friClosedClass = strtolower($friHours) === 'closed' ? 'closed' : '';
-                $satHours = $openingHours['sat'] ?? '10:45 - 15:00';
-                $satClosedClass = strtolower($satHours) === 'closed' ? 'closed' : '';
+                $defaultHours = [
+                    'mon_thu' => '8:00 - 17:30',
+                    'fri' => '8:00 - 17:30',
+                    'sat' => '10:45 - 15:00',
+                    'sun' => 'Closed',
+                ];
+
+                $monThuHours = $openingHours['mon_thu']
+                    ?? $openingHours['mon_tue']
+                    ?? $openingHours['wed_thu']
+                    ?? $defaultHours['mon_thu'];
+                $friHours = $openingHours['fri'] ?? $defaultHours['fri'];
+                $satHours = $openingHours['sat'] ?? $defaultHours['sat'];
+                $sunHours = $openingHours['sun'] ?? $defaultHours['sun'];
+
+                $monThuClosedClass = strtolower(trim($monThuHours)) === 'closed' ? 'closed' : '';
+                $friClosedClass = strtolower(trim($friHours)) === 'closed' ? 'closed' : '';
+                $satClosedClass = strtolower(trim($satHours)) === 'closed' ? 'closed' : '';
+                $sunClosedClass = strtolower(trim($sunHours)) === 'closed' ? 'closed' : '';
+
+                $emergencyPhone = optional($siteSetting)->contact_phone
+                    ?? optional($siteSetting)->footer_phone
+                    ?? '(+987)98765432';
+                $cancerCarePhone = optional($siteSetting)->footer_phone
+                    ?? optional($siteSetting)->contact_phone
+                    ?? '(+987)98765432';
             @endphp
 
             <div class="feature-entry-items text-center">
@@ -59,7 +79,7 @@
                             </p>
                             <div class="contact">
                                 <span>Phone:</span>
-                                <p>(+987)98765432</p>
+                                <p>{{ $emergencyPhone }}</p>
                             </div>
                         </div>
                     </div>
@@ -70,11 +90,8 @@
                             <i class="flaticon-time"></i>
                             <h4>Opening Hours</h4>
                             <ul>
-                                <li> <span> Mon - Tue :  </span>
-                                  <div class="float-right"> {{ $openingHours['mon_tue'] ?? '8:00 - 17:30' }} </div>
-                                </li>
-                                <li> <span> Wed - Thu :</span>
-                                  <div class="float-right"> {{ $openingHours['wed_thu'] ?? '10:45 - 15:00' }} </div>
+                                <li> <span> Mon - Thu :  </span>
+                                  <div class="float-right {{ $monThuClosedClass }}"> {{ $monThuHours }} </div>
                                 </li>
                                 <li> <span> Fri :</span>
                                   <div class="float-right {{ $friClosedClass }}"> {{ $friHours }} </div>
@@ -99,7 +116,7 @@
                             </p>
                             <div class="contact">
                                 <span>Phone:</span>
-                                <p>(+987)98765432</p>
+                                <p>{{ $cancerCarePhone }}</p>
                             </div>
                         </div>
                     </div>
