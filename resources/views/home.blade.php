@@ -75,7 +75,7 @@
                             <i class="flaticon-ambulance-1"></i>
                             <h4>Emergency Case</h4>
                             <p>
-                                Moment he at on wonder at season little. Six garden result summer set family.
+                                For urgent cases, contact us immediately for prompt medical attention.
                             </p>
                             <div class="contact">
                                 <span>Phone:</span>
@@ -110,9 +110,9 @@
                     <div class="col-lg-4 single-item">
                         <div class="item">
                             <i class="flaticon-ribbon"></i>
-                            <h4>Cancer Care</h4>
+                            <h4>General Consultation</h4>
                             <p>
-                                Moment he at on wonder at season little. Six garden result summer set family.
+                                Book a general consultation for routine check-ups, health advice, or treatment of common illnesses.
                             </p>
                             <div class="contact">
                                 <span>Phone:</span>
@@ -205,39 +205,36 @@
             </div>
         </div>
         <div class="container">
-            <div class="department-items text-center">
-                <div class="row">
-                    <div class="department-area icon-only default-padding bottom-less">
-                        <div class="container">
-                            <div class="item-box text-center">
-                                <div class="department-carousel owl-carousel owl-theme">
-                                    <!-- Single Item -->
-                                    @foreach ($categories as $category)
-                                    <div class="item">
-                                        <div class="info">
-                                            <h4>
-                                                <a href="#">{{ $category->name }}</a>
-                                            </h4>
-                                            <div class="icon">
-                                                @if (!empty($category->image) && file_exists(public_path('uploads/categories/' . $category->image)))
-                                                    <img src="{{ $category->image }}" alt="{{ $category->name }}" style="width:60px; height:60px; object-fit:contain;">
-                                                @else
-                                                    <i class="flaticon-broken-bone"></i>
-                                                @endif
-                                            </div>
-                                            <p>
-                                               {{ $category->description }}
-                                            </p>
-                                            <a class="btn btn-sm circle btn-theme border" href="{{ route('department') }}"><i class="fas fa-angle-right"></i> See All</a>
-                                        </div>
+            <div class="department-items text-center py-4">
+                <div class="row justify-content-center">
+                    @foreach ($categories as $category)
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div class="card h-100 shadow-sm border-0 rounded-lg">
+                                <div class="card-body d-flex flex-column align-items-center">
+                                    <div class="mb-3">
+                                        @if (!empty($category->image) && file_exists(public_path('uploads/categories/' . $category->image)))
+                                            <img src="{{ asset('uploads/categories/' . $category->image) }}" alt="{{ $category->name }}" class="rounded-circle border" style="width:70px; height:70px; object-fit:cover;">
+                                        @else
+                                            <span class="d-inline-block bg-light rounded-circle p-3">
+                                                <i class="flaticon-broken-bone text-theme" style="font-size:40px;"></i>
+                                            </span>
+                                        @endif
                                     </div>
-                                    @endforeach
-                                    <!-- End Single Item -->
-                                    
+                                    <h5 class="mb-2 font-weight-bold">
+                                        <a href="#" class="text-dark">{{ $category->name }}</a>
+                                    </h5>
+                                    <p class="text-muted small mb-0">
+                                        {{ $category->description }}
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-transparent border-0 text-center">
+                                    <a class="btn btn-sm btn-gradient rounded-pill px-3" href="{{ route('department') }}">
+                                        See All <i class="fas fa-angle-right"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -287,27 +284,38 @@
         </div>
         <div class="container">
             <div class="team-items">
-                <div class="row justify-content-center">
-                    <!-- Single Item -->
-                    @foreach ($doctors as $doctor)
-                    <div class="single-item col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                        <div class="item">
-                            <div class="thumb">
-                                <img src="{{  $doctor->photo }}" alt="Thumb">
-                              
-                            </div>
-                            <div class="info">
-                                <h5>{{ $doctor->name }}</h5>
-                                <span>{{ $doctor->specialization }}</span>
-                            </div>
-                            <a href="{{ route('doctor', $doctor->id) }}" class="btn btn-view-profile">
-                                View Profile <i class="fas fa-arrow-right"></i>
-                            </a>
-                            
+            <div class="row justify-content-center">
+                @foreach ($doctors as $doctor)
+                <div class="single-item col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <div class="card h-100 shadow-lg border-0 rounded-xl overflow-hidden position-relative">
+                    <div class="bg-gradient position-absolute w-100" style="height: 60px; top: 0; left: 0; opacity: 0.12;"></div>
+                    <div class="card-body d-flex flex-column align-items-center pt-4 pb-3">
+                        <div class="mb-3 position-relative">
+                        <img 
+                            src="{{ $doctor->photo }}" 
+                            alt="{{ $doctor->name }}" 
+                            class="rounded-circle border border-3 border-theme shadow"
+                            style="width:100px; height:100px; object-fit:cover;"
+                        >
+                      
                         </div>
+                        <h5 class="mb-1 font-weight-bold text-theme">{{ $doctor->name }}</h5>
+                        <span class="badge bg-gradient text-white mb-2 px-3 py-1 rounded-pill" style="font-size: 0.95em;">
+                        {{ $doctor->specialization }}
+                        </span>
+                        <p class="text-muted small mb-2 text-center">
+                        {{ $doctor->experience ? 'With ' . $doctor->experience . ' years of experience.' : 'Experienced and caring medical professional.' }}
+                        </p>
                     </div>
-                    @endforeach                    
+                    <div class="card-footer bg-transparent border-0 text-center pb-3">
+                        <a href="{{ route('doctor', $doctor->id) }}" class="btn btn-sm btn-gradient rounded-pill px-4 shadow">
+                        View Profile <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    </div>
                 </div>
+                @endforeach                    
+            </div>
             </div>
         </div>
     </div>

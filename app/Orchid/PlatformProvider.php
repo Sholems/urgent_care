@@ -70,11 +70,6 @@ class PlatformProvider extends OrchidServiceProvider {
         ->route('platform.category.list')
         ->permission('platform.systems.users'),
 
-      Menu::make('Diagnostics')
-        ->icon('bs.thermometer-half')
-        ->route('platform.diagnostic.list')
-        ->permission('platform.systems.users'),
-
       Menu::make('Specialities')
         ->icon('bs.award')
         ->route('platform.speciality.list')
