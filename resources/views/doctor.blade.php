@@ -251,11 +251,36 @@ document.addEventListener('keydown', function(event) {
                             </div>
                         </div>
 
-                        <div class="alert alert-success border-0 mb-3" role="alert">
-                            <i class="far fa-clock me-2"></i>
-                            <strong>Available Today:</strong> {{ \Carbon\Carbon::parse($doctor->start_time)->format('g:i A') }} - 
-                            {{ \Carbon\Carbon::parse($doctor->end_time)->format('g:i A') }}
-                        </div>
+                        @php
+    use Carbon\Carbon;
+
+    function parseTimeOrNull($t) {
+        if (!$t) return null;
+        $t = trim($t);
+
+        // Try common time-only formats first
+        foreach (['g:i A', 'g:iA', 'h:i A', 'h:iA', 'H:i', 'H:i:s'] as $fmt) {
+            try { return Carbon::createFromFormat($fmt, $t); } catch (\Throwable $e) {}
+        }
+
+        // Fallback: prefix a date so Carbon::parse has full context
+        try { return Carbon::parse('today ' . $t); } catch (\Throwable $e) {}
+
+        return null;
+    }
+
+    $start = parseTimeOrNull($doctor->start_time);
+    $end   = parseTimeOrNull($doctor->end_time);
+@endphp
+
+<div class="alert alert-success border-0 mb-3" role="alert">
+    <i class="far fa-clock me-2"></i>
+    @if($start && $end)
+        <strong>Available Today:</strong> {{ $start->format('g:i A') }} - {{ $end->format('g:i A') }}
+    @else
+        <strong>Availability:</strong> Not provided
+    @endif
+</div>
 
                         <a href="#appointment" class="btn btn-primary btn-lg w-100 rounded-pill shadow-sm fw-medium">
                             <i class="fas fa-calendar-plus me-2"></i>Book Appointment
