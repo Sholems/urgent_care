@@ -61,6 +61,12 @@ class SiteSettingScreen extends Screen
                 Input::make('siteSetting.opening_hours.wed_thu')
                     ->title('Opening Hours (Wed - Thu)')
                     ->placeholder('e.g. 10:45 - 15:00'),
+                Input::make('siteSetting.opening_hours.fri')
+                    ->title('Opening Hours (Fri)')
+                    ->placeholder('e.g. 8:00 - 17:30'),
+                Input::make('siteSetting.opening_hours.sat')
+                    ->title('Opening Hours (Sat)')
+                    ->placeholder('e.g. 10:45 - 15:00'),
                 Input::make('siteSetting.opening_hours.sun')
                     ->title('Opening Hours (Sun)')
                     ->placeholder('e.g. Closed'),
@@ -83,6 +89,8 @@ class SiteSettingScreen extends Screen
             'siteSetting.contact_email' => 'nullable|email|max:255',
             'siteSetting.opening_hours.mon_tue' => 'nullable|string|max:255',
             'siteSetting.opening_hours.wed_thu' => 'nullable|string|max:255',
+            'siteSetting.opening_hours.fri' => 'nullable|string|max:255',
+            'siteSetting.opening_hours.sat' => 'nullable|string|max:255',
             'siteSetting.opening_hours.sun' => 'nullable|string|max:255',
             'siteSetting.header_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'siteSetting.footer_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -98,6 +106,8 @@ class SiteSettingScreen extends Screen
         $openingHours = [
             'mon_tue' => $request->input('siteSetting.opening_hours.mon_tue'),
             'wed_thu' => $request->input('siteSetting.opening_hours.wed_thu'),
+            'fri' => $request->input('siteSetting.opening_hours.fri'),
+            'sat' => $request->input('siteSetting.opening_hours.sat'),
             'sun' => $request->input('siteSetting.opening_hours.sun'),
         ];
 
