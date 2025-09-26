@@ -41,6 +41,10 @@
                 $openingHours = optional($siteSetting)->opening_hours ?? [];
                 $sunHours = $openingHours['sun'] ?? 'Closed';
                 $sunClosedClass = strtolower($sunHours) === 'closed' ? 'closed' : '';
+                $friHours = $openingHours['fri'] ?? '8:00 - 17:30';
+                $friClosedClass = strtolower($friHours) === 'closed' ? 'closed' : '';
+                $satHours = $openingHours['sat'] ?? '10:45 - 15:00';
+                $satClosedClass = strtolower($satHours) === 'closed' ? 'closed' : '';
             @endphp
 
             <div class="feature-entry-items text-center">
@@ -71,6 +75,12 @@
                                 </li>
                                 <li> <span> Wed - Thu :</span>
                                   <div class="float-right"> {{ $openingHours['wed_thu'] ?? '10:45 - 15:00' }} </div>
+                                </li>
+                                <li> <span> Fri :</span>
+                                  <div class="float-right {{ $friClosedClass }}"> {{ $friHours }} </div>
+                                </li>
+                                <li> <span> Sat :</span>
+                                  <div class="float-right {{ $satClosedClass }}"> {{ $satHours }} </div>
                                 </li>
                                 <li> <span> Sun : </span>
                                   <div class="float-right {{ $sunClosedClass }}"> {{ $sunHours }} </div>
