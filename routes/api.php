@@ -32,6 +32,7 @@ use \App\Http\Controllers\PaymentController;
 use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\DashboardController;
 use \App\Http\Controllers\ExchangeRateController;
+use \App\Http\Controllers\AdminBankDetailController;
 
 Route::middleware('authApi')->group(function () {
   Route::get('/doctors/{doctor}/patients', [DoctorController::class, 'patients']);
@@ -92,6 +93,8 @@ Route::middleware('authApi')->group(function () {
   Route::get('/dashboard/admin', [DashboardController::class, 'admin']);
 
   Route::get('/exchange-rate', [ExchangeRateController::class, 'show']);
+
+  Route::get('/admin-bank-details', [AdminBankDetailController::class, 'show']);
 
   Route::post('/payments/payment-intent', [PaymentController::class, 'createPaymentIntent']);
   Route::post('/payments/setup-intent/{userId}', [PaymentController::class, 'createSetupIntent']);

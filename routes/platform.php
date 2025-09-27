@@ -32,6 +32,7 @@ use App\Orchid\Screens\Twilio\TwilioSettingScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyListScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyEditScreen;
 use App\Orchid\Screens\SiteSetting\SiteSettingScreen;
+use App\Orchid\Screens\AdminBank\AdminBankDetailScreen;
 
 //
 // Dashboard Routes
@@ -92,6 +93,10 @@ Route::screen('stripekey/edit/{stripeKey?}', StripeKeyEditScreen::class)
 
 Route::screen('settings/site', SiteSettingScreen::class)
   ->name('platform.site.settings')
+  ->middleware('check.orchid.permission');
+
+Route::screen('settings/bank-details', AdminBankDetailScreen::class)
+  ->name('platform.bank.details')
   ->middleware('check.orchid.permission');
 
 // AppUsers
