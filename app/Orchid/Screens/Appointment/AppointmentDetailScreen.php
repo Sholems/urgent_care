@@ -25,7 +25,7 @@ class AppointmentDetailScreen extends Screen {
   public $appointment;
 
   public function query(Appointment $appointment): iterable {
-    $this->appointment = $appointment->load('documents');
+    $this->appointment = $appointment->load(['documents', 'user']);
     return [
       'appointment' => $this->appointment,
       'documents' => $this->appointment->documents,
@@ -98,6 +98,24 @@ class AppointmentDetailScreen extends Screen {
         }),
         Sight::make('patient_insurance', 'Patient Insurance:')->render(function (Appointment $appointment) {
           return $appointment->user->insurance_details;
+        }),
+        Sight::make('bank_account_holder_name', 'Account Holder Name:')->render(function (Appointment $appointment) {
+          return $appointment->bank_account_holder_name ?? '—';
+        }),
+        Sight::make('bank_name', 'Bank Name / Provider:')->render(function (Appointment $appointment) {
+          return $appointment->bank_name ?? '—';
+        }),
+        Sight::make('bank_account_number', 'Account Number / Reference:')->render(function (Appointment $appointment) {
+          return $appointment->bank_account_number ?? '—';
+        }),
+        Sight::make('payment_invoice_path', 'Payment Invoice:')->render(function (Appointment $appointment) {
+          if (!$appointment->payment_invoice_path) {
+            return '—';
+          }
+
+          return Link::make('Download Invoice')
+            ->href(Storage::disk('public')->url($appointment->payment_invoice_path))
+            ->target('_blank');
         }),
       ]),
 
