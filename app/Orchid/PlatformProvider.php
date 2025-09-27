@@ -102,6 +102,11 @@ class PlatformProvider extends OrchidServiceProvider {
         ->route('platform.stripekey.list')
         ->permission('platform.systems.users'),
 
+        Menu::make('Bank Details')
+        ->icon('bs.wallet2')
+        ->route('platform.bank.details')
+        ->permission('platform.systems.users'),
+
         Menu::make('Twilio Settings')
         ->icon('bs.phone')
         ->route('platform.twilio.edit')

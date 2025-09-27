@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Stripe\StripeClient;
+use Illuminate\Support\Facades\Storage;
 
 class AppointmentController extends Controller {
   /**
@@ -37,30 +38,43 @@ class AppointmentController extends Controller {
   }
 
   public function store(Request $request) {
-    $request->validate([
+    $validated = $request->validate([
         'date' => 'required|date',
         'time' => 'required|string',
         'user_id' => 'required',
         'doctor_id' => 'required|exists:doctors,id',
-        'payment_intent_id' => 'nullable|string'
+        'payment_intent_id' => 'nullable|string',
+        'bank_account_holder_name' => 'nullable|string|max:255',
+        'bank_name' => 'nullable|string|max:255',
+        'bank_account_number' => 'nullable|string|max:255',
+        'payment_invoice' => 'nullable|file',
     ]);
+
+    $invoicePath = null;
+    if ($request->hasFile('payment_invoice')) {
+      $invoicePath = $request->file('payment_invoice')->store('appointment_invoices', 'public');
+    }
 
     $appointment = Appointment::create([
-        'date' => $request->input('date'),
-        'time' => $request->input('time'),
-        'user_id' => $request->input('user_id'),
-        'doctor_id' => $request->input('doctor_id'),
+        'date' => $validated['date'],
+        'time' => $validated['time'],
+        'user_id' => $validated['user_id'],
+        'doctor_id' => $validated['doctor_id'],
         'status' => 'pending',
-        'payment_intent_id' => $request->input('payment_intent_id'),
+        'payment_intent_id' => $validated['payment_intent_id'] ?? null,
+        'bank_account_holder_name' => $validated['bank_account_holder_name'] ?? null,
+        'bank_name' => $validated['bank_name'] ?? null,
+        'bank_account_number' => $validated['bank_account_number'] ?? null,
+        'payment_invoice_path' => $invoicePath,
     ]);
 
-    $this->notify(AppUser::class, $request->input('user_id'), 'appointment.created', [
-      'message' => 'Appointment booked for ' . $request->input('date') . ' at ' . $request->input('time'),
+    $this->notify(AppUser::class, $validated['user_id'], 'appointment.created', [
+      'message' => 'Appointment booked for ' . $validated['date'] . ' at ' . $validated['time'],
       'appointment_id' => $appointment->id,
     ]);
 
-    $this->notify(Doctor::class, $request->input('doctor_id'), 'appointment.created', [
-      'message' => 'New appointment on ' . $request->input('date') . ' at ' . $request->input('time'),
+    $this->notify(Doctor::class, $validated['doctor_id'], 'appointment.created', [
+      'message' => 'New appointment on ' . $validated['date'] . ' at ' . $validated['time'],
       'appointment_id' => $appointment->id,
     ]);
 
@@ -239,6 +253,10 @@ public function availableSlots(Request $request, $doctorId) {
       } catch (\Exception $e) {
         // Optionally log the exception or handle the refund failure
       }
+    }
+
+    if ($appointment->payment_invoice_path) {
+      Storage::disk('public')->delete($appointment->payment_invoice_path);
     }
 
     $appointment->delete();

@@ -13,6 +13,7 @@ use App\Models\Review;
 use App\Models\Doctor;
 use App\Models\AppUser;
 use App\Models\AppointmentDocument;
+use Illuminate\Support\Facades\Storage;
 
 class Appointment extends Model {
   use AsSource;
@@ -30,8 +31,15 @@ class Appointment extends Model {
     'doctor_id',
     'status',
     'payment_intent_id',
-    'upcoming'
+    'bank_account_holder_name',
+    'bank_name',
+    'bank_account_number',
+    'payment_invoice_path',
+    'upcoming',
+  ];
 
+  protected $appends = [
+    'payment_invoice_url',
   ];
 
   protected $allowedSorts = [
@@ -75,5 +83,13 @@ class Appointment extends Model {
 
   public function medicalReports() {
     return $this->hasMany(AppointmentDocument::class)->where('type', 'medical_report');
+  }
+
+  public function getPaymentInvoiceUrlAttribute() {
+    if (!$this->payment_invoice_path) {
+      return null;
+    }
+
+    return Storage::disk('public')->url($this->payment_invoice_path);
   }
 }
