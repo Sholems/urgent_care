@@ -269,11 +269,11 @@
         <!-- Start Footer Bottom -->
         <div class="footer-bottom">
             <div class="container">
-                <div class="row align-center">
-                    <div class="col-lg-6">
-                        <p>Copyright &copy; 2025. </p>
-                    </div>
+            <div class="row align-center">
+                <div class="col-lg-12 text-center">
+                <p>Copyright &copy; 2025. Powered by <a href="https://www.kugbahost.com" target="_blank" rel="noopener">KugbaHost</a></p>
                 </div>
+            </div>
             </div>
         </div>
         <!-- End Footer Bottom -->

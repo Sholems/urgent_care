@@ -212,8 +212,8 @@
                             <div class="card h-100 shadow-sm border-0 rounded-lg">
                                 <div class="card-body d-flex flex-column align-items-center">
                                     <div class="mb-3">
-                                        @if (!empty($category->image) && file_exists(public_path('uploads/categories/' . $category->image)))
-                                            <img src="{{ asset('uploads/categories/' . $category->image) }}" alt="{{ $category->name }}" class="rounded-circle border" style="width:70px; height:70px; object-fit:cover;">
+                                        @if (!empty($category->image))
+                                            <img src="{{  $category->image }}" alt="{{ $category->name }}" class="rounded-circle border" style="width:70px; height:70px; object-fit:cover;">
                                         @else
                                             <span class="d-inline-block bg-light rounded-circle p-3">
                                                 <i class="flaticon-broken-bone text-theme" style="font-size:40px;"></i>
@@ -299,7 +299,7 @@
                         >
                       
                         </div>
-                        <h5 class="mb-1 font-weight-bold text-theme">{{ $doctor->name }}</h5>
+                        <h5 class="mb-1 font-weight-bold text-center text-theme">{{ $doctor->name }}</h5>
                         <span class="badge bg-gradient text-white mb-2 px-3 py-1 rounded-pill" style="font-size: 0.95em;">
                         {{ $doctor->specialization }}
                         </span>

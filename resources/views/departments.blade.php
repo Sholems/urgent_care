@@ -36,8 +36,8 @@
                                     <a href="#">{{ $category->name }}</a>
                                 </h4>
                                 <div class="icon">
-                                    @if (!empty($category->photo))
-                                        <img src="{{ $category->photo }}" alt="{{ $category->name }}" style="width:60px; height:60px; object-fit:contain;">
+                                    @if (!empty($category->image))
+                                        <img src="{{ $category->image }}" alt="{{ $category->name }}" style="width:60px; height:60px; object-fit:contain;">
                                     @else
                                         <i class="flaticon-broken-bone"></i>
                                     @endif

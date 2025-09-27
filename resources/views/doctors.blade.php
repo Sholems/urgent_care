@@ -832,7 +832,8 @@
             font-weight: 700;
             color: var(--dark-color);
             margin-bottom: 0.5rem;
-            line-height: 0.5;
+            line-height: 1.5rem;
+            text-align: center;
         }
 
         .doctor-specialty {
