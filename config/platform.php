@@ -99,7 +99,7 @@ return [
      |
      */
 
-  'index' => 'platform.appointment.list',
+  'index' => 'platform.main',
 
   /*
      |--------------------------------------------------------------------------

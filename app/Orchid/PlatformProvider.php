@@ -33,6 +33,11 @@ class PlatformProvider extends OrchidServiceProvider {
    */
   public function menu(): array {
     return [
+      Menu::make('Dashboard')
+        ->title('Overview')
+        ->icon('bs.speedometer2')
+        ->route('platform.main')
+        ->permission('platform.systems.users'),
 
       Menu::make('Doctors')
         ->title('Navigation')
