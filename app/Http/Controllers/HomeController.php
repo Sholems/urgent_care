@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\Contact;
+use App\Models\AdminBankDetail;
 
 class HomeController extends Controller
 {
@@ -153,7 +154,9 @@ class HomeController extends Controller
                 $q->select('id', 'user_name');
             }]);
         }])->findOrFail($id);
-        return view('doctor', compact('doctor'));
+        $adminBankDetail = AdminBankDetail::first();
+
+        return view('doctor', compact('doctor', 'adminBankDetail'));
     }
 
     public function getBookedSlots(Request $request)
@@ -182,7 +185,11 @@ public function bookAppointment(Request $request)
         'gender' => 'required|in:male,female,child',
         'date' => 'required|date|after_or_equal:today',
         'time' => 'required',
-        'doctor_id' => 'required|exists:users,id'
+        'doctor_id' => 'required|exists:users,id',
+        'bank_account_holder_name' => 'required|string|max:255',
+        'bank_name' => 'required|string|max:255',
+        'bank_account_number' => 'required|string|max:255',
+        'payment_invoice' => 'required|file|max:5120',
     ]);
 
     if ($validator->fails()) {
@@ -204,6 +211,11 @@ if(!$existingUser){
    
 
 
+    $invoicePath = null;
+    if ($request->hasFile('payment_invoice')) {
+        $invoicePath = $request->file('payment_invoice')->store('appointment_invoices', 'public');
+    }
+
     Appointment::create([
         'user_id' => $existingUser ? $existingUser->id : $user->id,
         'doctor_id' => $request->doctor_id,
@@ -211,6 +223,10 @@ if(!$existingUser){
         'time' => $request->time,
         'status' => 'pending',
         'payment_intent_id' => null,
+        'bank_account_holder_name' => $request->bank_account_holder_name,
+        'bank_name' => $request->bank_name,
+        'bank_account_number' => $request->bank_account_number,
+        'payment_invoice_path' => $invoicePath,
     ]);
 
     return redirect()->back()->with('success', 'Appointment booked successfully!');

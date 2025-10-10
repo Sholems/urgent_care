@@ -428,22 +428,59 @@ document.addEventListener('keydown', function(event) {
                         <div class="heading">
                             <h4>Make an Appointment</h4>
                         </div>
-                        <form action="{{ route('appointments.book') }}" id="appointmentForm" method="POST">
+                        @if($adminBankDetail)
+                            <div class="alert alert-light text-start border rounded-3 shadow-sm mb-4">
+                                <h5 class="fw-semibold mb-3 text-primary">Payment Details</h5>
+                                <ul class="list-unstyled mb-0 small text-muted">
+                                    <li><span class="fw-semibold text-dark">Bank Name:</span> {{ $adminBankDetail->bank_name ?? 'N/A' }}</li>
+                                    <li><span class="fw-semibold text-dark">Account Name:</span> {{ $adminBankDetail->account_name ?? 'N/A' }}</li>
+                                    <li><span class="fw-semibold text-dark">Account Number:</span> {{ $adminBankDetail->account_number ?? 'N/A' }}</li>
+                                    @if($adminBankDetail->bank_code)
+                                        <li><span class="fw-semibold text-dark">Bank Code:</span> {{ $adminBankDetail->bank_code }}</li>
+                                    @endif
+                                </ul>
+                                <p class="mt-3 mb-0 text-secondary">
+                                    Please complete the transfer and upload your receipt below to confirm your appointment request.
+                                </p>
+                            </div>
+                        @else
+                            <div class="alert alert-warning text-start border rounded-3 shadow-sm mb-4">
+                                <h5 class="fw-semibold mb-1">Bank Details Unavailable</h5>
+                                <p class="mb-0 small">Admin bank details are not configured yet. Please contact support before proceeding with payment.</p>
+                            </div>
+                        @endif
+                        @if(session('success'))
+                            <div class="alert alert-success text-start border rounded-3 shadow-sm mb-4">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        <form action="{{ route('appointments.book') }}" id="appointmentForm" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
+                                @if($errors->any())
+                                    <div class="col-12">
+                                        <div class="alert alert-danger text-start">
+                                            <ul class="mb-0">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    </div>
+                                @endif
                                 <!-- Name Field -->
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <input class="form-control" id="f_name" name="name" placeholder="Full Name" 
-                                               type="text" required>
+                                               type="text" value="{{ old('name') }}" required>
                                     </div>
                                 </div>
 
                                 <!-- Phone Field with Country Code Picker -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input class="form-control" name="email" placeholder="Email" 
-                                               type="email" required>
+                                        <input class="form-control" id="email" name="email" placeholder="Email" 
+                                               type="email" value="{{ old('email') }}" required>
                                     </div>
                                 </div>
 
@@ -452,9 +489,9 @@ document.addEventListener('keydown', function(event) {
                                     <div class="form-group">
                                         <select name="gender" class="form-control" required>
                                             <option value="">Select Gender</option>
-                                            <option value="male">Male</option>
-                                            <option value="female">Female</option>
-                                            <option value="child">Child</option>
+                                            <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male</option>
+                                            <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>Female</option>
+                                            <option value="child" {{ old('gender') === 'child' ? 'selected' : '' }}>Child</option>
                                         </select>
                                     </div>
                                 </div>
@@ -466,7 +503,7 @@ document.addEventListener('keydown', function(event) {
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <input class="form-control" id="f_date" name="date" placeholder="Select Date" 
-                                               type="text" readonly required>
+                                               type="text" readonly value="{{ old('date') }}" required>
                                     </div>
                                 </div>
 
@@ -481,7 +518,35 @@ document.addEventListener('keydown', function(event) {
                                                 Please select a date first to view available time slots
                                             </div>
                                         </div>
-                                        <input type="hidden" id="selected_time" name="time" required>
+                                        <input type="hidden" id="selected_time" name="time" value="{{ old('time') }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <input class="form-control" name="bank_account_holder_name" placeholder="Account Holder Name"
+                                               type="text" value="{{ old('bank_account_holder_name') }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <input class="form-control" name="bank_name" placeholder="Bank Name"
+                                               type="text" value="{{ old('bank_name') }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <input class="form-control" name="bank_account_number" placeholder="Account Number"
+                                               type="text" value="{{ old('bank_account_number') }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group text-start">
+                                        <label for="payment_invoice" class="form-label text-white">Upload Payment Receipt (PDF or Image)</label>
+                                        <input class="form-control" name="payment_invoice" id="payment_invoice" type="file" accept=".pdf,.jpg,.jpeg,.png" required>
                                     </div>
                                 </div>
 
@@ -840,6 +905,7 @@ document.addEventListener('keydown', function(event) {
             function renderTimeSlots(allSlots, bookedSlots) {
                 const timeSlotsContainer = document.getElementById('time-slots-container');
                 const selectedTimeInput = document.getElementById('selected_time');
+                const previouslySelected = selectedTimeInput.value;
         
                 
                 if (allSlots.length === 0) {
@@ -859,8 +925,10 @@ document.addEventListener('keydown', function(event) {
                 
                 allSlots.forEach(slot => {
                     const isBooked = bookedSlots.includes(slot.value);
-                    const buttonClass = isBooked ? 'time-slot-btn booked' : 'time-slot-btn';
+                    const isSelected = !isBooked && previouslySelected === slot.value;
+                    const buttonClass = isBooked ? 'time-slot-btn booked' : `time-slot-btn${isSelected ? ' active' : ''}`;
                     const disabled = isBooked ? 'disabled' : '';
+                    const checked = isSelected ? 'checked' : '';
                     const title = isBooked ? 'This time slot is already booked' : '';
                     
                     slotsHtml += `
@@ -869,6 +937,7 @@ document.addEventListener('keydown', function(event) {
                                    id="slot-${slot.value}" 
                                    name="time_slot" 
                                    value="${slot.value}" 
+                                   ${checked}
                                    ${disabled}
                                    class="time-slot-radio">
                             <label for="slot-${slot.value}" 
@@ -907,8 +976,13 @@ document.addEventListener('keydown', function(event) {
                     });
                 });
 
-                // Clear previously selected time
-                selectedTimeInput.value = '';
+                if (!previouslySelected || bookedSlots.includes(previouslySelected)) {
+                    // Clear invalid selection
+                    selectedTimeInput.value = '';
+                    document.querySelectorAll('.time-slot-label.active').forEach(label => {
+                        label.classList.remove('active');
+                    });
+                }
             }
 
             // Form Validation

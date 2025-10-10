@@ -15,6 +15,7 @@ use Orchid\Screen\Actions\Button;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
 use Orchid\Screen\Actions\DropDown;
+use App\Services\AppointmentMailer;
 
 class AppointmentListScreen extends Screen {
   public function query(): iterable {
@@ -148,6 +149,7 @@ class AppointmentListScreen extends Screen {
   public function accept(Appointment $appointment) {
     $appointment->update(['status' => 'accepted']);
     $this->notifyUser($appointment, 'accepted');
+    app(AppointmentMailer::class)->sendStatus($appointment, 'accepted');
     Alert::info('Appointment accepted');
     return redirect()->route('platform.appointment.list');
   }
@@ -155,6 +157,7 @@ class AppointmentListScreen extends Screen {
   public function decline(Appointment $appointment) {
     $appointment->update(['status' => 'declined']);
     $this->notifyUser($appointment, 'declined');
+    app(AppointmentMailer::class)->sendStatus($appointment, 'declined');
     Alert::info('Appointment declined');
     return redirect()->route('platform.appointment.list');
   }

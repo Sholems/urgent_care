@@ -19,6 +19,7 @@ use App\Models\Notification;
 use Orchid\Support\Facades\Alert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Services\AppointmentMailer;
 
 class AppointmentDetailScreen extends Screen {
 
@@ -154,6 +155,7 @@ class AppointmentDetailScreen extends Screen {
     $appointment->status = 'accepted';
     $appointment->save();
     $this->notifyUser($appointment, 'accepted');
+    app(AppointmentMailer::class)->sendStatus($appointment, 'accepted');
     Alert::info('Appointment accepted');
     return redirect()->route('platform.appointment.list');
   }
@@ -162,6 +164,7 @@ class AppointmentDetailScreen extends Screen {
     $appointment->status = 'declined';
     $appointment->save();
     $this->notifyUser($appointment, 'declined');
+    app(AppointmentMailer::class)->sendStatus($appointment, 'declined');
     Alert::info('Appointment declined');
     return redirect()->route('platform.appointment.list');
   }

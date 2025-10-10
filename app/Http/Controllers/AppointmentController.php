@@ -13,8 +13,13 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Stripe\StripeClient;
 use Illuminate\Support\Facades\Storage;
+use App\Services\AppointmentMailer;
 
 class AppointmentController extends Controller {
+
+  public function __construct(private AppointmentMailer $mailer) {
+  }
+
   /**
    * Display a listing of the resource.
    */
@@ -77,6 +82,8 @@ class AppointmentController extends Controller {
       'message' => 'New appointment on ' . $validated['date'] . ' at ' . $validated['time'],
       'appointment_id' => $appointment->id,
     ]);
+
+    $this->mailer->sendCreated($appointment);
 
     return response()->json([
         'status' => 'success',

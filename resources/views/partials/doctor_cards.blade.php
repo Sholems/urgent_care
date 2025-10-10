@@ -89,7 +89,7 @@
                         <!-- Price -->
                         <div class="price">
                             <span class="price-label">Consultation Fee</span>
-                            <div class="price-amount">${{ number_format($price) }}</div>
+                            <div class="price-amount">${{ number_format($doctor->price) }}</div>
                         </div>
                         
                         <!-- View Profile Button -->

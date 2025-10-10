@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Schema;
-use App\Models\SmtpSetting;
+use App\Services\SmtpConfigurator;
 use App\Models\Category;
 use App\Models\SiteSetting;
 use Illuminate\Support\Facades\View;
@@ -26,17 +26,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        if (Schema::hasTable('smtp_settings') && ($smtp = SmtpSetting::first())) {
-            config([
-                'mail.default' => $smtp->mailer ?? 'smtp',
-                'mail.mailers.smtp.host' => $smtp->host,
-                'mail.mailers.smtp.port' => $smtp->port,
-                'mail.mailers.smtp.username' => $smtp->username,
-                'mail.mailers.smtp.password' => $smtp->password,
-                'mail.mailers.smtp.encryption' => $smtp->encryption,
-                'mail.from.address' => $smtp->from_address,
-                'mail.from.name' => $smtp->from_name,
-            ]);
+        if (Schema::hasTable('smtp_settings')) {
+            SmtpConfigurator::apply();
         }
 
         if (Schema::hasTable('categories')) {
@@ -52,4 +43,3 @@ class AppServiceProvider extends ServiceProvider
         View::share('siteSetting', $siteSetting);
     }
 }
-
