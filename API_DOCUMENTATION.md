@@ -9,7 +9,8 @@ Create a new application user.
 
 **Parameters**
 - `user_name` (string, required)
-- `user_email` (string, required, email)
+- `user_email` (string, optional, email; required if `user_phone_number` is not provided)
+- `user_phone_number` (string, optional; required if `user_email` is not provided)
 - `user_password` (string, required)
 
 **Sample Response**
@@ -28,7 +29,8 @@ Create a new application user.
 Authenticate an application user.
 
 **Parameters**
-- `user_email` (string, required, email)
+- `user_email` (string, optional, email; required if `user_phone_number` is not provided)
+- `user_phone_number` (string, optional; required if `user_email` is not provided)
 - `user_password` (string, required)
 
 **Sample Response**
