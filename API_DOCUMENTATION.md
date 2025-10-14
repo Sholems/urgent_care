@@ -12,6 +12,7 @@ Create a new application user.
 - `user_email` (string, optional, email; required if `user_phone_number` is not provided)
 - `user_phone_number` (string, optional; required if `user_email` is not provided)
 - `user_password` (string, required)
+- `user_photo` (file, optional image; send the request as `multipart/form-data` when included)
 
 **Sample Response**
 ```json
@@ -21,7 +22,8 @@ Create a new application user.
     "id": 1,
     "user_name": "John Doe",
     "user_email": "john@example.com",
-    "user_phone_number": "+23212345678"
+    "user_phone_number": "+23212345678",
+    "user_photo": "app-users/example.jpg"
   }
 }
 ```
@@ -65,14 +67,18 @@ Change an application user's password.
 ### `POST /api/user/update/{id}`
 Update profile details for a user.
 
-**Parameters** (all optional)
-- `user_name`, `user_email`, `user_location`, `user_phone_number`, `medical_history`, `insurance_details`
+**Parameters** (all optional; use `multipart/form-data` when sending `user_photo`)
+- `user_name`, `user_email`, `user_location`, `user_phone_number`, `medical_history`, `insurance_details`, `user_photo` (file image)
 
 **Sample Response**
 ```json
 {
   "message": "User updated successfully",
-  "user": { "id": 1, "user_name": "Jane" }
+  "user": {
+    "id": 1,
+    "user_name": "Jane",
+    "user_photo": "app-users/example.jpg"
+  }
 }
 ```
 
@@ -349,6 +355,27 @@ Validate the SMS OTP received by the user. When verification succeeds and an ema
 - `GET /api/dashboard/doctor/{doctorId}` – earnings for a doctor.
 - `GET /api/dashboard/admin` – revenue for all doctors.
 
+## Admin Contact
+
+### `GET /api/admin-contact`
+Retrieve the admin phone number and email address. Falls back to the configured footer contact details when dedicated contact values are missing.
+
+**Sample Request**
+```
+GET /api/admin-contact HTTP/1.1
+Host: api.example.com
+Authorization: Bearer {token}
+Accept: application/json
+```
+
+**Sample Response**
+```json
+{
+  "contact_phone": "+44-20-7328-4499",
+  "contact_email": "info@healdi.com"
+}
+```
+
 ---
 
 ## Exchange Rate
@@ -383,4 +410,3 @@ Each listing endpoint returns paginated data in the standard format:
   }
 }
 ```
-

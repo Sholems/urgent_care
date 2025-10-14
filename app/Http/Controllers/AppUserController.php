@@ -4,8 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\AppUser;
 use App\Models\EmailOtp;
+use App\Mail\WelcomeMail;
+use App\Services\SmtpConfigurator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class AppUserController extends Controller {
   /**
@@ -35,10 +40,11 @@ class AppUserController extends Controller {
     ]);
 
     $validated = $request->validate([
-      'user_name'         => 'required|string|unique:app_users,user_name',
+      'user_name'         => 'required|string',
       'user_email'        => 'nullable|email|unique:app_users,user_email|required_without:user_phone_number',
       'user_phone_number' => 'nullable|string|unique:app_users,user_phone_number|required_without:user_email',
       'user_password'     => 'required|string',
+      'user_photo'        => 'nullable|image|max:5120',
     ]);
 
     $input = [
@@ -48,7 +54,24 @@ class AppUserController extends Controller {
       'user_password'     => Hash::make($validated['user_password']),
     ];
 
+    if ($request->hasFile('user_photo')) {
+      $input['user_photo'] = $request->file('user_photo')->store('app-users', 'public');
+    }
+
     $appUser = AppUser::create($input);
+
+    if ($appUser->user_email) {
+      try {
+        SmtpConfigurator::apply();
+        Mail::to($appUser->user_email)->send(new WelcomeMail($appUser));
+      } catch (\Throwable $e) {
+        Log::warning('Failed to send welcome email', [
+          'user_id' => $appUser->id,
+          'email'   => $appUser->user_email,
+          'message' => $e->getMessage(),
+        ]);
+      }
+    }
 
     return response()->json([
       'message' => 'User created successfully',
@@ -179,7 +202,16 @@ class AppUserController extends Controller {
       'user_phone_number' => 'sometimes|string|nullable',
       'medical_history'   => 'sometimes|string|nullable',
       'insurance_details' => 'sometimes|string|nullable',
+      'user_photo'        => 'sometimes|image|max:5120',
     ]);
+
+    if (array_key_exists('user_photo', $data)) {
+      if (!empty($user->user_photo)) {
+        Storage::disk('public')->delete($user->user_photo);
+      }
+
+      $data['user_photo'] = $data['user_photo']->store('app-users', 'public');
+    }
 
     $user->fill($data);
     $user->save();
