@@ -28,24 +28,25 @@ class AppUserController extends Controller {
   public function store(Request $request) {
     info($request->all());
 
-    $request->validate([
-      'user_name' => 'required',
-      'user_email' => 'required|email',
-      'user_password' => 'required',
+    $request->merge([
+      'user_name'         => $request->has('user_name') ? trim($request->input('user_name')) : null,
+      'user_email'        => $request->has('user_email') ? strtolower(trim($request->input('user_email'))) : null,
+      'user_phone_number' => $request->has('user_phone_number') ? trim($request->input('user_phone_number')) : null,
     ]);
 
-    $userExists = AppUser::where('user_name', $request->user_name)
-      ->orWhere('user_email', $request->user_email)
-      ->exists();
+    $validated = $request->validate([
+      'user_name'         => 'required|string|unique:app_users,user_name',
+      'user_email'        => 'nullable|email|unique:app_users,user_email|required_without:user_phone_number',
+      'user_phone_number' => 'nullable|string|unique:app_users,user_phone_number|required_without:user_email',
+      'user_password'     => 'required|string',
+    ]);
 
-    if ($userExists) {
-      return response()->json([
-        'message' => 'User with this name or email already exists',
-      ], 409); // 409 Conflict
-    }
-
-    $input = $request->all();
-    $input['user_password'] = Hash::make($request->user_password);
+    $input = [
+      'user_name'         => $validated['user_name'],
+      'user_email'        => $validated['user_email'] ?? null,
+      'user_phone_number' => $validated['user_phone_number'] ?? null,
+      'user_password'     => Hash::make($validated['user_password']),
+    ];
 
     $appUser = AppUser::create($input);
 
@@ -60,16 +61,32 @@ class AppUserController extends Controller {
   public function login(Request $request) {
     info($request->all());
 
-    $request->validate([
-      'user_email' => 'required|email',
-      'user_password' => 'required',
+    $request->merge([
+      'user_email'        => $request->has('user_email') ? strtolower(trim($request->input('user_email'))) : null,
+      'user_phone_number' => $request->has('user_phone_number') ? trim($request->input('user_phone_number')) : null,
     ]);
 
-    $user = AppUser::where('user_email', $request->user_email)->first();
+    $validated = $request->validate([
+      'user_email'        => 'nullable|email|required_without:user_phone_number',
+      'user_phone_number' => 'nullable|string|required_without:user_email',
+      'user_password'     => 'required|string',
+    ]);
 
-    if (!$user || !Hash::check($request->user_password, $user->user_password)) {
+    $user = AppUser::query()
+      ->when($validated['user_email'] ?? null, fn($query, $email) => $query->where('user_email', $email))
+      ->when(
+        empty($validated['user_email']) && ($validated['user_phone_number'] ?? null),
+        fn($query, $phone) => $query->where('user_phone_number', $phone)
+      )
+      ->first();
+
+    if (!$user && ($validated['user_phone_number'] ?? null)) {
+      $user = AppUser::where('user_phone_number', $validated['user_phone_number'])->first();
+    }
+
+    if (!$user || !Hash::check($validated['user_password'], $user->user_password)) {
       return response()->json([
-        'message' => 'Invalid email or password',
+        'message' => 'Invalid login credentials',
       ], 401); // 401 Unauthorized
     }
 

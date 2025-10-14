@@ -9,7 +9,8 @@ Create a new application user.
 
 **Parameters**
 - `user_name` (string, required)
-- `user_email` (string, required, email)
+- `user_email` (string, optional, email; required if `user_phone_number` is not provided)
+- `user_phone_number` (string, optional; required if `user_email` is not provided)
 - `user_password` (string, required)
 
 **Sample Response**
@@ -19,7 +20,8 @@ Create a new application user.
   "user": {
     "id": 1,
     "user_name": "John Doe",
-    "user_email": "john@example.com"
+    "user_email": "john@example.com",
+    "user_phone_number": "+23212345678"
   }
 }
 ```
@@ -28,7 +30,8 @@ Create a new application user.
 Authenticate an application user.
 
 **Parameters**
-- `user_email` (string, required, email)
+- `user_email` (string, optional, email; required if `user_phone_number` is not provided)
+- `user_phone_number` (string, optional; required if `user_email` is not provided)
 - `user_password` (string, required)
 
 **Sample Response**
@@ -38,7 +41,8 @@ Authenticate an application user.
   "user": {
     "id": 1,
     "user_name": "John Doe",
-    "user_email": "john@example.com"
+    "user_email": "john@example.com",
+    "user_phone_number": "+23212345678"
   }
 }
 ```
@@ -283,10 +287,60 @@ Each listing endpoint supports `per_page` and `page` query parameters and return
 
 ## OTP and Verification
 
-- `POST /api/otp/send` – send email OTP (`email`).
-- `POST /api/otp/verify` – verify email OTP (`email`, `otp`).
-- `POST /api/phone-otp/send` – send SMS OTP (`phone`).
-- `POST /api/phone-otp/verify` – verify SMS OTP (`phone`, `code`, `user_email`).
+### `POST /api/otp/send`
+Send a one-time password to a user's email address. The OTP is valid for 10 minutes.
+
+**Parameters**
+- `email` (string, required, email)
+
+**Sample Response**
+```json
+{
+  "message": "OTP sent successfully"
+}
+```
+
+### `POST /api/otp/verify`
+Verify the OTP sent to the provided email address. On success, the OTP record is cleared and the user's email is flagged as verified when a matching user exists.
+
+**Parameters**
+- `email` (string, required, email)
+- `otp` (string, required)
+
+**Sample Response**
+```json
+{
+  "message": "OTP verified successfully"
+}
+```
+
+### `POST /api/phone-otp/send`
+Trigger an SMS OTP using the configured Twilio Verify service.
+
+**Parameters**
+- `phone` (string, required; must include country code)
+
+**Sample Response**
+```json
+{
+  "message": "OTP sent successfully"
+}
+```
+
+### `POST /api/phone-otp/verify`
+Validate the SMS OTP received by the user. When verification succeeds and an email address is supplied, the matching user record is updated with the verified phone number.
+
+**Parameters**
+- `phone` (string, required; must include country code)
+- `code` (string, required)
+- `user_email` (string, required, email)
+
+**Sample Response**
+```json
+{
+  "message": "Phone number verified successfully"
+}
+```
 
 ---
 
