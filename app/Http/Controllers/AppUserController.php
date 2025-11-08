@@ -302,13 +302,15 @@ class AppUserController extends Controller {
     $user = AppUser::findOrFail($id);
 
     $data = $request->validate([
-      'user_name'         => 'sometimes|string',
-      'user_email'        => 'sometimes|email',
-      'user_location'     => 'sometimes|string|nullable',
-      'user_phone_number' => 'sometimes|string|nullable',
-      'medical_history'   => 'sometimes|string|nullable',
-      'insurance_details' => 'sometimes|string|nullable',
-      'user_photo'        => 'sometimes|image|max:5120',
+      'user_name'                     => 'sometimes|string',
+      'user_email'                    => 'sometimes|email',
+      'user_location'                 => 'sometimes|string|nullable',
+      'user_phone_number'             => 'sometimes|string|nullable',
+      'medical_history'              => 'sometimes|string|nullable',
+      'insurance_details'            => 'sometimes|string|nullable',
+      'medical_history_attachment'   => 'sometimes|file|max:10240',
+      'insurance_details_attachment' => 'sometimes|file|max:10240',
+      'user_photo'                   => 'sometimes|image|max:5120',
     ]);
 
     if (array_key_exists('user_photo', $data)) {
@@ -317,6 +319,26 @@ class AppUserController extends Controller {
       }
 
       $data['user_photo'] = $data['user_photo']->store('app-users', 'public');
+    }
+
+    if ($request->hasFile('medical_history_attachment')) {
+      if (!empty($user->medical_history_attachment)) {
+        Storage::disk('public')->delete($user->medical_history_attachment);
+      }
+
+      $data['medical_history_attachment'] = $request->file('medical_history_attachment')->store('app-users/medical-history', 'public');
+    } else {
+      unset($data['medical_history_attachment']);
+    }
+
+    if ($request->hasFile('insurance_details_attachment')) {
+      if (!empty($user->insurance_details_attachment)) {
+        Storage::disk('public')->delete($user->insurance_details_attachment);
+      }
+
+      $data['insurance_details_attachment'] = $request->file('insurance_details_attachment')->store('app-users/insurance-details', 'public');
+    } else {
+      unset($data['insurance_details_attachment']);
     }
 
     $user->fill($data);

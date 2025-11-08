@@ -119,6 +119,26 @@ class AppointmentDetailScreen extends Screen {
         Sight::make('patient_insurance', 'Patient Insurance:')->render(function (Appointment $appointment) {
           return $appointment->user->insurance_details;
         }),
+        Sight::make('patient_medical_history_attachment', 'Medical History File:')->render(function (Appointment $appointment) {
+          $path = $appointment->user->medical_history_attachment;
+          if (empty($path)) {
+            return '—';
+          }
+
+          return Link::make('Download')
+            ->href(Storage::disk('public')->url($path))
+            ->target('_blank');
+        }),
+        Sight::make('patient_insurance_attachment', 'Insurance File:')->render(function (Appointment $appointment) {
+          $path = $appointment->user->insurance_details_attachment;
+          if (empty($path)) {
+            return '—';
+          }
+
+          return Link::make('Download')
+            ->href(Storage::disk('public')->url($path))
+            ->target('_blank');
+        }),
         Sight::make('bank_account_holder_name', 'Account Holder Name:')->render(function (Appointment $appointment) {
           return $appointment->bank_account_holder_name ?? '—';
         }),

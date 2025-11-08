@@ -33,6 +33,8 @@ class AppUser extends Model {
     'stripe_customer_id',
     'medical_history',
     'insurance_details',
+    'medical_history_attachment',
+    'insurance_details_attachment',
     'firebase_token',
   ];
 
@@ -49,6 +51,8 @@ class AppUser extends Model {
     'stripe_customer_id',
     'medical_history',
     'insurance_details',
+    'medical_history_attachment',
+    'insurance_details_attachment',
     'updated_at',
     'firebase_token',
   ];
@@ -66,6 +70,8 @@ class AppUser extends Model {
     'stripe_customer_id'  => Like::class,
     'medical_history'     => Like::class,
     'insurance_details'   => Like::class,
+    'medical_history_attachment'   => Like::class,
+    'insurance_details_attachment' => Like::class,
     'updated_at'          => Like::class,
     'firebase_token'      => Like::class,
   ];
