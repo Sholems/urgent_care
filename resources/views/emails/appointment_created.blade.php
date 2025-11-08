@@ -1,7 +1,7 @@
 @php
     $patientName = $appointment->user?->user_name ?: 'there';
     $doctorName = $appointment->doctor?->name;
-    $doctorLine = $doctorName ? " with Dr. {$doctorName}" : '';
+    $doctorLine = $doctorName ? " with {$doctorName}" : '';
 @endphp
 
 <p>Hi {{ $patientName }},</p>

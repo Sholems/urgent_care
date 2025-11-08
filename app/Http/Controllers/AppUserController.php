@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\AppUser;
 use App\Models\EmailOtp;
+use App\Models\Favourite;
+use App\Models\Notification;
+use App\Models\Review;
+use App\Models\StripeKey;
 use App\Mail\WelcomeMail;
 use App\Services\SmtpConfigurator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Stripe\StripeClient;
 
 class AppUserController extends Controller {
   /**
@@ -77,6 +83,90 @@ class AppUserController extends Controller {
       'message' => 'User created successfully',
       'user' => $appUser,
     ], 201); // 201 Created
+  }
+
+  public function findOrCreate(Request $request) {
+    info($request->all());
+
+    $request->merge([
+      'user_email'        => $request->has('user_email') ? strtolower(trim($request->input('user_email'))) : null,
+      'user_phone_number' => $request->has('user_phone_number') ? trim($request->input('user_phone_number')) : null,
+      'user_name'         => $request->has('user_name') ? trim($request->input('user_name')) : null,
+    ]);
+
+    $validated = $request->validate([
+      'user_email'        => 'nullable|email|required_without:user_phone_number',
+      'user_phone_number' => 'nullable|string|required_without:user_email',
+      'user_name'         => 'nullable|string',
+      'user_password'     => 'nullable|string',
+    ]);
+
+    $user = AppUser::query()
+      ->when($validated['user_email'] ?? null, fn($query, $email) => $query->where('user_email', $email))
+      ->when(
+        empty($validated['user_email']) && ($validated['user_phone_number'] ?? null),
+        fn($query, $phone) => $query->where('user_phone_number', $phone)
+      )
+      ->first();
+
+    if (!$user && ($validated['user_phone_number'] ?? null)) {
+      $user = AppUser::where('user_phone_number', $validated['user_phone_number'])->first();
+    }
+
+    if ($user) {
+      return response()->json([
+        'message'      => 'User already exists',
+        'user_exists'  => true,
+        'user_created' => false,
+        'user'         => $user,
+      ], 200);
+    }
+
+    $missing = [];
+
+    if (empty($validated['user_name'])) {
+      $missing[] = 'user_name';
+    }
+
+    if (empty($validated['user_password'])) {
+      $missing[] = 'user_password';
+    }
+
+    if (!empty($missing)) {
+      return response()->json([
+        'message'        => 'Additional fields required to create a new user',
+        'missing_fields' => $missing,
+      ], 422);
+    }
+
+    $input = [
+      'user_name'         => $validated['user_name'],
+      'user_email'        => $validated['user_email'] ?? null,
+      'user_phone_number' => $validated['user_phone_number'] ?? null,
+      'user_password'     => Hash::make($validated['user_password']),
+    ];
+
+    $appUser = AppUser::create($input);
+
+    if ($appUser->user_email) {
+      try {
+        SmtpConfigurator::apply();
+        Mail::to($appUser->user_email)->send(new WelcomeMail($appUser));
+      } catch (\Throwable $e) {
+        Log::warning('Failed to send welcome email', [
+          'user_id' => $appUser->id,
+          'email'   => $appUser->user_email,
+          'message' => $e->getMessage(),
+        ]);
+      }
+    }
+
+    return response()->json([
+      'message'      => 'User created successfully',
+      'user_exists'  => false,
+      'user_created' => true,
+      'user'         => $appUser,
+    ], 201);
   }
 
 
@@ -182,6 +272,22 @@ class AppUserController extends Controller {
     return $this->paginatedResponse($paginator);
   }
 
+  public function saveFirebaseToken(Request $request) {
+    $data = $request->validate([
+      'user_id' => 'required|exists:app_users,id',
+      'firebase_token' => 'required|string|max:4096',
+    ]);
+
+    $user = AppUser::findOrFail($data['user_id']);
+    $user->firebase_token = $data['firebase_token'];
+    $user->save();
+
+    return response()->json([
+      'message' => 'Firebase token saved successfully',
+      'user' => $user,
+    ]);
+  }
+
   /**
    * Show the form for editing the specified resource.
    */
@@ -225,7 +331,70 @@ class AppUserController extends Controller {
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(AppUser $appUser) {
-    //
+  public function destroy($id) {
+    $user = AppUser::find($id);
+
+    if (!$user) {
+      return response()->json(['message' => 'User not found'], 404);
+    }
+
+    DB::transaction(function () use ($user) {
+      $appointments = $user->appointments()->with('documents')->get();
+
+      foreach ($appointments as $appointment) {
+        foreach ($appointment->documents as $document) {
+          if (!empty($document->file_path)) {
+            Storage::disk('public')->delete($document->file_path);
+          }
+        }
+
+        if (!empty($appointment->payment_invoice_path)) {
+          Storage::disk('public')->delete($appointment->payment_invoice_path);
+        }
+      }
+
+      Review::where('user_id', $user->id)->delete();
+      Favourite::where('user_id', $user->id)->delete();
+
+      Notification::where('notifiable_type', AppUser::class)
+        ->where('notifiable_id', $user->id)
+        ->delete();
+
+      if (!empty($user->user_email)) {
+        EmailOtp::where('email', $user->user_email)->delete();
+      }
+
+      foreach ($appointments as $appointment) {
+        $appointment->delete();
+      }
+
+      if (!empty($user->user_photo)) {
+        Storage::disk('public')->delete($user->user_photo);
+      }
+
+      if (!empty($user->stripe_customer_id)) {
+        $stripeKey = StripeKey::first();
+        $secretKey = $stripeKey?->secret_key;
+
+        if (!empty($secretKey)) {
+          try {
+            $stripe = new StripeClient($secretKey);
+            $stripe->customers->delete($user->stripe_customer_id);
+          } catch (\Throwable $e) {
+            Log::warning('Failed to delete Stripe customer during account removal', [
+              'user_id'     => $user->id,
+              'customer_id' => $user->stripe_customer_id,
+              'message'     => $e->getMessage(),
+            ]);
+          }
+        }
+      }
+
+      $user->delete();
+    });
+
+    return response()->json([
+      'message' => 'Account deleted successfully',
+    ]);
   }
 }

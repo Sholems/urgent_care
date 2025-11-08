@@ -178,6 +178,22 @@ class DoctorController extends Controller {
     ], 200);
   }
 
+  public function saveFirebaseToken(Request $request) {
+    $data = $request->validate([
+      'doctor_id' => 'required|exists:doctors,id',
+      'firebase_token' => 'required|string|max:4096',
+    ]);
+
+    $doctor = Doctor::findOrFail($data['doctor_id']);
+    $doctor->firebase_token = $data['firebase_token'];
+    $doctor->save();
+
+    return response()->json([
+      'message' => 'Firebase token saved successfully',
+      'doctor' => $doctor,
+    ]);
+  }
+
   private function applyFilters(Request $request, $query) {
     if ($request->filled(['latitude', 'longitude'])) {
       $lat = (float) $request->input('latitude');

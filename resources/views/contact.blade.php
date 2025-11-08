@@ -26,8 +26,8 @@
     <!-- Start Contact Area
         ============================================= -->
     @php
-        $contactPhone = optional($siteSetting)->contact_phone ?? optional($siteSetting)->footer_phone ?? '+44-20-7328-4499';
-        $contactEmail = optional($siteSetting)->contact_email ?? optional($siteSetting)->footer_email ?? 'info@healdi.com';
+        $contactPhone = optional($siteSetting)->contact_phone ?? optional($siteSetting)->footer_phone ?? '+1 (240) 476-9840';
+        $contactEmail = optional($siteSetting)->contact_email ?? optional($siteSetting)->footer_email ?? 'info@lizelsundria.com';
     @endphp
 
     <div id="contact" class="contact-us-area default-padding">

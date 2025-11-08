@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Stripe\StripeClient;
 use Illuminate\Support\Facades\Storage;
 use App\Services\AppointmentMailer;
+use App\Services\AppointmentNotifier;
 
 class AppointmentController extends Controller {
 
@@ -73,15 +74,7 @@ class AppointmentController extends Controller {
         'payment_invoice_path' => $invoicePath,
     ]);
 
-    $this->notify(AppUser::class, $validated['user_id'], 'appointment.created', [
-      'message' => 'Appointment booked for ' . $validated['date'] . ' at ' . $validated['time'],
-      'appointment_id' => $appointment->id,
-    ]);
-
-    $this->notify(Doctor::class, $validated['doctor_id'], 'appointment.created', [
-      'message' => 'New appointment on ' . $validated['date'] . ' at ' . $validated['time'],
-      'appointment_id' => $appointment->id,
-    ]);
+    app(AppointmentNotifier::class)->status($appointment, 'pending');
 
     $this->mailer->sendCreated($appointment);
 

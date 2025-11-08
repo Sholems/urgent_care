@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AppUser;
 use App\Models\StripeKey;
 use Illuminate\Http\Request;
+use Stripe\Exception\InvalidRequestException;
 use Stripe\StripeClient;
 
 class PaymentController extends Controller
@@ -19,12 +20,25 @@ class PaymentController extends Controller
     protected function getOrCreateCustomer(AppUser $user, StripeClient $stripe): string
     {
         if ($user->stripe_customer_id) {
-            return $user->stripe_customer_id;
+            try {
+                $stripe->customers->retrieve($user->stripe_customer_id, []);
+
+                return $user->stripe_customer_id;
+            } catch (InvalidRequestException $exception) {
+                if ($exception->getStripeCode() !== 'resource_missing') {
+                    throw $exception;
+                }
+
+                // Stored customer was deleted in Stripe; fall through to create a fresh one
+                $user->stripe_customer_id = null;
+                $user->save();
+            }
         }
 
         $customer = $stripe->customers->create([
             'metadata' => ['app_user_id' => $user->id],
         ]);
+
         $user->stripe_customer_id = $customer->id;
         $user->save();
 

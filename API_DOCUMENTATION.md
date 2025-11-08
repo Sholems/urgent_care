@@ -49,6 +49,39 @@ Authenticate an application user.
 }
 ```
 
+### `POST /api/user/find-or-create`
+Check if a user exists by email or phone; create one when missing.
+
+**Parameters**
+- `user_email` (string, optional, email; required if `user_phone_number` is not provided)
+- `user_phone_number` (string, optional; required if `user_email` is not provided)
+- `user_name` (string, required only when creating a new user)
+- `user_password` (string, required only when creating a new user)
+
+**Sample Response (user exists)**
+```json
+{
+  "message": "User already exists",
+  "user_exists": true,
+  "user_created": false,
+  "user": { "id": 1 }
+}
+```
+
+**Sample Response (user created)**
+```json
+{
+  "message": "User created successfully",
+  "user_exists": false,
+  "user_created": true,
+  "user": {
+    "id": 12,
+    "user_name": "Jane Doe",
+    "user_email": "jane@example.com"
+  }
+}
+```
+
 ### `POST /api/user/change-password`
 Change an application user's password.
 
@@ -82,6 +115,24 @@ Update profile details for a user.
 }
 ```
 
+### `POST /api/user/firebase-token`
+Save a Firebase Cloud Messaging token for a user device.
+
+**Parameters**
+- `user_id` (int, required) – ID of the app user.
+- `firebase_token` (string, required) – Token issued by Firebase.
+
+**Sample Response**
+```json
+{
+  "message": "Firebase token saved successfully",
+  "user": {
+    "id": 1,
+    "firebase_token": "example-token"
+  }
+}
+```
+
 ### `POST /api/doctor/login`
 Authenticate a doctor and retrieve recent appointments.
 
@@ -97,6 +148,24 @@ Authenticate a doctor and retrieve recent appointments.
   "appointments": {
     "data": [ /* appointment list */ ],
     "pagination": { /* pagination info */ }
+  }
+}
+```
+
+### `POST /api/doctor/firebase-token`
+Save a Firebase Cloud Messaging token for a doctor device.
+
+**Parameters**
+- `doctor_id` (int, required) – ID of the doctor.
+- `firebase_token` (string, required) – Token issued by Firebase.
+
+**Sample Response**
+```json
+{
+  "message": "Firebase token saved successfully",
+  "doctor": {
+    "id": 5,
+    "firebase_token": "example-token"
   }
 }
 ```
@@ -371,8 +440,8 @@ Accept: application/json
 **Sample Response**
 ```json
 {
-  "contact_phone": "+44-20-7328-4499",
-  "contact_email": "info@healdi.com"
+  "contact_phone": "+1 (240) 476-9840",
+  "contact_email": "info@lizelsundria.com"
 }
 ```
 

@@ -14,19 +14,17 @@ use Orchid\Screen\Actions\Link;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Appointment;
 use App\Models\AppointmentDocument;
-use App\Models\AppUser;
-use App\Models\Notification;
 use Orchid\Support\Facades\Alert;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use App\Services\AppointmentMailer;
+use App\Services\AppointmentNotifier;
 
 class AppointmentDetailScreen extends Screen {
 
   public $appointment;
 
   public function query(Appointment $appointment): iterable {
-    $this->appointment = $appointment->load(['documents', 'user']);
+    $this->appointment = $appointment->load(['documents', 'user', 'doctor']);
     return [
       'appointment' => $this->appointment,
       'documents' => $this->appointment->documents,
@@ -58,6 +56,24 @@ class AppointmentDetailScreen extends Screen {
         ->canSee($this->appointment->status === 'pending')
         ->confirm('Are you sure you want to decline this appointment ?'),
 
+      Button::make('Mark Pending')
+        ->icon('bs.arrow-counterclockwise')
+        ->method('markPending')
+        ->parameters([
+          'appointment' => $this->appointment->id,
+        ])
+        ->canSee($this->appointment->status !== 'pending')
+        ->confirm('Mark this appointment as pending?'),
+
+      Button::make('Mark Completed')
+        ->icon('bs.check2-circle')
+        ->method('complete')
+        ->parameters([
+          'appointment' => $this->appointment->id,
+        ])
+        ->canSee($this->appointment->status === 'accepted')
+        ->confirm('Mark this appointment as completed?'),
+
       Button::make('Remove')
         ->icon('trash')
         ->method('remove')
@@ -84,6 +100,9 @@ class AppointmentDetailScreen extends Screen {
         }),
         Sight::make('status', 'Status:')->render(function (Appointment $appointment) {
           return ucfirst($appointment->status ?? 'pending');
+        }),
+        Sight::make('doctor_name', 'Doctor Name:')->render(function (Appointment $appointment) {
+          return $appointment->doctor?->name ?? '—';
         }),
         Sight::make('patient_name', 'Patient Name:')->render(function (Appointment $appointment) {
           return $appointment->user->user_name;
@@ -154,7 +173,7 @@ class AppointmentDetailScreen extends Screen {
   public function accept(Appointment $appointment) {
     $appointment->status = 'accepted';
     $appointment->save();
-    $this->notifyUser($appointment, 'accepted');
+    app(AppointmentNotifier::class)->status($appointment, 'accepted');
     app(AppointmentMailer::class)->sendStatus($appointment, 'accepted');
     Alert::info('Appointment accepted');
     return redirect()->route('platform.appointment.list');
@@ -163,30 +182,26 @@ class AppointmentDetailScreen extends Screen {
   public function decline(Appointment $appointment) {
     $appointment->status = 'declined';
     $appointment->save();
-    $this->notifyUser($appointment, 'declined');
+    app(AppointmentNotifier::class)->status($appointment, 'declined');
     app(AppointmentMailer::class)->sendStatus($appointment, 'declined');
     Alert::info('Appointment declined');
     return redirect()->route('platform.appointment.list');
   }
 
-  protected function notifyUser(Appointment $appointment, string $status): void {
-    $message = $status === 'accepted'
-      ? 'Your appointment on ' . $appointment->date . ' at ' . $appointment->time . ' has been approved.'
-      : 'Your appointment on ' . $appointment->date . ' at ' . $appointment->time . ' has been declined.';
+  public function markPending(Appointment $appointment) {
+    $appointment->status = 'pending';
+    $appointment->save();
+    app(AppointmentNotifier::class)->status($appointment, 'pending');
+    Alert::info('Appointment marked as pending');
+    return redirect()->route('platform.appointment.list');
+  }
 
-    Notification::create([
-      'id' => (string) Str::uuid(),
-      'type' => 'appointment.' . $status,
-      'notifiable_type' => AppUser::class,
-      'notifiable_id' => $appointment->user_id,
-      'data' => json_encode([
-        'message' => $message,
-        'appointment_id' => $appointment->id,
-        'status' => $status,
-        'date' => $appointment->date,
-        'time' => $appointment->time,
-      ]),
-    ]);
+  public function complete(Appointment $appointment) {
+    $appointment->status = 'completed';
+    $appointment->save();
+    app(AppointmentNotifier::class)->status($appointment, 'completed');
+    Alert::info('Appointment marked as completed');
+    return redirect()->route('platform.appointment.list');
   }
 
   public function remove(Appointment $appointment) {

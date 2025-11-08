@@ -45,6 +45,7 @@ class Doctor extends Model {
       'country',
       'latitude',
       'longitude',
+      'firebase_token',
     ];
 
   protected $casts = [

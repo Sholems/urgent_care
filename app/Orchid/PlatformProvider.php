@@ -96,33 +96,28 @@ class PlatformProvider extends OrchidServiceProvider {
         ->permission('platform.systems.users')
         ->title(__('Access Controls')),
 
-      Menu::make(__('Roles'))
-        ->icon('bs.shield')
-        ->route('platform.systems.roles')
-        ->permission('platform.systems.roles'),
-
-       Menu::make('Stripe Keys')
-       ->title('Configuration')
-       ->icon('bs.credit-card')
+      Menu::make('Stripe Keys')
+        ->title('Configuration')
+        ->icon('bs.credit-card')
         ->route('platform.stripekey.list')
         ->permission('platform.systems.users'),
 
-        Menu::make('Bank Details')
+      Menu::make('Bank Details')
         ->icon('bs.wallet2')
         ->route('platform.bank.details')
         ->permission('platform.systems.users'),
 
-        Menu::make('Twilio Settings')
+      Menu::make('Twilio Settings')
         ->icon('bs.phone')
         ->route('platform.twilio.edit')
         ->permission('platform.systems.users'),
 
-        Menu::make('Site Settings')
+      Menu::make('Site Settings')
         ->icon('bs.gear')
         ->route('platform.site.settings')
         ->permission('platform.systems.users'),
 
-        Menu::make('SMTP Settings')
+      Menu::make('SMTP Settings')
         ->icon('bs.envelope')
         ->route('platform.smtp.edit')
         ->permission('platform.systems.users')

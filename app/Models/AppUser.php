@@ -33,6 +33,7 @@ class AppUser extends Model {
     'stripe_customer_id',
     'medical_history',
     'insurance_details',
+    'firebase_token',
   ];
 
   protected $allowedSorts = [
@@ -49,6 +50,7 @@ class AppUser extends Model {
     'medical_history',
     'insurance_details',
     'updated_at',
+    'firebase_token',
   ];
 
   protected $allowedFilters = [
@@ -65,6 +67,7 @@ class AppUser extends Model {
     'medical_history'     => Like::class,
     'insurance_details'   => Like::class,
     'updated_at'          => Like::class,
+    'firebase_token'      => Like::class,
   ];
 
   public function appointments() {

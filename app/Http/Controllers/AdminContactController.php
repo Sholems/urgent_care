@@ -13,11 +13,11 @@ class AdminContactController extends Controller
 
         $contactPhone = $siteSetting?->contact_phone
             ?? $siteSetting?->footer_phone
-            ?? '+44-20-7328-4499';
+            ?? '+1 (240) 476-9840';
 
         $contactEmail = $siteSetting?->contact_email
             ?? $siteSetting?->footer_email
-            ?? 'info@healdi.com';
+            ?? 'info@lizelsundria.com';
 
         return response()->json([
             'contact_phone' => $contactPhone,

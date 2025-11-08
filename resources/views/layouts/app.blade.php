@@ -173,6 +173,9 @@
                         <li>
                             <a href="{{ route('contact') }}">Contact</a>
                         </li>
+                        <li>
+                            <a href="https://lizelsundria.com/webmail" target="_blank" rel="noopener">Staff Email</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -254,7 +257,7 @@
                                             </div>
                                             <div class="info">
                                                 <h5>Phone:</h5>
-                                                <span>{{ optional($siteSetting)->footer_phone ?? '+44-20-7328-4499' }}</span>
+                                                <span>{{ optional($siteSetting)->footer_phone ?? '+1 (240) 476-9840' }}</span>
                                             </div>
                                         </li>
                                     </ul>
