@@ -17,8 +17,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $categories = Category::all()->take(3);
-        $doctors = Doctor::all()->take(3);
+        $categories = Category::all()->take(4);
+        $doctors = Doctor::all()->take(4);
         return view('home', compact('categories', 'doctors'));
     }
 
@@ -235,6 +235,12 @@ if(!$existingUser){
     {
         return view('contact');
     }
+
+    public function privacyPolicy()
+    {
+        return view('privacy-policy');
+    }
+
     public function contactStore(Request $request)
     {
         // Validation

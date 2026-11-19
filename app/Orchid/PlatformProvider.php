@@ -37,7 +37,7 @@ class PlatformProvider extends OrchidServiceProvider {
         ->title('Overview')
         ->icon('bs.speedometer2')
         ->route('platform.main')
-        ->permission('platform.systems.users'),
+        ->permission(['platform.systems.users', 'platform.index']),
 
       Menu::make('Doctors')
         ->title('Navigation')
@@ -61,6 +61,16 @@ class PlatformProvider extends OrchidServiceProvider {
         // })
         ->route('platform.appointment.list')
         ->permission('platform.systems.users'),
+
+      Menu::make('Service Requests')
+        ->icon('bs.heart-pulse')
+        ->route('platform.service-request.list')
+        ->permission(['platform.systems.users', 'platform.service-requests']),
+
+      Menu::make('Nurses')
+        ->icon('bs.person-badge')
+        ->route('platform.nurse.list')
+        ->permission('platform.systems.users'), // Only admins can see this
 
       Menu::make('Banner')
         ->icon('bs.image')
@@ -96,15 +106,42 @@ class PlatformProvider extends OrchidServiceProvider {
         ->permission('platform.systems.users')
         ->title(__('Access Controls')),
 
-      Menu::make('Stripe Keys')
+      // Stripe key management is temporarily hidden from the admin panel.
+      // Menu::make('Stripe Keys')
+      //   ->title('Configuration')
+      //   ->icon('bs.credit-card')
+      //   ->route('platform.stripekey.list')
+      //   ->permission('platform.systems.users'),
+
+      Menu::make('Monime Credentials')
         ->title('Configuration')
-        ->icon('bs.credit-card')
-        ->route('platform.stripekey.list')
+        ->icon('bs.credit-card-2-front')
+        ->route('platform.monime.list')
         ->permission('platform.systems.users'),
 
       Menu::make('Bank Details')
         ->icon('bs.wallet2')
         ->route('platform.bank.details')
+        ->permission('platform.systems.users'),
+
+      Menu::make('Transport Pricing')
+        ->icon('bs.truck')
+        ->route('platform.transport-options.list')
+        ->permission('platform.systems.users'),
+
+      Menu::make('Meal Options')
+        ->icon('bs.cup-hot')
+        ->route('platform.meal-options.list')
+        ->permission('platform.systems.users'),
+
+      Menu::make('Consultation Options')
+        ->icon('bs.chat-dots')
+        ->route('platform.consultation-options.list')
+        ->permission('platform.systems.users'),
+
+      Menu::make('Service Add-ons')
+        ->icon('bs.plus-square')
+        ->route('platform.service-request-addon-options.list')
         ->permission('platform.systems.users'),
 
       Menu::make('Twilio Settings')
@@ -138,6 +175,9 @@ class PlatformProvider extends OrchidServiceProvider {
       ItemPermission::group(__('System'))
         ->addPermission('platform.systems.roles', __('Roles'))
         ->addPermission('platform.systems.users', __('Users')),
+      ItemPermission::group(__('Nurse'))
+        ->addPermission('platform.service-requests', __('Service Requests'))
+        ->addPermission('platform.nurses', __('Nurses')),
     ];
   }
 }

@@ -3,6 +3,7 @@
 namespace App\Orchid\Screens\SiteSetting;
 
 use App\Models\SiteSetting;
+use App\Support\ContactPhoneFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -36,6 +37,24 @@ class SiteSettingScreen extends Screen
 
             unset($openingHours['mon_tue'], $openingHours['wed_thu']);
 
+            if (
+                !array_key_exists('mon_sat', $openingHours)
+                || $openingHours['mon_sat'] === null
+                || $openingHours['mon_sat'] === ''
+            ) {
+                $openingHours['mon_sat'] = $openingHours['mon_thu']
+                    ?? $openingHours['fri']
+                    ?? $openingHours['sat']
+                    ?? null;
+            }
+            if (
+                !array_key_exists('sun_holidays', $openingHours)
+                || $openingHours['sun_holidays'] === null
+                || $openingHours['sun_holidays'] === ''
+            ) {
+                $openingHours['sun_holidays'] = $openingHours['sun'] ?? null;
+            }
+
             $siteSetting->opening_hours = $openingHours;
         }
 
@@ -64,30 +83,26 @@ class SiteSettingScreen extends Screen
             Layout::rows([
                 Input::make('siteSetting.footer_phone')
                     ->title('Footer Phone')
-                    ->placeholder('Enter footer phone number'),
+                    ->placeholder('e.g. +232 72 735 530 / +232 78 100 017 / +232 30 439 975')
+                    ->help('Saved to both footer and contact areas (same number shown site-wide).'),
                 Input::make('siteSetting.footer_email')
                     ->title('Footer Email')
                     ->type('email')
                     ->placeholder('Enter footer email address'),
                 Input::make('siteSetting.contact_phone')
                     ->title('Contact Page Phone')
-                    ->placeholder('Enter contact page phone number'),
+                    ->placeholder('e.g. +232 72 735 530 / +232 78 100 017 / +232 30 439 975')
+                    ->help('Takes priority over footer phone when both are filled; both fields are kept in sync on save.'),
                 Input::make('siteSetting.contact_email')
                     ->title('Contact Page Email')
                     ->type('email')
                     ->placeholder('Enter contact page email address'),
-                Input::make('siteSetting.opening_hours.mon_thu')
-                    ->title('Opening Hours (Mon - Thu)')
-                    ->placeholder('e.g. 8:00 - 17:30'),
-                Input::make('siteSetting.opening_hours.fri')
-                    ->title('Opening Hours (Fri)')
-                    ->placeholder('e.g. 8:00 - 17:30'),
-                Input::make('siteSetting.opening_hours.sat')
-                    ->title('Opening Hours (Sat)')
-                    ->placeholder('e.g. 10:45 - 15:00'),
-                Input::make('siteSetting.opening_hours.sun')
-                    ->title('Opening Hours (Sun)')
-                    ->placeholder('e.g. Closed'),
+                Input::make('siteSetting.opening_hours.mon_sat')
+                    ->title('Opening Hours (Mon - Sat)')
+                    ->placeholder('e.g. 8:00 am to 04:00 pm'),
+                Input::make('siteSetting.opening_hours.sun_holidays')
+                    ->title('Opening Hours (Sun & Holidays)')
+                    ->placeholder('e.g. Appointment/Emergency'),
                 Input::make('siteSetting.header_logo')
                     ->title('Header Logo')
                     ->type('file'),
@@ -105,26 +120,27 @@ class SiteSettingScreen extends Screen
             'siteSetting.footer_email' => 'nullable|email|max:255',
             'siteSetting.contact_phone' => 'nullable|string|max:255',
             'siteSetting.contact_email' => 'nullable|email|max:255',
-            'siteSetting.opening_hours.mon_thu' => 'nullable|string|max:255',
-            'siteSetting.opening_hours.fri' => 'nullable|string|max:255',
-            'siteSetting.opening_hours.sat' => 'nullable|string|max:255',
-            'siteSetting.opening_hours.sun' => 'nullable|string|max:255',
+            'siteSetting.opening_hours.mon_sat' => 'nullable|string|max:255',
+            'siteSetting.opening_hours.sun_holidays' => 'nullable|string|max:255',
             'siteSetting.header_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'siteSetting.footer_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $siteSetting = SiteSetting::first() ?? new SiteSetting();
 
-        $siteSetting->footer_phone = $request->input('siteSetting.footer_phone');
+        $resolvedPhone = ContactPhoneFormatter::resolveFromInput(
+            $request->input('siteSetting.contact_phone'),
+            $request->input('siteSetting.footer_phone')
+        ) ?? ContactPhoneFormatter::format(config('site.default_phone'));
+
+        $siteSetting->contact_phone = $resolvedPhone;
+        $siteSetting->footer_phone = $resolvedPhone;
         $siteSetting->footer_email = $request->input('siteSetting.footer_email');
-        $siteSetting->contact_phone = $request->input('siteSetting.contact_phone');
         $siteSetting->contact_email = $request->input('siteSetting.contact_email');
 
         $openingHours = [
-            'mon_thu' => $request->input('siteSetting.opening_hours.mon_thu'),
-            'fri' => $request->input('siteSetting.opening_hours.fri'),
-            'sat' => $request->input('siteSetting.opening_hours.sat'),
-            'sun' => $request->input('siteSetting.opening_hours.sun'),
+            'mon_sat' => $request->input('siteSetting.opening_hours.mon_sat'),
+            'sun_holidays' => $request->input('siteSetting.opening_hours.sun_holidays'),
         ];
 
         $openingHours = array_filter($openingHours, fn ($value) => $value !== null && $value !== '');

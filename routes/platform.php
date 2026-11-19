@@ -31,8 +31,22 @@ use App\Orchid\Screens\Smtp\SmtpSettingScreen;
 use App\Orchid\Screens\Twilio\TwilioSettingScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyListScreen;
 use App\Orchid\Screens\StripeKey\StripeKeyEditScreen;
+use App\Orchid\Screens\Monime\MonimeCredentialListScreen;
+use App\Orchid\Screens\Monime\MonimeCredentialEditScreen;
 use App\Orchid\Screens\SiteSetting\SiteSettingScreen;
 use App\Orchid\Screens\AdminBank\AdminBankDetailScreen;
+use App\Orchid\Screens\Pricing\TransportOptionListScreen;
+use App\Orchid\Screens\Pricing\TransportOptionEditScreen;
+use App\Orchid\Screens\Pricing\MealOptionListScreen;
+use App\Orchid\Screens\Pricing\MealOptionEditScreen;
+use App\Orchid\Screens\Pricing\ConsultationOptionListScreen;
+use App\Orchid\Screens\Pricing\ConsultationOptionEditScreen;
+use App\Orchid\Screens\Pricing\ServiceRequestAddonOptionListScreen;
+use App\Orchid\Screens\Pricing\ServiceRequestAddonOptionEditScreen;
+use App\Orchid\Screens\ServiceRequest\ServiceRequestListScreen;
+use App\Orchid\Screens\ServiceRequest\ServiceRequestDetailScreen;
+use App\Orchid\Screens\Nurse\NurseListScreen;
+use App\Orchid\Screens\Nurse\NurseEditScreen;
 
 //
 // Dashboard Routes
@@ -55,6 +69,24 @@ Route::screen('appointment/list', AppointmentListScreen::class)
 
 Route::screen('appointment/edit/{appointment?}', AppointmentDetailScreen::class)
   ->name('platform.appointment.detail');
+
+// Service Requests
+Route::screen('service-request/list', ServiceRequestListScreen::class)
+  ->name('platform.service-request.list')
+  ->middleware('check.orchid.permission');
+
+Route::screen('service-request/detail/{serviceRequest}', ServiceRequestDetailScreen::class)
+  ->name('platform.service-request.detail')
+  ->middleware('check.orchid.permission');
+
+// Nurses
+Route::screen('nurse/list', NurseListScreen::class)
+  ->name('platform.nurse.list')
+  ->middleware('check.orchid.permission');
+
+Route::screen('nurse/edit/{nurse?}', NurseEditScreen::class)
+  ->name('platform.nurse.edit')
+  ->middleware('check.orchid.permission');
 
 // Specialities
 Route::screen('speciality/list', SpecialityListScreen::class)
@@ -84,12 +116,18 @@ Route::screen('banner/list', BannerListScreen::class)
 Route::screen('banner/edit/{banner?}', BannerEditScreen::class)
   ->name('platform.banner.edit');
 
-// Stripe Keys
-Route::screen('stripekey/list', StripeKeyListScreen::class)
-  ->name('platform.stripekey.list');
+// Stripe Keys are temporarily hidden from admin panel routes.
+// Route::screen('stripekey/list', StripeKeyListScreen::class)
+//   ->name('platform.stripekey.list');
+//
+// Route::screen('stripekey/edit/{stripeKey?}', StripeKeyEditScreen::class)
+//   ->name('platform.stripekey.edit');
 
-Route::screen('stripekey/edit/{stripeKey?}', StripeKeyEditScreen::class)
-  ->name('platform.stripekey.edit');
+Route::screen('monime/list', MonimeCredentialListScreen::class)
+  ->name('platform.monime.list');
+
+Route::screen('monime/edit/{credential?}', MonimeCredentialEditScreen::class)
+  ->name('platform.monime.edit');
 
 Route::screen('settings/site', SiteSettingScreen::class)
   ->name('platform.site.settings')
@@ -97,6 +135,38 @@ Route::screen('settings/site', SiteSettingScreen::class)
 
 Route::screen('settings/bank-details', AdminBankDetailScreen::class)
   ->name('platform.bank.details')
+  ->middleware('check.orchid.permission');
+
+Route::screen('pricing/transport-options', TransportOptionListScreen::class)
+  ->name('platform.transport-options.list')
+  ->middleware('check.orchid.permission');
+
+Route::screen('pricing/transport-options/edit/{transportOption?}', TransportOptionEditScreen::class)
+  ->name('platform.transport-options.edit')
+  ->middleware('check.orchid.permission');
+
+Route::screen('pricing/meal-options', MealOptionListScreen::class)
+  ->name('platform.meal-options.list')
+  ->middleware('check.orchid.permission');
+
+Route::screen('pricing/meal-options/edit/{mealOption?}', MealOptionEditScreen::class)
+  ->name('platform.meal-options.edit')
+  ->middleware('check.orchid.permission');
+
+Route::screen('pricing/consultation-options', ConsultationOptionListScreen::class)
+  ->name('platform.consultation-options.list')
+  ->middleware('check.orchid.permission');
+
+Route::screen('pricing/consultation-options/edit/{consultationOption?}', ConsultationOptionEditScreen::class)
+  ->name('platform.consultation-options.edit')
+  ->middleware('check.orchid.permission');
+
+Route::screen('pricing/service-request-addons', ServiceRequestAddonOptionListScreen::class)
+  ->name('platform.service-request-addon-options.list')
+  ->middleware('check.orchid.permission');
+
+Route::screen('pricing/service-request-addons/edit/{serviceRequestAddonOption?}', ServiceRequestAddonOptionEditScreen::class)
+  ->name('platform.service-request-addon-options.edit')
   ->middleware('check.orchid.permission');
 
 // AppUsers

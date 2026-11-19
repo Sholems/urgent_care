@@ -23,6 +23,18 @@ class RoleSeeder extends Seeder
                 ],
             ]
         );
+
+        Role::updateOrCreate(
+            ['slug' => 'nurse'],
+            [
+                'name' => 'Nurse',
+                'permissions' => [
+                    'platform.index' => true,
+                    'platform.service-requests' => true,
+                    'platform.nurses' => true,
+                ],
+            ]
+        );
     }
 }
 

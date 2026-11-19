@@ -4,12 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\AppUser;
 use App\Models\StripeKey;
+use App\Services\MonimeApiService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use RuntimeException;
 use Stripe\Exception\InvalidRequestException;
 use Stripe\StripeClient;
 
 class PaymentController extends Controller
 {
+    public function __construct(
+        private MonimeApiService $monimeApiService
+    ) {
+    }
+
+    protected function stripeTemporarilyUnavailable(): JsonResponse
+    {
+        return response()->json([
+            'message' => 'Stripe payments are temporarily unavailable. Please use offline or cash payment methods.',
+        ], 503);
+    }
+
     protected function stripeClient(): StripeClient
     {
         $key = StripeKey::first();
@@ -50,7 +65,53 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'amount' => 'required|integer',
             'userId' => 'required|integer',
+            'paymentProvider' => 'nullable|in:stripe,monime',
+            'description' => 'nullable|string|max:1000',
+            'reference' => 'nullable|string|max:255',
         ]);
+
+        $provider = $validated['paymentProvider'] ?? 'stripe';
+        if ($provider === 'stripe') {
+            return $this->stripeTemporarilyUnavailable();
+        }
+
+        try {
+            $reference = $validated['reference'] ?? sprintf('appointment-%d-%s', $validated['userId'], uniqid());
+            $baseUrl = rtrim(config('app.url', 'https://lizelsundria.com'), '/');
+            $payload = [
+                'name' => 'Appointment Payment',
+                'description' => $validated['description'] ?? 'Lizelsundria appointment payment',
+                'reference' => $reference,
+                'successUrl' => "{$baseUrl}/monime/success",
+                'cancelUrl' => "{$baseUrl}/monime/cancel",
+                'callbackState' => "appointment-user-{$validated['userId']}",
+                'lineItems' => [[
+                    'type' => 'custom',
+                    'name' => 'Appointment fee',
+                    'reference' => $reference,
+                    'price' => [
+                        'currency' => 'SLE',
+                        'value' => (int) $validated['amount'],
+                    ],
+                    'quantity' => 1,
+                ]],
+                'paymentOptions' => $this->monimeApiService->buildPaymentOptions(),
+            ];
+
+            $result = $this->monimeApiService->createCheckoutSession($payload);
+            return response()->json([
+                'paymentProvider' => 'monime',
+                'checkoutSessionId' => data_get($result, 'result.id'),
+                'redirectUrl' => data_get($result, 'result.redirectUrl'),
+                'orderNumber' => data_get($result, 'result.orderNumber'),
+                'raw' => $result,
+            ]);
+        } catch (RuntimeException $exception) {
+            $status = $exception->getCode() >= 400 ? $exception->getCode() : 422;
+            return response()->json([
+                'message' => $exception->getMessage(),
+            ], $status);
+        }
 
         $user = AppUser::findOrFail($validated['userId']);
         $stripe = $this->stripeClient();
@@ -77,6 +138,8 @@ class PaymentController extends Controller
 
     public function createSetupIntent($userId)
     {
+        return $this->stripeTemporarilyUnavailable();
+
         $user = AppUser::findOrFail($userId);
         $stripe = $this->stripeClient();
         $customerId = $this->getOrCreateCustomer($user, $stripe);

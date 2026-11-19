@@ -440,7 +440,7 @@ Accept: application/json
 **Sample Response**
 ```json
 {
-  "contact_phone": "+1 (240) 476-9840",
+  "contact_phone": "+232 72 735 530 / +232 78 100 017 / +232 30 439 975",
   "contact_email": "info@lizelsundria.com"
 }
 ```

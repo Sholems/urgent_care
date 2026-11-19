@@ -9,6 +9,7 @@ use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Layouts\Rows;
 use App\Models\Doctor;
+use App\Models\Nurse;
 
 class UserEditLayout extends Rows
 {
@@ -37,6 +38,11 @@ class UserEditLayout extends Rows
                 ->title(__('Doctor'))
                 ->fromModel(Doctor::class, 'name', 'id')
                 ->empty('Select doctor'),
+
+            Select::make('user.nurse_id')
+                ->title(__('Nurse'))
+                ->fromModel(Nurse::class, 'name', 'id')
+                ->empty('Select nurse'),
         ];
     }
 }

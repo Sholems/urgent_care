@@ -28,7 +28,9 @@ class UserPasswordLayout extends Rows
         return [
             Password::make('user.password')
                 ->placeholder($placeholder)
-                ->title(__('Password')),
+                ->title(__('Password'))
+                ->required(!$user->exists)
+                ->help($user->exists ? __('Leave empty to keep current password') : __('Password is required (minimum 8 characters)')),
         ];
     }
 }

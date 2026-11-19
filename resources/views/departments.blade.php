@@ -37,7 +37,7 @@
                                 </h4>
                                 <div class="icon">
                                     @if (!empty($category->image))
-                                        <img src="{{ $category->image }}" alt="{{ $category->name }}" style="width:60px; height:60px; object-fit:contain;">
+                                        <img src="{{ asset($category->image) }}" alt="{{ $category->name }}" style="width:60px; height:60px; object-fit:contain;">
                                     @else
                                         <i class="flaticon-broken-bone"></i>
                                     @endif

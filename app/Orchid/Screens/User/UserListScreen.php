@@ -10,10 +10,15 @@ use App\Orchid\Layouts\User\UserListLayout;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\User;
+use App\Models\Appointment;
+use App\Models\Doctor;
+use App\Models\Nurse;
+use Illuminate\Support\Facades\DB;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
 use Orchid\Support\Facades\Toast;
+use Orchid\Support\Facades\Alert;
 
 class UserListScreen extends Screen
 {
@@ -111,8 +116,33 @@ class UserListScreen extends Screen
 
     public function remove(Request $request): void
     {
-        User::findOrFail($request->get('id'))->delete();
-
-        Toast::info(__('User was removed'));
+        $user = User::findOrFail($request->get('id'));
+        
+        try {
+            DB::beginTransaction();
+            
+            // Delete all appointments for this user
+            Appointment::where('user_id', $user->id)->delete();
+            
+            // Delete role assignments (role_users table)
+            DB::table('role_users')->where('user_id', $user->id)->delete();
+            
+            // Note: Doctors and Nurses have cascade delete, so they will be automatically deleted
+            // But let's explicitly delete them to be safe
+            Doctor::where('user_id', $user->id)->delete();
+            Nurse::where('user_id', $user->id)->delete();
+            
+            // Delete the user
+            $user->delete();
+            
+            DB::commit();
+            Toast::info(__('User and all related records were removed'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Alert::error(
+                'Error deleting user',
+                'An error occurred while deleting the user: ' . $e->getMessage()
+            );
+        }
     }
 }

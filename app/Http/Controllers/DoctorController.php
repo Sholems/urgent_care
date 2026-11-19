@@ -6,6 +6,7 @@ use App\Models\Doctor;
 use App\Models\Review;
 use App\Models\User;
 use App\Models\Category;
+use App\Models\Nurse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -146,36 +147,51 @@ class DoctorController extends Controller {
       'password' => 'required',
     ]);
 
+    // First, try to find a doctor via User email
     $user = User::where('email', $request->email)->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
-      return response()->json([
-        'message' => 'Invalid email or password',
-      ], 401);
+    if ($user && Hash::check($request->password, $user->password)) {
+      $doctor = $user->doctor;
+      
+      if ($doctor) {
+        $perPage = (int) $request->input('per_page', 15);
+        $page    = (int) $request->input('page', 1);
+        $perPage = max(1, min($perPage, 100));
+
+        $appointments = $doctor->appointments()
+          ->with(['user', 'review'])
+          ->orderByDesc('id')
+          ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+          'message' => 'Doctor logged in successfully',
+          'doctor' => $doctor,
+          'appointments' => $this->formatPaginated($appointments),
+          'type' => 'doctor',
+        ], 200);
+      }
     }
 
-    $doctor = $user->doctor;
-
-    if (!$doctor) {
-      return response()->json([
-        'message' => 'Doctor not found',
-      ], 404);
+    // If not a doctor, check if it's a nurse
+    $nurse = Nurse::where('email', $request->email)->first();
+    
+    if ($nurse && $nurse->is_active) {
+      // Verify the nurse's user password matches
+      $nurseUser = $nurse->user;
+      if ($nurseUser && Hash::check($request->password, $nurseUser->password)) {
+        return response()->json([
+          'message' => 'Nurse logged in successfully',
+          'nurse' => $nurse,
+          'user' => $nurseUser,
+          'type' => 'nurse',
+        ], 200);
+      }
     }
-
-    $perPage = (int) $request->input('per_page', 15);
-    $page    = (int) $request->input('page', 1);
-    $perPage = max(1, min($perPage, 100));
-
-    $appointments = $doctor->appointments()
-      ->with(['user', 'review'])
-      ->orderByDesc('id')
-      ->paginate($perPage, ['*'], 'page', $page);
-
+    
+    // If neither doctor nor nurse found, return error
     return response()->json([
-      'message' => 'Doctor logged in successfully',
-      'doctor' => $doctor,
-      'appointments' => $this->formatPaginated($appointments),
-    ], 200);
+      'message' => 'Invalid email or password',
+    ], 401);
   }
 
   public function saveFirebaseToken(Request $request) {

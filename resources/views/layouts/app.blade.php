@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Lizelsundria Urgent Care">
+    <meta name="description" content="@yield('description', 'Lizelsundria Urgent Care')">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Lizelsundria Urgent Care')</title>
 
@@ -105,8 +105,8 @@
     <!-- Header
    ============================================= -->
     @php
-        $headerLogoPath = optional($siteSetting)->header_logo_url ?? asset('logo-health-care.png');
-        $footerLogoPath = optional($siteSetting)->footer_logo_url ?? asset('logo-health-care.png');
+        $headerLogoPath = ($siteSetting ?? null)?->resolved_header_logo_url ?? \App\Models\SiteSetting::defaultLogoUrl();
+        $footerLogoPath = ($siteSetting ?? null)?->resolved_footer_logo_url ?? \App\Models\SiteSetting::defaultLogoUrl();
     @endphp
 
     <header id="home">
@@ -171,6 +171,9 @@
                             <a href="{{ route('doctors') }}">Doctors</a>
                         </li>
                         <li>
+                            <a href="{{ route('homecare.families') }}">Care for Families Abroad</a>
+                        </li>
+                        <li>
                             <a href="{{ route('contact') }}">Contact</a>
                         </li>
                         <li>
@@ -193,8 +196,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-6 item">
                         <div class="f-item about">
-                            <img src="{{ $footerLogoPath }}" width="150" height="150"
-                                alt="Logo">
+                            <img src="{{ $footerLogoPath }}" alt="Logo" style="max-width: 150px; height: auto; object-fit: contain;">
                             <p>
                                 Our platform connects patients with experienced and qualified doctors across multiple
                                 specialties. From cardiology and neurology to orthopedics and ENT, you can easily find
@@ -208,7 +210,7 @@
                         <div class="f-item link">
                             <h4 class="widget-title">Department</h4>
                             <ul>
-                                @foreach ($categories as $category)
+                                @foreach (($categories ?? []) as $category)
                                     <li>
                                         <a href="{{ route('department') }}">{{ $category->name }}</a>
                                     </li>
@@ -233,6 +235,9 @@
                                 <li>
                                     <a href="{{ route('contact') }}">Contact</a>
                                 </li>
+                                <li>
+                                    <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -248,7 +253,7 @@
                                             </div>
                                             <div class="info">
                                                 <h5>Email:</h5>
-                                                <span>{{ optional($siteSetting)->footer_email ?? 'support@validtemplates.com' }}</span>
+                                                <span>{{ optional($siteSetting ?? null)->contact_email ?? optional($siteSetting ?? null)->footer_email ?? 'info@lizelsundria.com' }}</span>
                                             </div>
                                         </li>
                                         <li>
@@ -257,7 +262,7 @@
                                             </div>
                                             <div class="info">
                                                 <h5>Phone:</h5>
-                                                <span>{{ optional($siteSetting)->footer_phone ?? '+1 (240) 476-9840' }}</span>
+                                                <span>{{ ($siteSetting ?? null) ? $siteSetting->resolvedContactPhone() : \App\Support\ContactPhoneFormatter::resolve() }}</span>
                                             </div>
                                         </li>
                                     </ul>

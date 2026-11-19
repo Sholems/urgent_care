@@ -3,22 +3,10 @@
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-// For Admin Portal
+// Admin portal
 Route::redirect('/admin', '/admin/login');
 
-// For Frontend
-
+// Public website
 Route::controller(HomeController::class)->group(function () {
     Route::get('/', 'index')->name('home');
     Route::get('/department', 'department')->name('department');
@@ -29,11 +17,15 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/appointments/book', 'bookAppointment')->name('appointments.book');
     Route::get('/contact', 'contact')->name('contact');
     Route::post('/contact', 'contactStore')->name('contact.submit');
+    Route::get('/privacy-policy', 'privacyPolicy')->name('privacy-policy');
 });
+
+Route::view('/care-for-families-abroad', 'families-abroad')
+    ->name('homecare.families');
+
+Route::view('/preview-features', 'preview-features')
+    ->name('preview.features');
 
 Route::fallback(function () {
     return view('404');
 });
-
-
-

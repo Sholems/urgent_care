@@ -79,4 +79,8 @@ class AppUser extends Model {
   public function appointments() {
     return $this->hasMany(Appointment::class, 'user_id');
   }
+
+  public function cart() {
+    return $this->hasOne(Cart::class, 'user_id');
+  }
 }

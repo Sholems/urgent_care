@@ -123,69 +123,6 @@ document.addEventListener('keydown', function(event) {
     }
 });
 </script>
-<div class="modal" id="reviewsModal" tabindex="-1">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="text-center w-100">
-                <div class="display-4 fw-bold text-warning mb-1">
-                    {{ number_format($doctor->reviews->avg('rating'), 1) }}
-                    <span class="text-white-50" style="font-size: 1.5rem">/ 5.0</span>
-                </div>
-                <div class="d-flex justify-content-center mb-2">
-                    @for($i = 1; $i <= 5; $i++)
-                        <i class="fas fa-star{{ $i <= floor($doctor->reviews->avg('rating')) ? ' text-warning' : ($i - 0.5 <= $doctor->reviews->avg('rating') ? ' text-warning' : ' text-white-50') }}" style="font-size: 1.2rem"></i>
-                    @endfor
-                </div>
-                <p class="text-white-50 mb-0">
-                    Based on {{ $doctor->reviews->count() }} {{ Str::plural('review', $doctor->reviews->count()) }}
-                </p>
-            </div>
-            <button type="button" class="btn-close btn-close-white position-absolute" style="top: 1rem; right: 1rem;" onclick="closeModal()" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            @if($doctor->reviews->count() > 0)
-                <div class="reviews-container" style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
-                    @foreach($doctor->reviews as $review)
-                        <div class="review-item">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div class="d-flex align-items-center">
-                                    @if($review->user && $review->user->user_photo)
-                                        <img src="{{ asset('storage/' . $review->user->user_photo) }}" 
-                                             alt="{{ $review->user->user_name }}" 
-                                             class="rounded-circle me-3" 
-                                             style="width: 50px; height: 50px; object-fit: cover;">
-                                    @endif
-                                    <div>
-                                        <div class="reviewer-name">{{ $review->user->user_name ?? 'Anonymous' }}</div>
-                                        <div class="d-flex align-items-center">
-                                            <div class="text-warning me-2">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    <i class="fas fa-star{{ $i <= $review->rating ? '' : '-o' }}"></i>
-                                                @endfor
-                                            </div>
-                                            <span class="review-date">{{ $review->created_at->format('M d, Y') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @if(!empty($review->comment))
-                                <div class="review-comment">
-                                    <p class="mb-0">{{ $review->comment }}</p>
-                                </div>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="no-reviews">
-                    <i class="far fa-comment-alt"></i>
-                    <h5 class="mb-2">No Reviews Yet</h5>
-                    <p class="mb-0">Be the first to share your experience!</p>
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
     <!-- Hero Section with Gradient Background -->
     <div class="breadcrumb-area bg-gradient text-center">
         <!-- Fixed BG -->
@@ -217,14 +154,6 @@ document.addEventListener('keydown', function(event) {
                         <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-2">{{ $doctor->categories[0] }}</span>
 
                         <div class="d-flex justify-content-center align-items-center mb-3">
-                            <div class="rating">
-                                @for ($i = 1; $i <= $doctor->reviews->avg('rating'); $i++)
-                                    <i class="fas fa-star text-warning"></i>
-                                @endfor
-                                <span class="ms-2 text-muted fw-medium" style="cursor: pointer; color: #0d6efd !important; text-decoration: underline;" onclick="document.getElementById('reviewsModal').classList.add('show'); document.body.style.overflow = 'hidden';">
-    {{ number_format($doctor->reviews->avg('rating'), 1) }} ({{ $doctor->reviews->count() }} reviews)
-</span>
-                            </div>
                         </div>
 
                         <div class="row text-center g-3 mb-4">

@@ -35,4 +35,8 @@ return [
         'app_id' => env('OPEN_EXCHANGE_RATES_APP_ID'),
     ],
 
+    'monime' => [
+        'base_url' => env('MONIME_API_BASE_URL', 'https://api.monime.io'),
+    ],
+
 ];

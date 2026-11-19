@@ -15,9 +15,6 @@
                 }
             }
             
-            // Calculate average rating
-            $avgRating = $doctor->avg_rating ?? ($doctor->reviews->avg('rating') ?? $doctor->rating ?? 0);
-            $reviewCount = $doctor->reviews->count() ?? 0;
             
             // Ensure numeric values
             $price = $doctor->price ?? 100;
@@ -27,7 +24,6 @@
         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4 doctor-card"
             data-name="{{ strtolower($doctor->name ?? '') }}"
             data-specialty="{{ strtolower($firstCategory) }}"
-            data-rating="{{ number_format($avgRating, 1) }}" 
             data-price="{{ $price }}"
             data-gender="{{ strtolower($doctor->gender ?? 'male') }}"
             data-experience="{{ $experience }}"
@@ -50,23 +46,7 @@
                     <h4 class="doctor-name">{{ $doctor->name ?? 'Dr. Unknown' }}</h4>
                     <p class="doctor-specialty">{{ $firstCategory }}</p>
                     
-                    <!-- Rating -->
-                    <div class="rating-wrapper">
-                        <div class="stars">
-                            @for ($i = 1; $i <= 5; $i++)
-                                @if ($i <= floor($avgRating))
-                                    <i class="fas fa-star"></i>
-                                @elseif ($i <= ceil($avgRating) && $avgRating > floor($avgRating))
-                                    <i class="fas fa-star-half-alt"></i>
-                                @else
-                                    <i class="far fa-star"></i>
-                                @endif
-                            @endfor
-                        </div>
-                        <span class="rating-text">
-                            {{ number_format($avgRating, 1) }} ({{ $reviewCount }} reviews)
-                        </span>
-                    </div>
+                    
                     
                     <!-- Experience -->
                     @if($experience > 0)

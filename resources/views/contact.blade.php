@@ -26,7 +26,9 @@
     <!-- Start Contact Area
         ============================================= -->
     @php
-        $contactPhone = optional($siteSetting)->contact_phone ?? optional($siteSetting)->footer_phone ?? '+1 (240) 476-9840';
+        $contactPhone = $siteSetting
+            ? $siteSetting->resolvedContactPhone()
+            : \App\Support\ContactPhoneFormatter::resolve();
         $contactEmail = optional($siteSetting)->contact_email ?? optional($siteSetting)->footer_email ?? 'info@lizelsundria.com';
     @endphp
 
@@ -52,7 +54,7 @@
                     </div>
 
                     <div class="col-lg-5 wow fadeInLeft contact-form-box">
-                        <h2>Need help? <strong>Let's ask your questions</strong></h2>
+                        <h2>Need help? <strong>Ask your questions</strong></h2>
                         @if (session('success'))
                             <div class="alert alert-success">
                                 {{ session('success') }}
@@ -62,6 +64,10 @@
                             <div class="alert alert-danger">
                                 {{ session('error') }}
                             </div>
+                        @endif
+                        @if (request()->query('enquiry') === 'homecare')
+                            <h2>Homecare Enquiry</h2>
+                            <p>Include the town or neighbourhood, type of support and preferred start date. If you’re enquiring from abroad, include your country and the best time to reach you. Please keep medical records and other sensitive information out of this form.</p>
                         @endif
                         <form id="contactForm" action="{{ route('contact.submit') }}" method="POST" >
                             @csrf
@@ -95,7 +101,7 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group comments">
-                                        <textarea class="form-control" id="comments" name="comments" placeholder="Tell Us About your need *" required></textarea>
+                                        <textarea class="form-control" id="comments" name="comments" aria-label="Your enquiry" placeholder="{{ request()->query('enquiry') === 'homecare' ? 'Town or neighbourhood, care requested and preferred start date' : 'How can we help?' }}" required></textarea>
                                         @error('comments')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror

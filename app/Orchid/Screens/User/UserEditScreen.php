@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
 use Orchid\Access\Impersonation;
 use App\Models\User;
 use App\Models\Doctor;
+use App\Models\Nurse;
 use Orchid\Screen\Action;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Screen;
@@ -36,8 +37,9 @@ class UserEditScreen extends Screen
      */
 public function query(User $user): iterable
 {
-    $user->load(['roles', 'doctor']);
+    $user->load(['roles', 'doctor', 'nurse']);
     $user->doctor_id = $user->doctor->id ?? null;
+    $user->nurse_id = $user->nurse->id ?? null;
 
     $permissions = $user->getStatusPermission();
 
@@ -174,22 +176,31 @@ public function query(User $user): iterable
      */
     public function save(User $user, Request $request)
     {
-        $request->validate([
+        $validationRules = [
             'user.email' => [
                 'required',
                 Rule::unique(User::class, 'email')->ignore($user),
             ],
             'user.doctor_id' => ['nullable', 'exists:doctors,id'],
-        ]);
+            'user.nurse_id' => ['nullable', 'exists:nurses,id'],
+        ];
+
+        // Require password when creating a new user
+        if (!$user->exists) {
+            $validationRules['user.password'] = ['required', 'string', 'min:8'];
+        }
+
+        $request->validate($validationRules);
 
         $permissions = collect($request->get('permissions'))
             ->map(fn ($value, $key) => [base64_decode($key) => $value])
             ->collapse()
             ->toArray();
 
-        $user->when($request->filled('user.password'), function (Builder $builder) use ($request) {
-            $builder->getModel()->password = Hash::make($request->input('user.password'));
-        });
+        // Set password when creating new user or when password is provided
+        if (!$user->exists || $request->filled('user.password')) {
+            $user->password = Hash::make($request->input('user.password'));
+        }
 
         $user
             ->fill($request->collect('user')->except(['password', 'permissions', 'roles'])->toArray())
@@ -203,6 +214,13 @@ public function query(User $user): iterable
 
         if ($doctorId) {
             Doctor::where('id', $doctorId)->update(['user_id' => $user->id]);
+        }
+
+        $nurseId = $request->input('user.nurse_id');
+        Nurse::where('user_id', $user->id)->where('id', '!=', $nurseId)->update(['user_id' => null]);
+
+        if ($nurseId) {
+            Nurse::where('id', $nurseId)->update(['user_id' => $user->id]);
         }
 
         Toast::info(__('User was saved.'));
