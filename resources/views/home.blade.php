@@ -5,23 +5,86 @@
 @section('description', 'Ask Lizelsundria about care at home in Sierra Leone, including elderly support, nursing and doctor home visits. Families abroad can enquire online.')
 
 @section('content')
-<div class="banner-area auto-height bg-gray fixed-thumb text-default">
-    <!-- Fixed Shape -->
+<div class="modern-hero-section">
+    <!-- Ambient Background Glow & Shapes -->
+    <div class="hero-ambient-glow"></div>
+    <div class="hero-ambient-glow-2"></div>
     <div class="fixed-shape-left-top">
         <img src="{{ asset('img/shape/1.png') }}" alt="Shape">
     </div>
-    <!-- End Fixed Shape -->
+
     <div class="container">
-        <div class="double-items">
-            <div class="row align-center">
-                <div class="col-lg-6 info">
-                    <h1>Arrange care at home in Sierra Leone</h1>
-                    <p>Tell us what kind of support you or your loved one needs. Ask about elderly care, nursing at home or a doctor home visit. We’ll discuss what is available in your area.</p>
-                    <a class="btn btn-md btn-gradient mr-2 mb-2" href="{{ route('contact', ['enquiry' => 'homecare']) }}#contact">Enquire About Homecare</a>
-                    <a class="btn btn-md btn-outline-primary mb-2" href="{{ route('homecare.families') }}">Care for Families Abroad</a>
+        <div class="row align-items-center modern-hero-row">
+            <!-- Left Info Column -->
+            <div class="col-lg-6 hero-info-col">
+                <div class="hero-pill-badge">
+                    <span class="hero-pulse-dot"></span>
+                    <i class="fas fa-heartbeat"></i> Compassionate In-Home Care
                 </div>
-                <div class="col-lg-6 thumb">
-                    <img src="{{ asset('img/hero-img.png') }}" alt="Thumb">
+
+                <h1 class="hero-headline">
+                    Arrange care at home in <span class="hero-gradient-text">Sierra Leone</span>
+                </h1>
+
+                <p class="hero-description">
+                    Tell us what kind of support you or your loved one needs. Ask about elderly care, nursing at home or a doctor home visit. We’ll discuss what is available in your area.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="btn-hero-primary" href="{{ route('contact', ['enquiry' => 'homecare']) }}#contact">
+                        <span>Enquire About Homecare</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a class="btn-hero-secondary" href="{{ route('homecare.families') }}">
+                        <i class="fas fa-globe"></i>
+                        <span>Care for Families Abroad</span>
+                    </a>
+                </div>
+
+                <!-- Trust Micro-Highlights (strictly from original copy) -->
+                <div class="hero-trust-list">
+                    <div class="trust-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Elderly Care</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Nursing at Home</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Doctor Home Visits</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Visual Column -->
+            <div class="col-lg-6 hero-thumb-col text-center">
+                <div class="hero-image-wrapper">
+                    <div class="hero-image-backdrop"></div>
+                    <img src="{{ asset('img/hero-img.png') }}" alt="Arrange care at home in Sierra Leone" class="hero-main-img img-fluid">
+                    
+                    <!-- Floating Badge 1: Doctor Visits -->
+                    <div class="floating-badge badge-top-right">
+                        <div class="floating-icon icon-doctor">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="floating-text">
+                            <strong>Doctor On-Call</strong>
+                            <span>Home Visits Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge 2: Families & Loved Ones -->
+                    <div class="floating-badge badge-bottom-left">
+                        <div class="floating-icon icon-care">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="floating-text">
+                            <strong>Trusted Homecare</strong>
+                            <span>Care for Loved Ones</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,6 +116,337 @@
     @endphp
 
     <style>
+        /* Modern Hero Section Styles */
+        .modern-hero-section {
+            position: relative;
+            overflow: hidden;
+            padding: 80px 0 65px;
+            background: linear-gradient(145deg, #f8fafc 0%, #f0f7ff 50%, #f8fafc 100%);
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .hero-ambient-glow {
+            position: absolute;
+            width: 480px;
+            height: 480px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.14) 0%, rgba(37, 99, 235, 0.05) 50%, transparent 75%);
+            filter: blur(55px);
+            top: -100px;
+            right: 8%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-ambient-glow-2 {
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            filter: blur(50px);
+            bottom: -50px;
+            left: 5%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .modern-hero-row {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-info-col {
+            padding-right: 35px;
+        }
+
+        .hero-pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: #e0f2fe;
+            border: 1px solid rgba(2, 132, 199, 0.25);
+            border-radius: 50px;
+            color: #0284c7;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);
+        }
+
+        .hero-pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: heroDotPulse 2s infinite;
+        }
+
+        @keyframes heroDotPulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .hero-headline {
+            font-size: 44px;
+            font-weight: 800;
+            line-height: 1.18;
+            color: #0f172a;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+        }
+
+        .hero-gradient-text {
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #475569;
+            margin-bottom: 30px;
+            max-width: 530px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .btn-hero-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 13px 28px;
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            color: #ffffff !important;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+            transition: all 0.3s ease;
+            text-decoration: none !important;
+            border: none;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.38);
+            color: #ffffff !important;
+        }
+
+        .btn-hero-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 26px;
+            background: #ffffff;
+            color: #1e293b !important;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+            transition: all 0.3s ease;
+            text-decoration: none !important;
+        }
+
+        .btn-hero-secondary:hover {
+            border-color: #0284c7;
+            color: #0284c7 !important;
+            background: #f0f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(2, 132, 199, 0.12);
+        }
+
+        .hero-trust-list {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 20px;
+            padding-top: 18px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .trust-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .trust-item i {
+            color: #10b981;
+            font-size: 15px;
+        }
+
+        /* Hero Image & Floating Cards */
+        .hero-image-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .hero-image-backdrop {
+            position: absolute;
+            top: 10%;
+            left: 8%;
+            width: 84%;
+            height: 84%;
+            background: linear-gradient(135deg, rgba(224, 242, 254, 0.8) 0%, rgba(219, 234, 254, 0.5) 100%);
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            filter: blur(35px);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-main-img {
+            position: relative;
+            z-index: 2;
+            max-height: 460px;
+            width: auto;
+            filter: drop-shadow(0 15px 30px rgba(15, 23, 42, 0.12));
+            transition: transform 0.4s ease;
+        }
+
+        .hero-image-wrapper:hover .hero-main-img {
+            transform: scale(1.02);
+        }
+
+        .floating-badge {
+            position: absolute;
+            z-index: 3;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+            text-align: left;
+            animation: heroCardFloat 5s ease-in-out infinite;
+        }
+
+        .badge-top-right {
+            top: 8%;
+            right: -2%;
+        }
+
+        .badge-bottom-left {
+            bottom: 6%;
+            left: -4%;
+            animation-delay: -2.5s;
+        }
+
+        @keyframes heroCardFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .floating-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .icon-doctor {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .icon-care {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .floating-text strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.25;
+            margin-bottom: 2px;
+        }
+
+        .floating-text span {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        @media (max-width: 991px) {
+            .modern-hero-section {
+                padding: 60px 0 50px;
+                text-align: center;
+            }
+            .hero-info-col {
+                padding-right: 15px;
+                margin-bottom: 40px;
+            }
+            .hero-headline {
+                font-size: 32px;
+            }
+            .hero-description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            .hero-trust-list {
+                justify-content: center;
+            }
+            .badge-top-right {
+                right: 4%;
+            }
+            .badge-bottom-left {
+                left: 2%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-headline {
+                font-size: 26px;
+            }
+            .floating-badge {
+                padding: 8px 12px;
+            }
+            .floating-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
+            }
+            .floating-text strong {
+                font-size: 11.5px;
+            }
+            .floating-text span {
+                font-size: 10px;
+            }
+        }
+
         /* Modern Quick Info Section */
         .modern-quick-info {
             position: relative;
