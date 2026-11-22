@@ -5,7 +5,7 @@
 @section('description', 'Ask Lizelsundria about care at home in Sierra Leone, including elderly support, nursing and doctor home visits. Families abroad can enquire online.')
 
 @section('content')
-<div class="modern-hero-section">
+<div class="banner-area auto-height modern-hero-section">
     <!-- Ambient Background Glow & Shapes -->
     <div class="hero-ambient-glow"></div>
     <div class="hero-ambient-glow-2"></div>
@@ -14,9 +14,9 @@
     </div>
 
     <div class="container">
-        <div class="row align-items-center modern-hero-row">
+        <div class="row modern-hero-row">
             <!-- Left Info Column -->
-            <div class="col-lg-6 hero-info-col">
+            <div class="col-md-6 col-lg-6 hero-info-col">
                 <div class="hero-pill-badge">
                     <span class="hero-pulse-dot"></span>
                     <i class="fas fa-heartbeat"></i> Compassionate In-Home Care
@@ -59,7 +59,7 @@
             </div>
 
             <!-- Right Visual Column -->
-            <div class="col-lg-6 hero-thumb-col text-center">
+            <div class="col-md-6 col-lg-6 hero-thumb-col text-center">
                 <div class="hero-image-wrapper">
                     <div class="hero-image-backdrop"></div>
                     <img src="{{ asset('img/hero-img.png') }}" alt="Arrange care at home in Sierra Leone" class="hero-main-img img-fluid">
