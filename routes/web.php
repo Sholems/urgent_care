@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Web\HomecareEnquiryController;
 use Illuminate\Support\Facades\Route;
 
 // Admin portal
@@ -19,6 +20,12 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/contact', 'contactStore')->name('contact.submit');
     Route::get('/privacy-policy', 'privacyPolicy')->name('privacy-policy');
 });
+
+Route::view('/homecare', 'homecare.index')->name('homecare.index');
+Route::view('/homecare/enquire', 'homecare.enquiry')->name('homecare.enquiry');
+Route::post('/homecare/enquire', [HomecareEnquiryController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('homecare.enquiry.store');
 
 Route::view('/care-for-families-abroad', 'families-abroad')
     ->name('homecare.families');

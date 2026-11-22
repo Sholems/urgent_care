@@ -14,7 +14,7 @@
                 <div class="col-lg-8 offset-lg-2">
                     <h1>Contact Us</h1>
                     <ul class="breadcrumb">
-                        <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="{{ route('home') }}"><i class="fas fa-home"></i> Home</a></li>
                         <li class="active">Contact</li>
                     </ul>
                 </div>
@@ -43,11 +43,16 @@
                             <ul>
                                 <li>
                                     <h5><i class="flaticon-call"></i> Phone</h5>
-                                    <span>{{ $contactPhone }}</span>
+                                    <span>
+                                        @foreach (explode(' / ', $contactPhone) as $phone)
+                                            @unless ($loop->first) / @endunless
+                                            <a class="text-white" href="tel:{{ preg_replace('/[^0-9+]/', '', $phone) }}">{{ $phone }}</a>
+                                        @endforeach
+                                    </span>
                                 </li>
                                 <li>
                                     <h5><i class="flaticon-email"></i> Email</h5>
-                                    <span>{{ $contactEmail }}</span>
+                                    <span><a class="text-white" href="mailto:{{ $contactEmail }}">{{ $contactEmail }}</a></span>
                                 </li>
                             </ul>
                         </div>
@@ -65,10 +70,7 @@
                                 {{ session('error') }}
                             </div>
                         @endif
-                        @if (request()->query('enquiry') === 'homecare')
-                            <h2>Homecare Enquiry</h2>
-                            <p>Include the town or neighbourhood, type of support and preferred start date. If you’re enquiring from abroad, include your country and the best time to reach you. Please keep medical records and other sensitive information out of this form.</p>
-                        @endif
+                        <p>Looking for care at home? <a href="{{ route('homecare.enquiry') }}">Use the homecare enquiry form</a>.</p>
                         <form id="contactForm" action="{{ route('contact.submit') }}" method="POST" >
                             @csrf
                             <div class="row">
@@ -101,7 +103,7 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="form-group comments">
-                                        <textarea class="form-control" id="comments" name="comments" aria-label="Your enquiry" placeholder="{{ request()->query('enquiry') === 'homecare' ? 'Town or neighbourhood, care requested and preferred start date' : 'How can we help?' }}" required></textarea>
+                                        <textarea class="form-control" id="comments" name="comments" aria-label="Your enquiry" placeholder="How can we help?" required></textarea>
                                         @error('comments')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror

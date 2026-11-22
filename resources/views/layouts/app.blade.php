@@ -32,6 +32,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;700;800&display=swap"
         rel="stylesheet">
+    @stack('styles')
 </head>
 
 <body>
@@ -165,6 +166,9 @@
                             <a href="{{ route('home') }}">Home</a>
                         </li>
                         <li>
+                            <a href="{{ route('homecare.index') }}">Homecare</a>
+                        </li>
+                        <li>
                             <a href="{{ route('department') }}">Departments</a>
                         </li>
                         <li>
@@ -262,7 +266,19 @@
                                             </div>
                                             <div class="info">
                                                 <h5>Phone:</h5>
-                                                <span>{{ ($siteSetting ?? null) ? $siteSetting->resolvedContactPhone() : \App\Support\ContactPhoneFormatter::resolve() }}</span>
+                                                @php
+                                                    $publicPhones = explode(' / ', \App\Support\ContactPhoneFormatter::resolve($siteSetting ?? null));
+                                                    $whatsappNumber = config('homecare.whatsapp_number');
+                                                @endphp
+                                                <span>
+                                                    @foreach ($publicPhones as $publicPhone)
+                                                        @unless ($loop->first) / @endunless
+                                                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $publicPhone) }}">{{ $publicPhone }}</a>
+                                                    @endforeach
+                                                </span>
+                                                @if (is_string($whatsappNumber) && preg_match('/\A[1-9][0-9]{6,14}\z/', $whatsappNumber))
+                                                    <a href="https://wa.me/{{ $whatsappNumber }}">WhatsApp Homecare</a>
+                                                @endif
                                             </div>
                                         </li>
                                     </ul>

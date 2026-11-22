@@ -3,6 +3,20 @@
 @section('title', 'Lizelsundria Urgent Care - ' . $doctor->name)
 
 @section('content')
+@php
+    $category = data_get($doctor->categories, '0.name', data_get($doctor->categories, '0'));
+    $specialty = data_get($doctor->specialities, '0.name', data_get($doctor->specialities, '0'));
+    $biography = trim((string) $doctor->biography);
+    $location = implode(', ', array_filter([$doctor->address, $doctor->city, $doctor->country]));
+    $professionalDetails = array_filter([
+        'Experience' => $doctor->experience > 0
+            ? trans_choice(':count year|:count years', $doctor->experience)
+            : null,
+        'Specialty' => is_string($specialty) ? trim($specialty) : null,
+        'Languages' => $doctor->language,
+        'Location' => $location,
+    ]);
+@endphp
 <style>
     .modal {
         display: none;
@@ -145,40 +159,15 @@ document.addEventListener('keydown', function(event) {
                 <div class="card shadow-lg border-0 sticky-top" style="top: 100px;">
                     <div class="card-body text-center p-4">
                         <div class="position-relative d-inline-block mb-3">
-                            <img src="{{ $doctor->photo }}" alt="Dr. {{ $doctor->name }}"
+                            <img src="{{ $doctor->photo ?: asset('img/800x800.png') }}" alt="{{ $doctor->name }}"
                                 class="rounded-circle img-fluid shadow-sm"
                                 style="width: 180px; height: 180px; object-fit: cover;">
                         </div>
 
                         <h3 class="fw-bold text-dark mb-1">{{ $doctor->name }}</h3>
-                        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-2">{{ $doctor->categories[0] }}</span>
-
-                        <div class="d-flex justify-content-center align-items-center mb-3">
-                        </div>
-
-                        <div class="row text-center g-3 mb-4">
-                            <div class="col-4">
-                                <div class="p-2 bg-light rounded">
-                                    <i class="fas fa-user-md text-primary mb-1"></i>
-                                    <small class="d-block text-muted">Specialty</small>
-                                    <strong class="text-dark small">{{ $doctor->specialities[0] }}</strong>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="p-2 bg-light rounded">
-                                    <i class="fas fa-clock text-success mb-1"></i>
-                                    <small class="d-block text-muted">Experience</small>
-                                    <strong class="text-dark small">{{ $doctor->experience }}</strong>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="p-2 bg-light rounded">
-                                    <i class="fas fa-venus-mars text-info mb-1"></i>
-                                    <small class="d-block text-muted">Gender</small>
-                                    <strong class="text-dark small">{{ ucfirst($doctor->gender) }}</strong>
-                                </div>
-                            </div>
-                        </div>
+                        @if (is_string($category) && trim($category) !== '')
+                            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-2">{{ $category }}</span>
+                        @endif
 
                         @php
     use Carbon\Carbon;
@@ -221,99 +210,44 @@ document.addEventListener('keydown', function(event) {
             <!-- Doctor Details -->
             <div class="col-lg-8">
                 <div class="row g-4">
-                    <!-- Biography Card -->
+                    @if ($biography !== '' && !preg_match('/\A(?:lorem ipsum\b|placeholder\b|coming soon\b|tbd\b|n\/a\z)/i', $biography))
                     <div class="col-12">
                         <div class="card shadow-sm border-0 h-100">
                             <div class="card-header bg-white border-0 pb-0">
                                 <h4 class="card-title mb-0 d-flex align-items-center">
-                                    <i class="fas fa-user-circle text-primary" style="margin-right: 8px;"></i>About Dr.
+                                    <i class="fas fa-user-circle text-primary" style="margin-right: 8px;"></i>About
                                     {{ $doctor->name }}
                                 </h4>
                             </div>
                             <div class="card-body">
                                 <p class="text-muted mb-0 lh-lg">
-                                    {{ $doctor->biography }}
+                                    {{ $biography }}
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Medical Information Grid -->
-                    <div class="col-md-6">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-header bg-white border-0 pb-0">
-                                <h5 class="card-title mb-0 d-flex align-items-center">
-                                    <i class="fas fa-stethoscope text-success me-2" style="margin-right: 8px;"></i>Medical
-                                    History
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <p class="text-muted mb-0">{{ $doctor->medical_history }}</p>
-                            </div>
-                        </div>
-                    </div>
+                    @endif
 
-                    <div class="col-md-6">
-                        <div class="card shadow-sm border-0 h-100">
-                            <div class="card-header bg-white border-0 pb-0">
-                                <h5 class="card-title mb-0 d-flex align-items-center">
-                                    <i class="fas fa-shield-alt text-info me-2" style="margin-right: 8px;"></i>Insurance
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <p class="text-muted mb-0">{{ $doctor->insurance }}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Detailed Information -->
-                    <div class="col-12">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-header bg-white border-0 pb-0">
-                                <h4 class="card-title mb-0 d-flex align-items-center">
-                                    <i class="fas fa-info-circle text-warning me-2" style="margin-right: 8px;"></i>Professional Details
-                                </h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center p-3 bg-light rounded">
-                                            <div>
-                                                <small class="text-muted d-block">Experience</small>
-                                                <strong>{{ $doctor->experience }}</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center p-3 bg-light rounded">
-                                            <div>
-                                                <small class="text-muted d-block">Specialties</small>
-                                                <strong>{{ $doctor->specialities[0] }}</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center p-3 bg-light rounded">
-                                            <div>
-                                                <small class="text-muted d-block">Languages</small>
-                                                <strong>{{ $doctor->language }}</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center p-3 bg-light rounded">
-                                            <div>
-                                                <small class="text-muted d-block">Location</small>
-                                                <strong>{{ $doctor->address }}, {{ $doctor->city }}, {{ $doctor->country }}</strong>
-                                            </div>
-                                        </div>
-                                    </div>
+                    @if ($professionalDetails)
+                        <div class="col-12">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header bg-white border-0 pb-0">
+                                    <h4 class="card-title mb-0">Professional Details</h4>
                                 </div>
-
-                                <hr class="my-4">
+                                <div class="card-body">
+                                    <dl class="row g-3 mb-0">
+                                        @foreach ($professionalDetails as $label => $value)
+                                            <div class="col-md-6">
+                                                <dt>{{ $label }}</dt>
+                                                <dd>{{ $value }}</dd>
+                                            </div>
+                                        @endforeach
+                                    </dl>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -328,8 +262,7 @@ document.addEventListener('keydown', function(event) {
                         How to Book an <br> Appointment with {{ $doctor->name }}?
                     </h2>
                     <p>
-                        Looking to consult with {{ $doctor->name }}, a trusted specialist in {{ $doctor->categories[0] ?? 'Healthcare' }}?
-                        Easily schedule your appointment online by selecting a convenient date, time, and providing your details.
+                        To consult with {{ $doctor->name }}, choose a date and time below.
                     </p>
                     <div class="row">
                         <div class="col-lg-4 col-md-4 single-item">

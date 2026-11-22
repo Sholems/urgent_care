@@ -10,7 +10,7 @@
             <div class="col-lg-6 mb-4">
                 <h1>Arrange care in Sierra Leone from abroad</h1>
                 <p>If your parent or relative needs support at home, tell us where they live and what help you’re looking for. We can discuss available options and whether an assessment is appropriate.</p>
-                <a class="btn btn-md btn-gradient" href="{{ route('contact', ['enquiry' => 'homecare']) }}#contact">Start a Homecare Enquiry</a>
+                <a class="btn btn-md btn-gradient" href="{{ route('homecare.enquiry') }}">Start a Homecare Enquiry</a>
             </div>
             <div class="col-lg-6">
                 <img class="img-fluid rounded" src="{{ asset('img/trusted-care.jpg') }}" alt="A nurse speaking with an older patient at home">

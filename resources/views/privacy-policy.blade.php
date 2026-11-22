@@ -44,7 +44,10 @@ Lizelsundria Urgent Care - Privacy Policy
                         <h5 class="mb-2">5. Your Rights</h5>
                         <p class="mb-4">You may request access to, correction of, or deletion of your personal data. Contact us using the details in our footer to make such a request.</p>
 
-                        <h5 class="mb-2">6. Contact Us</h5>
+                        <h5 id="homecare-enquiries" class="mb-2">6. Website Homecare Enquiries</h5>
+                        <p class="mb-4">The homecare form collects your name, email, optional phone number, care location, requested service and optional start date. We record your enquiry so our team can respond and discuss availability. Please keep patient names, diagnoses and medical records out of this form.</p>
+
+                        <h5 class="mb-2">7. Contact Us</h5>
                         <p class="mb-0">If you have questions about this Privacy Policy, please contact us at {{ optional($siteSetting)->footer_email ?? 'support@lizelsundria.com' }} or call {{ $siteSetting ? $siteSetting->resolvedContactPhone() : \App\Support\ContactPhoneFormatter::resolve() }}.</p>
                     </div>
                 </div>

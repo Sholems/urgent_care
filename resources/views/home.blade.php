@@ -4,6 +4,280 @@
 
 @section('description', 'Ask Lizelsundria about care at home in Sierra Leone, including elderly support, nursing and doctor home visits. Families abroad can enquire online.')
 
+@push('styles')
+    <style>
+        .homecare-enquiries {
+            background: linear-gradient(165deg, #f7fafc 15%, #eef5fa 100%);
+            padding-block: clamp(2.75rem, 6vw, 5.5rem);
+        }
+
+        .homecare-enquiries-panel {
+            display: grid;
+            background: #fff;
+            border: 1px solid #d9e5ee;
+            border-radius: 1.25rem;
+            box-shadow: 0 2px 5px rgba(16, 40, 66, .04), 0 16px 36px rgba(16, 40, 66, .08);
+            overflow: hidden;
+        }
+
+        .homecare-enquiries-photo img {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3 / 2;
+            object-fit: cover;
+        }
+
+        .homecare-enquiries-content {
+            padding: clamp(1.5rem, 4vw, 3.5rem);
+            min-width: 0;
+            background: linear-gradient(180deg, #f7fbfe 0, #fff 8.5rem);
+        }
+
+        .homecare-enquiries .homecare-enquiries-label {
+            color: #124d79;
+            font-size: .8125rem;
+            font-weight: 700;
+            letter-spacing: .105em;
+            margin: 0 0 .75rem;
+            text-transform: uppercase;
+        }
+
+        .homecare-enquiries h2 {
+            color: #102c45;
+            font-size: clamp(1.875rem, 3.5vw, 2.75rem);
+            font-weight: 700;
+            letter-spacing: -.035em;
+            text-wrap: balance;
+            line-height: 1.12;
+            margin: 0 0 .875rem;
+        }
+
+        .homecare-enquiries .homecare-enquiries-intro {
+            color: #3d5367;
+            margin: 0 0 1.5rem;
+        }
+
+        .homecare-enquiries-services {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .homecare-enquiries-services li {
+            display: grid;
+            grid-template-columns: 2.5rem minmax(0, 1fr);
+            align-items: start;
+            gap: .875rem;
+            padding: .875rem 0;
+            border-top: 1px solid #dce7ef;
+        }
+
+        .homecare-enquiries-icon {
+            display: grid;
+            place-items: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: .65rem;
+            background: #edf5fb;
+            box-shadow: inset 0 0 0 1px #dceaf4;
+            color: #124d79;
+        }
+
+        .homecare-enquiries-services h3 {
+            color: #102c45;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin: 0 0 .125rem;
+        }
+
+        .homecare-enquiries-services p {
+            color: #3d5367;
+            font-size: .9375rem;
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .homecare-enquiries-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: .625rem 1.125rem;
+            margin-top: 1.25rem;
+        }
+
+        .homecare-enquiries-actions a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 2.75rem;
+            font-weight: 700;
+        }
+
+        .homecare-enquiries-actions .homecare-enquiries-primary {
+            padding: .625rem 1rem;
+            background: #075485;
+            box-shadow: 0 2px 4px rgba(16, 40, 66, .14);
+            border-radius: .5rem;
+            color: #fff;
+        }
+
+        .homecare-enquiries-actions .homecare-enquiries-primary:hover {
+            background: #083f63;
+        }
+
+        .homecare-enquiries-actions .homecare-enquiries-secondary {
+            color: #124d79;
+            gap: .5rem;
+            text-decoration: underline;
+            text-underline-offset: .22em;
+            text-decoration-thickness: 1px;
+        }
+
+        .homecare-enquiries-actions a:focus-visible {
+            outline: 3px solid #085caa;
+            outline-offset: 3px;
+        }
+
+        @media (min-width: 992px) {
+            .homecare-enquiries-panel {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                align-items: center;
+                gap: clamp(1.75rem, 4vw, 3.5rem);
+                background: transparent;
+                border: 0;
+                border-radius: 0;
+                box-shadow: none;
+                overflow: visible;
+            }
+
+            .homecare-enquiries-photo,
+            .homecare-enquiries-content {
+                border: 1px solid #d9e5ee;
+                border-radius: 1.25rem;
+                box-shadow: 0 2px 5px rgba(16, 40, 66, .04), 0 16px 36px rgba(16, 40, 66, .08);
+                overflow: hidden;
+            }
+
+        }
+
+        .clinic-section {
+            padding-block: clamp(3.5rem, 7vw, 6.75rem);
+            background: #fff;
+        }
+
+        .clinic-section-panel {
+            display: grid;
+            gap: clamp(2rem, 5vw, 5rem);
+            align-items: center;
+        }
+
+        .clinic-section-photo {
+            position: relative;
+            isolation: isolate;
+            margin: 0 .75rem .75rem 0;
+        }
+
+        .clinic-section-photo::before {
+            position: absolute;
+            z-index: -1;
+            inset: 1rem -.75rem -.75rem 1rem;
+            border: 1px solid #d4e6ee;
+            border-radius: .875rem;
+            background: #eaf4f7;
+            content: "";
+        }
+
+        .clinic-section-photo img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: .875rem;
+            box-shadow: 0 8px 30px rgba(18, 49, 71, .10);
+        }
+
+        .clinic-section-copy {
+            min-width: 0;
+            max-width: 42rem;
+        }
+
+        .clinic-section-copy .clinic-section-label {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            margin: 0 0 .875rem;
+            color: #176477;
+            font-size: .8125rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+
+        .clinic-section-label::before {
+            width: 1.625rem;
+            height: 2px;
+            background: currentColor;
+            content: "";
+        }
+
+        .clinic-section-copy h2 {
+            margin: 0 0 1.25rem;
+            color: #123047;
+            font-size: clamp(2rem, 3.6vw, 3.125rem);
+            font-weight: 700;
+            letter-spacing: -.045em;
+            line-height: 1.09;
+        }
+
+        .clinic-section-copy p {
+            margin: 0 0 1rem;
+            color: #3f5667;
+            line-height: 1.7;
+        }
+
+        .clinic-section-copy .clinic-section-link {
+            display: inline-flex;
+            min-height: 2.875rem;
+            align-items: center;
+            gap: .75rem;
+            margin-top: .5rem;
+            padding: .625rem 1.125rem;
+            border-radius: .5rem;
+            background: #12586c;
+            color: #fff;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        .clinic-section-copy .clinic-section-link:hover {
+            background: #0d4253;
+            color: #fff;
+        }
+
+        .clinic-section-copy .clinic-section-link:focus-visible {
+            outline: 3px solid #176477;
+            outline-offset: 4px;
+        }
+
+        @media (min-width: 992px) {
+            .clinic-section-panel {
+                grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+            }
+
+            .clinic-section-photo {
+                margin-right: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .clinic-section-photo::before {
+                inset: 1.125rem -1rem -1rem 1.125rem;
+            }
+        }
+
+    </style>
+@endpush
+
 @section('content')
 <div class="banner-area auto-height modern-hero-section">
     <!-- Ambient Background Glow & Shapes -->
@@ -31,7 +305,7 @@
                 </p>
 
                 <div class="hero-actions">
-                    <a class="btn-hero-primary" href="{{ route('contact', ['enquiry' => 'homecare']) }}#contact">
+                    <a class="btn-hero-primary" href="{{ route('homecare.enquiry') }}">
                         <span>Enquire About Homecare</span>
                         <i class="fas fa-arrow-right"></i>
                     </a>
@@ -62,7 +336,7 @@
             <div class="col-md-6 col-lg-6 hero-thumb-col text-center">
                 <div class="hero-image-wrapper">
                     <div class="hero-image-backdrop"></div>
-                    <img src="{{ asset('img/hero-img.png') }}" alt="Arrange care at home in Sierra Leone" class="hero-main-img img-fluid">
+                    <img src="{{ asset('img/hero-nurse.webp') }}" alt="Black nurse wearing blue scrubs" class="hero-main-img img-fluid" fetchpriority="high">
                     
                     <!-- Floating Badge 1: Doctor Visits -->
                     <div class="floating-badge badge-top-right">
@@ -714,9 +988,9 @@
                         <div class="card-icon-wrapper red-accent">
                             <i class="flaticon-ambulance-1"></i>
                         </div>
-                        <h4 class="card-title">Emergency Case</h4>
+                        <h4 class="card-title">Urgent Care Enquiries</h4>
                         <p class="card-desc">
-                            For urgent cases and emergency home visits, contact our response team immediately for prompt medical attention.
+                            Call the clinic to ask about urgent care availability. In an emergency, seek immediate local help.
                         </p>
                         <div class="mt-auto">
                             <a href="tel:{{ $primaryTel }}" class="btn btn-call-emergency w-100 mb-2">
@@ -759,7 +1033,7 @@
                             </div>
                         </div>
                         <div class="hours-note">
-                            <i class="fas fa-shield-alt me-1"></i> Emergency home visits &amp; telephone consultations available on-call.
+                            <i class="fas fa-shield-alt me-1"></i> Call ahead to confirm availability.
                         </div>
                     </div>
                 </div>
@@ -778,7 +1052,7 @@
                             Book a general consultation for routine check-ups, health advice, or home care treatment in Sierra Leone.
                         </p>
                         <div class="mt-auto">
-                            <a href="{{ route('contact', ['enquiry' => 'homecare']) }}#contact" class="btn btn-book-consult w-100 mb-2">
+                            <a href="{{ route('homecare.enquiry') }}" class="btn btn-book-consult w-100 mb-2">
                                 <i class="fas fa-calendar-check me-2"></i> Book Consultation
                             </a>
                             <div class="consultation-phone text-center small text-muted mt-2">
@@ -791,34 +1065,54 @@
         </div>
     </div>
 
-    <!-- Start About
-    ============================================= -->
-    <div class="about-area bg-gray relative default-padding">
-
+    <section id="homecare-enquiries" class="homecare-enquiries" aria-labelledby="homecare-enquiries-title">
         <div class="container">
-            <div class="row">
-
-                <div class="col-lg-6 thumb">
-                    <div class="thumb-box">
-                        <img src="{{ asset('img/trusted-care.jpg') }}" alt="A nurse speaking with an older patient at home" loading="lazy">
-                    </div>
+            <div class="homecare-enquiries-panel">
+                <div class="homecare-enquiries-photo">
+                    <img src="{{ asset('img/trusted-care.jpg') }}"
+                        alt="A nurse speaking with an older patient at home"
+                        width="1440" height="960" loading="lazy" decoding="async">
                 </div>
 
-                <div class="col-lg-6 info">
-                    <h5>Homecare Enquiries</h5>
-                    <h2>Explore care options for your family</h2>
-                    <ul class="icon-less">
-                        <li><h5>Elderly care</h5><p>Ask about companionship, wellbeing checks and help with daily activities.</p></li>
-                        <li><h5>Nursing at home</h5><p>Ask about scheduled nursing visits, shifts or support after a hospital stay.</p></li>
-                        <li><h5>Doctor home visits</h5><p>Ask whether a home visit is available and appropriate for your situation.</p></li>
+                <div class="homecare-enquiries-content">
+                    <p class="homecare-enquiries-label">Homecare Enquiries</p>
+                    <h2 id="homecare-enquiries-title">Find the right care at home</h2>
+                    <p class="homecare-enquiries-intro">Tell us what your loved one needs and where they live. We’ll help you check which services are available in their area.</p>
+
+                    <ul class="homecare-enquiries-services">
+                        <li>
+                            <span class="homecare-enquiries-icon"><i class="fas fa-hands-helping" aria-hidden="true"></i></span>
+                            <div>
+                                <h3>Elderly care</h3>
+                                <p>Wellbeing checks, companionship and help with daily activities.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="homecare-enquiries-icon"><i class="fas fa-heartbeat" aria-hidden="true"></i></span>
+                            <div>
+                                <h3>Nursing at home</h3>
+                                <p>Scheduled nursing visits, shifts and support after discharge.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="homecare-enquiries-icon"><i class="fas fa-stethoscope" aria-hidden="true"></i></span>
+                            <div>
+                                <h3>Doctor home visits</h3>
+                                <p>Ask if a doctor can visit and whether a home consultation is appropriate.</p>
+                            </div>
+                        </li>
                     </ul>
-                    <p>Options depend on location, staffing and an assessment of care needs.</p>
-                    <a class="btn btn-md btn-gradient" href="{{ route('contact', ['enquiry' => 'homecare']) }}#contact">Ask About Availability</a>
+
+                    <div class="homecare-enquiries-actions">
+                        <a class="homecare-enquiries-primary" href="{{ route('homecare.enquiry') }}">Ask About Availability</a>
+                        <a class="homecare-enquiries-secondary" href="{{ route('homecare.index') }}">
+                            Explore Homecare Services <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- End About -->
+    </section>
 
     <!-- Start Services 
     ============================================= -->
@@ -877,30 +1171,33 @@
     </div>
     <!-- End Services -->
 
-    <!-- Start Choose Us 
-    ============================================= -->
-    <div class="choose-us-area">
-        <div class="row">
-            <div class="col-lg-6 thumb bg-cover" style="background-image: url({{ asset('img/banner-img.jpg') }});"></div>
-            <div class="col-lg-6 info">
-                <div class="info-box">
-                    <h5>At Our Clinic</h5>
-                    <h2>Our Doctors <br> Specialize in you.</h2>
+    <section id="at-our-clinic" class="clinic-section" aria-labelledby="clinic-section-title">
+        <div class="container">
+            <div class="clinic-section-panel">
+                <div class="clinic-section-copy">
+                    <p class="clinic-section-label">At Our Clinic</p>
+                    <h2 id="clinic-section-title">Our Doctors <br> Specialize in you.</h2>
                     <p>
-                        Our doctors are highly qualified, compassionate, and dedicated to providing personalized care. 
-                        Each physician brings years of medical expertise and specialized training to ensure accurate diagnosis 
+                        Our doctors are highly qualified, compassionate, and dedicated to providing personalized care.
+                        Each physician brings years of medical expertise and specialized training to ensure accurate diagnosis
                         and effective treatment
                     </p>
                     <p>
-                        Whether you need routine check-ups, expert consultation, or advanced procedures, 
-    our doctors are committed to supporting your health and well-being every step of the way.
+                        Whether you need routine check-ups, expert consultation, or advanced procedures,
+                        our doctors are committed to supporting your health and well-being every step of the way.
                     </p>
-                    <a class="btn btn-md btn-gradient" href="{{ route('doctors') }}"><i class="fas fa-angle-right"></i> Doctor Lists</a>
+                    <a class="clinic-section-link" href="{{ route('doctors') }}">
+                        Doctor Lists <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="clinic-section-photo">
+                    <img src="{{ asset('img/clinic-team-pocket-embroidery.webp') }}"
+                        alt="A clinic team wearing coats and scrubs with embroidered Lizelsundria pocket logos"
+                        width="1536" height="1024" loading="lazy" decoding="async">
                 </div>
             </div>
         </div>
-    </div>
-    <!-- End Choose Us -->
+    </section>
 
     <!-- Start Team 
     ============================================= -->
@@ -940,7 +1237,9 @@
                         {{ $doctor->specialization }}
                         </span>
                         <p class="text-muted small mb-2 text-center">
-                        {{ $doctor->experience ? 'With ' . $doctor->experience . ' years of experience.' : 'Experienced and caring medical professional.' }}
+                        @if ($doctor->experience > 0)
+                            {{ trans_choice(':count year of experience|:count years of experience', $doctor->experience) }}
+                        @endif
                         </p>
                     </div>
                     <div class="card-footer bg-transparent border-0 text-center pb-3">

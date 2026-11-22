@@ -2,21 +2,12 @@
 @if($doctors && count($doctors) > 0)
     @foreach ($doctors as $doctor)
         @php
-            // Safely get the first category name
-            $firstCategory = 'Specialist';
-            if (!empty($doctor->categories)) {
-                if (is_array($doctor->categories) && count($doctor->categories) > 0) {
-                    $firstCategory = is_array($doctor->categories[0]) 
-                        ? ($doctor->categories[0]['name'] ?? $doctor->categories[0])
-                        : $doctor->categories[0];
-                } elseif (is_string($doctor->categories)) {
-                    $decoded = json_decode($doctor->categories, true);
-                    $firstCategory = is_array($decoded) && count($decoded) > 0 ? $decoded[0] : $doctor->categories;
-                }
+            $categories = $doctor->categories;
+            if (is_string($categories)) {
+                $categories = json_decode($categories, true) ?? [$categories];
             }
-            
-            
-            // Ensure numeric values
+            $category = data_get($categories, '0.name', data_get($categories, '0'));
+            $firstCategory = is_string($category) ? trim($category) : '';
             $price = $doctor->price ?? 100;
             $experience = $doctor->experience ?? 0;
         @endphp
@@ -44,7 +35,9 @@
                 <!-- Doctor Info -->
                 <div class="doctor-info">
                     <h4 class="doctor-name">{{ $doctor->name ?? 'Dr. Unknown' }}</h4>
-                    <p class="doctor-specialty">{{ $firstCategory }}</p>
+                    @if ($firstCategory !== '')
+                        <p class="doctor-specialty">{{ $firstCategory }}</p>
+                    @endif
                     
                     
                     
@@ -52,7 +45,7 @@
                     @if($experience > 0)
                         <div class="doctor-experience mb-2">
                             <i class="fas fa-briefcase-medical me-1"></i>
-                            {{ $experience }} Years Experience
+                            {{ trans_choice(':count year of experience|:count years of experience', $experience) }}
                         </div>
                     @endif
                     
